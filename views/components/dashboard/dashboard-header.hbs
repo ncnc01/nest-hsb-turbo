@@ -1,0 +1,279 @@
+{{!-- 
+  대시보드 헤더 컴포넌트
+  
+  @param {string} title - 페이지 제목 (기본: "대시보드")
+  @param {string} description - 페이지 설명
+  @param {boolean} showExportBtn - 내보내기 버튼 표시 여부
+  @param {string} lastUpdated - 마지막 업데이트 시간
+--}}
+
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0 mb-6">
+  
+  <!-- 제목 영역 -->
+  <div class="flex-1">
+    <h1 class="text-2xl font-bold text-gray-900">
+      {{#if title}}{{title}}{{else}}대시보드{{/if}}
+    </h1>
+    {{#if description}}
+    <p class="text-gray-600 mt-1">{{description}}</p>
+    {{else}}
+    <p class="text-gray-600 mt-1">관리자 패널 개요 및 통계</p>
+    {{/if}}
+  </div>
+
+  <!-- 액션 버튼 영역 -->
+  <div class="flex items-center space-x-3 flex-shrink-0">
+    
+    <!-- 새로고침 버튼 -->
+    <button 
+      id="refresh-dashboard"
+      class="bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-colors duration-200"
+      title="데이터 새로고침"
+    >
+      <i class="fas fa-sync-alt mr-2"></i>
+      새로고침
+    </button>
+
+    {{#if showExportBtn}}
+    <!-- 내보내기 버튼 -->
+    <div class="relative" x-data="{ open: false }">
+      <button 
+        @click="open = !open"
+        class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200"
+      >
+        <i class="fas fa-download mr-2"></i>
+        내보내기
+        <i class="fas fa-chevron-down ml-2 text-sm"></i>
+      </button>
+      
+      <!-- 드롭다운 메뉴 -->
+      <div 
+        x-show="open"
+        @click.away="open = false"
+        x-transition:enter="transition ease-out duration-100"
+        x-transition:enter-start="transform opacity-0 scale-95"
+        x-transition:enter-end="transform opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-75"
+        x-transition:leave-start="transform opacity-100 scale-100"
+        x-transition:leave-end="transform opacity-0 scale-95"
+        class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-10"
+        x-cloak
+      >
+        <div class="py-1">
+          <button 
+            class="export-btn w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            data-format="json"
+          >
+            <i class="fas fa-file-code mr-2"></i>
+            JSON 형식
+          </button>
+          <button 
+            class="export-btn w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            data-format="csv"
+          >
+            <i class="fas fa-file-csv mr-2"></i>
+            CSV 형식
+          </button>
+          <button 
+            class="export-btn w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            data-format="pdf"
+          >
+            <i class="fas fa-file-pdf mr-2"></i>
+            PDF 보고서
+          </button>
+        </div>
+      </div>
+    </div>
+    {{/if}}
+
+    <!-- 마지막 업데이트 시간 -->
+    <div class="text-sm text-gray-500 hidden sm:block">
+      <span class="font-medium">마지막 업데이트:</span>
+      <span id="last-updated" class="ml-1">
+        {{#if lastUpdated}}{{lastUpdated}}{{else}}방금 전{{/if}}
+      </span>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // 새로고침 버튼 이벤트
+  const refreshBtn = document.getElementById('refresh-dashboard');
+  if (refreshBtn) {
+    refreshBtn.addEventListener('click', async function() {
+      const icon = this.querySelector('i');
+      const originalText = this.innerHTML;
+      
+      // 로딩 상태
+      this.disabled = true;
+      this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>새로고침 중...';
+      
+      try {
+        // DataProvider를 통한 데이터 새로고침
+        if (window.DataProvider) {
+          await window.DataProvider.refreshData();
+          
+          // 성공 피드백
+          this.innerHTML = '<i class="fas fa-check mr-2"></i>완료!';
+          this.classList.add('bg-green-600', 'hover:bg-green-700');
+          this.classList.remove('bg-white', 'hover:bg-gray-50', 'text-gray-700', 'border-gray-300');
+          
+          // 마지막 업데이트 시간 갱신
+          updateLastUpdatedTime();
+          
+          setTimeout(() => {
+            this.innerHTML = originalText;
+            this.classList.remove('bg-green-600', 'hover:bg-green-700');
+            this.classList.add('bg-white', 'hover:bg-gray-50', 'text-gray-700', 'border-gray-300');
+          }, 2000);
+          
+        } else {
+          // DataProvider가 없는 경우 페이지 새로고침
+          if (window.Turbo) {
+            Turbo.visit(window.location.href, { action: 'replace' });
+          } else {
+            window.location.reload();
+          }
+        }
+      } catch (error) {
+        console.error('Refresh failed:', error);
+        
+        // 오류 피드백
+        this.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i>오류 발생';
+        this.classList.add('bg-red-600', 'hover:bg-red-700');
+        this.classList.remove('bg-white', 'hover:bg-gray-50', 'text-gray-700', 'border-gray-300');
+        
+        setTimeout(() => {
+          this.innerHTML = originalText;
+          this.classList.remove('bg-red-600', 'hover:bg-red-700');
+          this.classList.add('bg-white', 'hover:bg-gray-50', 'text-gray-700', 'border-gray-300');
+        }, 3000);
+      } finally {
+        this.disabled = false;
+      }
+    });
+  }
+
+  // 내보내기 버튼 이벤트
+  const exportBtns = document.querySelectorAll('.export-btn');
+  exportBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const format = this.dataset.format;
+      exportDashboardData(format);
+    });
+  });
+});
+
+// 마지막 업데이트 시간 갱신
+function updateLastUpdatedTime() {
+  const lastUpdatedEl = document.getElementById('last-updated');
+  if (lastUpdatedEl) {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('ko-KR', { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
+    lastUpdatedEl.textContent = `${timeString}`;
+  }
+}
+
+// 대시보드 데이터 내보내기
+async function exportDashboardData(format) {
+  try {
+    let data;
+    let filename;
+    let mimeType;
+
+    if (window.DataProvider) {
+      data = window.DataProvider.exportData(format);
+    } else {
+      // Fallback: 현재 표시된 데이터 수집
+      data = collectCurrentDashboardData();
+    }
+
+    switch (format) {
+      case 'json':
+        filename = `dashboard-${new Date().toISOString().split('T')[0]}.json`;
+        mimeType = 'application/json';
+        break;
+      case 'csv':
+        filename = `dashboard-${new Date().toISOString().split('T')[0]}.csv`;
+        mimeType = 'text/csv';
+        break;
+      case 'pdf':
+        // PDF 생성은 별도 구현 필요
+        alert('PDF 내보내기는 준비 중입니다.');
+        return;
+      default:
+        throw new Error(`Unsupported format: ${format}`);
+    }
+
+    // 파일 다운로드
+    const blob = new Blob([data], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    // 성공 메시지
+    if (window.Toast) {
+      window.Toast.success(`${format.toUpperCase()} 파일이 다운로드되었습니다.`);
+    }
+
+  } catch (error) {
+    console.error('Export failed:', error);
+    
+    if (window.Toast) {
+      window.Toast.error('내보내기에 실패했습니다.');
+    } else {
+      alert('내보내기에 실패했습니다.');
+    }
+  }
+}
+
+// 현재 대시보드 데이터 수집 (fallback)
+function collectCurrentDashboardData() {
+  const data = {
+    exportedAt: new Date().toISOString(),
+    stats: {},
+    charts: {}
+  };
+
+  // 통계 카드 데이터 수집
+  const statCards = document.querySelectorAll('.bg-white.rounded-lg.shadow-sm');
+  statCards.forEach((card, index) => {
+    const title = card.querySelector('.text-sm.font-medium')?.textContent;
+    const value = card.querySelector('.text-3xl.font-bold')?.textContent;
+    if (title && value) {
+      data.stats[`stat_${index}`] = { title: title.trim(), value: value.trim() };
+    }
+  });
+
+  return JSON.stringify(data, null, 2);
+}
+
+// 주기적으로 마지막 업데이트 시간 갱신 (상대 시간)
+setInterval(() => {
+  const lastUpdatedEl = document.getElementById('last-updated');
+  if (lastUpdatedEl && lastUpdatedEl.dataset.timestamp) {
+    const timestamp = parseInt(lastUpdatedEl.dataset.timestamp);
+    const now = Date.now();
+    const diff = now - timestamp;
+    
+    if (diff < 60000) {
+      lastUpdatedEl.textContent = '방금 전';
+    } else if (diff < 3600000) {
+      const minutes = Math.floor(diff / 60000);
+      lastUpdatedEl.textContent = `${minutes}분 전`;
+    } else {
+      const hours = Math.floor(diff / 3600000);
+      lastUpdatedEl.textContent = `${hours}시간 전`;
+    }
+  }
+}, 30000); // 30초마다 업데이트
+</script>

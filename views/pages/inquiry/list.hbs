@@ -1,0 +1,979 @@
+<div class="space-y-6">
+  <!-- Inquiry Management Header -->
+  {{!-- <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">문의사항 관리</h1>
+      <p class="text-gray-600 mt-1">전체 {{total}}건의 문의사항 ({{page}}/{{totalPages}} 페이지)</p>
+    </div>
+    <div class="flex items-center space-x-3">
+      <a 
+        href="/inquiry/new/create" 
+                class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200 flex items-center"
+      >
+        <i class="fas fa-plus mr-2"></i>
+        새 문의 등록
+      </a>
+      <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center">
+        <i class="fas fa-download mr-2"></i>
+        내보내기
+      </button>
+    </div>
+  </div> --}}
+
+  <!-- Stats Cards -->
+  {{!-- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">전체</p>
+          <p class="text-2xl font-bold text-gray-900">{{stats.total}}</p>
+        </div>
+        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+          <i class="fas fa-inbox text-blue-600"></i>
+        </div>
+      </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">대기</p>
+          <p class="text-2xl font-bold text-orange-600">{{stats.pending}}</p>
+        </div>
+        <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+          <i class="fas fa-clock text-orange-600"></i>
+        </div>
+      </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">진행중</p>
+          <p class="text-2xl font-bold text-blue-600">{{stats.inProgress}}</p>
+        </div>
+        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+          <i class="fas fa-spinner text-blue-600"></i>
+        </div>
+      </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">완료</p>
+          <p class="text-2xl font-bold text-green-600">{{stats.completed}}</p>
+        </div>
+        <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+          <i class="fas fa-check-circle text-green-600"></i>
+        </div>
+      </div>
+    </div>
+  </div> --}}
+
+  <!-- Filters and Search -->
+  {{!-- <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <form method="GET" action="/inquiry" data-turbo-frame="main-content" class="space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        <!-- Search -->
+        <div class="xl:col-span-2">
+          <label class="block text-sm font-medium text-gray-700 mb-1">검색</label>
+          <input
+            type="text"
+            name="search"
+            value="{{currentFilters.search}}"
+            placeholder="제목, 내용, 고객명, 이메일..."
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+          >
+        </div>
+
+        <!-- Date Range Filter -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">시작일</label>
+          <input
+            type="date"
+            name="startDate"
+            value="{{currentFilters.startDate}}"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+          >
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">종료일</label>
+          <input
+            type="date"
+            name="endDate"
+            value="{{currentFilters.endDate}}"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+          >
+        </div>
+
+        <!-- Status Filter -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">상태</label>
+          <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
+            <option value="">전체</option>
+            {{#each statuses}}
+            <option value="{{value}}" {{#if (eq ../currentFilters.status value)}}selected{{/if}}>
+              {{label}}
+            </option>
+            {{/each}}
+          </select>
+        </div>
+
+        <!-- Category Filter -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">카테고리</label>
+          <select name="category" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
+            <option value="">전체</option>
+            {{#each categories}}
+            <option value="{{value}}" {{#if (eq ../currentFilters.category value)}}selected{{/if}}>
+              {{label}}
+            </option>
+            {{/each}}
+          </select>
+        </div>
+      </div>
+
+      <!-- Second Row -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Priority Filter -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">우선순위</label>
+          <select name="priority" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
+            <option value="">전체</option>
+            {{#each priorities}}
+            <option value="{{value}}" {{#if (eq ../currentFilters.priority value)}}selected{{/if}}>
+              {{label}}
+            </option>
+            {{/each}}
+          </select>
+        </div>
+
+        <!-- Date Quick Filters -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">기간 선택</label>
+          <select onchange="setDateRange(this.value)" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
+            <option value="">직접 선택</option>
+            <option value="today">오늘</option>
+            <option value="yesterday">어제</option>
+            <option value="thisWeek">이번 주</option>
+            <option value="lastWeek">지난 주</option>
+            <option value="thisMonth">이번 달</option>
+            <option value="lastMonth">지난 달</option>
+            <option value="last7days">최근 7일</option>
+            <option value="last30days">최근 30일</option>
+            <option value="last90days">최근 90일</option>
+          </select>
+        </div>
+
+        <!-- Empty columns for spacing -->
+        <div></div>
+        <div></div>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <button type="submit" class="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors duration-200">
+          <i class="fas fa-search mr-2"></i>검색
+        </button>
+        <a href="/inquiry" data-turbo-frame="main-content" class="bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200 transition-colors duration-200">
+          <i class="fas fa-times mr-2"></i>초기화
+        </a>
+      </div>
+    </form>
+  </div> --}}
+
+  <!-- Table Library Selector -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-semibold text-gray-900">문의사항 목록</h3>
+      <div class="flex items-center space-x-2">
+        <label class="text-sm text-gray-600">테이블 라이브러리:</label>
+        <select 
+          id="table-library-select" 
+          class="text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary-500"
+        >
+          <option value="basic">기본 테이블</option>
+          <option value="datatables">DataTables</option>
+          <option value="tabulator">Tabulator</option>
+          <option value="aggrid">AG Grid</option>
+          <option value="handsontable">Handsontable</option>
+          <option value="gridjs">Grid.js</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Table Container -->
+    <div id="inquiry-table-container" class="w-full">
+      <!-- Basic Table (Default) -->
+      <div id="basic-table" class="w-full overflow-x-auto">
+        <div class="min-w-full bg-white shadow-sm rounded-lg border border-gray-200">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">문의사항</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">고객</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/8">카테고리</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/8">상태</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/8">우선순위</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/8">등록일</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/8">액션</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              {{#each inquiries}}
+              <tr class="hover:bg-gray-50 transition-colors duration-200">
+                <td class="px-4 py-4">
+                  <div class="max-w-xs">
+                    <div class="text-sm font-medium text-gray-900 truncate" title="{{title}}">
+                      {{#if (gt title.length 30)}}
+                        {{substring title 0 30}}...
+                      {{else}}
+                        {{title}}
+                      {{/if}}
+                    </div>
+                  </div>
+                </td>
+                <td class="px-4 py-4">
+                  <div class="text-sm text-gray-900">{{customerName}}</div>
+                  <div class="text-sm text-gray-500">{{customerEmail}}</div>
+                </td>
+                <td class="px-4 py-4">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                    {{#if (eq category 'technical')}}기술 지원{{/if}}
+                    {{#if (eq category 'billing')}}결제/청구{{/if}}
+                    {{#if (eq category 'account')}}계정 관리{{/if}}
+                    {{#if (eq category 'general')}}일반 문의{{/if}}
+                  </span>
+                </td>
+                <td class="px-4 py-4">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                    {{#if (eq status 'pending')}}bg-orange-100 text-orange-800{{/if}}
+                    {{#if (eq status 'in_progress')}}bg-blue-100 text-blue-800{{/if}}
+                    {{#if (eq status 'completed')}}bg-green-100 text-green-800{{/if}}
+                    {{#if (eq status 'closed')}}bg-gray-100 text-gray-800{{/if}}">
+                    {{#if (eq status 'pending')}}대기{{/if}}
+                    {{#if (eq status 'in_progress')}}진행중{{/if}}
+                    {{#if (eq status 'completed')}}완료{{/if}}
+                    {{#if (eq status 'closed')}}종료{{/if}}
+                  </span>
+                </td>
+                <td class="px-4 py-4">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                    {{#if (eq priority 'low')}}bg-green-100 text-green-800{{/if}}
+                    {{#if (eq priority 'medium')}}bg-blue-100 text-blue-800{{/if}}
+                    {{#if (eq priority 'high')}}bg-orange-100 text-orange-800{{/if}}
+                    {{#if (eq priority 'urgent')}}bg-red-100 text-red-800{{/if}}">
+                    {{#if (eq priority 'low')}}낮음{{/if}}
+                    {{#if (eq priority 'medium')}}보통{{/if}}
+                    {{#if (eq priority 'high')}}높음{{/if}}
+                    {{#if (eq priority 'urgent')}}긴급{{/if}}
+                  </span>
+                </td>
+                <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
+                  {{formatDate createdAt}}
+                </td>
+                <td class="px-4 py-4 text-sm font-medium whitespace-nowrap">
+                  <div class="flex space-x-2">
+                    <a href="/inquiry/{{id}}" data-turbo-frame="main-content" class="text-primary-600 hover:text-primary-700 transition-colors">보기</a>
+                    <a href="/inquiry/{{id}}/edit" data-turbo-frame="main-content" class="text-gray-600 hover:text-gray-700 transition-colors">수정</a>
+                  </div>
+                </td>
+              </tr>
+              {{/each}}
+              {{#unless inquiries}}
+              <tr>
+                <td colspan="7" class="px-4 py-8 text-center text-gray-500">
+                  <div class="flex flex-col items-center">
+                    <i class="fas fa-inbox text-4xl text-gray-300 mb-2"></i>
+                    <p class="text-lg">문의사항이 없습니다</p>
+                  </div>
+                </td>
+              </tr>
+              {{/unless}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    {{#if (gt totalPages 1)}}
+    <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6 mt-4">
+      <div class="flex-1 flex justify-between sm:hidden">
+        {{#if (gt page 1)}}
+        <a href="/inquiry?page={{subtract page 1}}" data-turbo-frame="main-content" 
+           class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+          이전
+        </a>
+        {{/if}}
+        {{#if (lt page totalPages)}}
+        <a href="/inquiry?page={{add page 1}}" data-turbo-frame="main-content" 
+           class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+          다음
+        </a>
+        {{/if}}
+      </div>
+      <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+        <div>
+          <p class="text-sm text-gray-700">
+            <span class="font-medium">{{total}}</span>개 중 
+            <span class="font-medium">{{multiply (subtract page 1) limit}}{{add 1}}</span> - 
+            <span class="font-medium">{{#if (lt (multiply page limit) total)}}{{multiply page limit}}{{else}}{{total}}{{/if}}</span>개 표시
+          </p>
+        </div>
+        <div>
+          <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+            {{#each (range 1 totalPages)}}
+            <a href="/inquiry?page={{this}}"                class="relative inline-flex items-center px-4 py-2 border text-sm font-medium
+               {{#if (eq ../page this)}}
+                 z-10 bg-primary-50 border-primary-500 text-primary-600
+               {{else}}
+                 bg-white border-gray-300 text-gray-500 hover:bg-gray-50
+               {{/if}}">
+              {{this}}
+            </a>
+            {{/each}}
+          </nav>
+        </div>
+      </div>
+    </div>
+    {{/if}}
+  </div>
+
+  <!-- Table Library Comparison Dashboard -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mt-6">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h3 class="text-xl font-bold text-gray-900">📊 테이블 라이브러리 비교 대시보드</h3>
+        <p class="text-gray-600 mt-1">각 라이브러리별 특성을 비교하여 적재적소에 맞는 선택을 하세요</p>
+      </div>
+      <button 
+        onclick="toggleComparisonTable()" 
+        class="bg-gray-100 text-gray-700 px-3 py-1 rounded text-sm hover:bg-gray-200 transition-colors"
+        id="comparison-toggle"
+      >
+        <i class="fas fa-chevron-down mr-1"></i>상세 비교
+      </button>
+    </div>
+
+    <!-- Quick Overview Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+      <div class="border border-gray-200 rounded-lg p-4 bg-blue-50">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="font-semibold text-blue-900">🏆 추천 라이브러리</h4>
+          <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">일반용도</span>
+        </div>
+        <p class="text-sm text-blue-800"><strong>DataTables</strong> - 완성도 높고 안정적</p>
+        <p class="text-xs text-blue-700 mt-1">✅ jQuery 기반, 풍부한 플러그인, 한국어 지원</p>
+      </div>
+
+      <div class="border border-gray-200 rounded-lg p-4 bg-green-50">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="font-semibold text-green-900">⚡ 고성능</h4>
+          <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">대용량</span>
+        </div>
+        <p class="text-sm text-green-800"><strong>AG Grid</strong> - 엔터프라이즈급</p>
+        <p class="text-xs text-green-700 mt-1">✅ 가상화, 무한스크롤, 고급 필터링</p>
+      </div>
+
+      <div class="border border-gray-200 rounded-lg p-4 bg-purple-50">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="font-semibold text-purple-900">🎨 현대적</h4>
+          <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">반응형</span>
+        </div>
+        <p class="text-sm text-purple-800"><strong>Tabulator</strong> - 모던 디자인</p>
+        <p class="text-xs text-purple-700 mt-1">✅ 반응형, 모바일 친화적, 가벼움</p>
+      </div>
+    </div>
+
+    <!-- Detailed Comparison Table -->
+    <div id="detailed-comparison" style="display: none;">
+      <div class="mb-4">
+        <h4 class="text-lg font-semibold text-gray-800 mb-2 flex items-center">
+          🔧 테이블 라이브러리별 특성 비교
+          <button 
+            class="ml-2 text-gray-400 hover:text-gray-600 cursor-help"
+            onclick="toggleLicenseTooltip()"
+            title="라이센스 정보 보기"
+          >
+            <i class="fas fa-info-circle"></i>
+          </button>
+        </h4>
+        
+        <!-- 라이센스 정보 툴팁 -->
+        <div id="license-tooltip" class="hidden mb-4 p-4 bg-blue-50 border-l-4 border-blue-400 rounded">
+          <h5 class="font-semibold text-blue-800 mb-2">📄 라이센스 종류 설명</h5>
+          <div class="text-sm text-blue-700 space-y-2">
+            <div><strong>MIT:</strong> 상업적 이용 가능, 수정/배포 자유, 라이센스 고지 의무</div>
+            <div><strong>Apache 2.0:</strong> MIT와 유사하나 특허권 보호, 변경사항 명시 필요</div>
+            <div><strong>Commercial:</strong> 상업적 라이센스 필요, 고급 기능은 유료 플랜</div>
+            <div><strong>Dual License:</strong> 오픈소스(무료)와 상업적 라이센스(유료) 중 선택</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">라이브러리</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">장점</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">단점</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">적합한 용도</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">성능</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">학습난이도</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">라이센스</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <!-- DataTables -->
+            <tr class="hover:bg-gray-50">
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                  <div>
+                    <div class="text-sm font-medium text-gray-900">DataTables</div>
+                    <div class="text-xs text-gray-500">jQuery 기반</div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <ul class="text-xs space-y-1">
+                  <li>✅ 매우 안정적이고 성숙한 라이브러리</li>
+                  <li>✅ 풍부한 플러그인 생태계</li>
+                  <li>✅ 우수한 문서화 및 커뮤니티</li>
+                  <li>✅ 한국어 완벽 지원</li>
+                </ul>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <ul class="text-xs space-y-1">
+                  <li>❌ jQuery 의존성</li>
+                  <li>❌ 대용량 데이터 처리 한계</li>
+                  <li>❌ 모던 프레임워크와 통합 복잡</li>
+                </ul>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  일반적인 관리자 페이지
+                </span>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                    <div class="bg-yellow-500 h-2 rounded-full" style="width: 70%"></div>
+                  </div>
+                  <span class="text-xs text-gray-600">중간</span>
+                </div>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  쉬움
+                </span>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="text-xs">
+                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 mb-1">
+                    MIT
+                  </span>
+                  <div class="text-gray-600">완전 무료</div>
+                </div>
+              </td>
+            </tr>
+
+            <!-- AG Grid -->
+            <tr class="hover:bg-gray-50">
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                  <div>
+                    <div class="text-sm font-medium text-gray-900">AG Grid</div>
+                    <div class="text-xs text-gray-500">Enterprise급</div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <ul class="text-xs space-y-1">
+                  <li>✅ 뛰어난 성능 (가상화)</li>
+                  <li>✅ 엔터프라이즈급 기능</li>
+                  <li>✅ 무한 스크롤링</li>
+                  <li>✅ 고급 필터링 및 정렬</li>
+                </ul>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <ul class="text-xs space-y-1">
+                  <li>❌ 학습 곡선이 높음</li>
+                  <li>❌ 유료 기능 많음</li>
+                  <li>❌ 파일 크기 큼</li>
+                </ul>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  대용량 데이터 처리
+                </span>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                    <div class="bg-green-500 h-2 rounded-full" style="width: 95%"></div>
+                  </div>
+                  <span class="text-xs text-gray-600">최고</span>
+                </div>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                  어려움
+                </span>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="text-xs">
+                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 mb-1">
+                    MIT + Commercial
+                  </span>
+                  <div class="text-gray-600">Community(무료) / Enterprise(유료)</div>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Tabulator -->
+            <tr class="hover:bg-gray-50">
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="w-3 h-3 bg-purple-500 rounded-full mr-2"></div>
+                  <div>
+                    <div class="text-sm font-medium text-gray-900">Tabulator</div>
+                    <div class="text-xs text-gray-500">모던 디자인</div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <ul class="text-xs space-y-1">
+                  <li>✅ 모던하고 깔끔한 UI</li>
+                  <li>✅ 반응형 디자인</li>
+                  <li>✅ 가벼운 용량</li>
+                  <li>✅ 모바일 친화적</li>
+                </ul>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <ul class="text-xs space-y-1">
+                  <li>❌ 상대적으로 새로운 라이브러리</li>
+                  <li>❌ 플러그인 생태계 부족</li>
+                  <li>❌ 일부 고급 기능 부족</li>
+                </ul>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                  모던 웹앱, 대시보드
+                </span>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                    <div class="bg-blue-500 h-2 rounded-full" style="width: 80%"></div>
+                  </div>
+                  <span class="text-xs text-gray-600">좋음</span>
+                </div>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                  보통
+                </span>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="text-xs">
+                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 mb-1">
+                    MIT
+                  </span>
+                  <div class="text-gray-600">완전 무료</div>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Handsontable -->
+            <tr class="hover:bg-gray-50">
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="w-3 h-3 bg-orange-500 rounded-full mr-2"></div>
+                  <div>
+                    <div class="text-sm font-medium text-gray-900">Handsontable</div>
+                    <div class="text-xs text-gray-500">스프레드시트형</div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <ul class="text-xs space-y-1">
+                  <li>✅ 엑셀 같은 편집 경험</li>
+                  <li>✅ 인라인 편집 최적화</li>
+                  <li>✅ 복사/붙여넣기 지원</li>
+                  <li>✅ 수식 지원</li>
+                </ul>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <ul class="text-xs space-y-1">
+                  <li>❌ 상업적 사용 시 유료</li>
+                  <li>❌ 큰 파일 크기</li>
+                  <li>❌ 복잡한 라이선스</li>
+                </ul>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                  데이터 편집 중심
+                </span>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                    <div class="bg-orange-500 h-2 rounded-full" style="width: 75%"></div>
+                  </div>
+                  <span class="text-xs text-gray-600">양호</span>
+                </div>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                  보통
+                </span>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="text-xs">
+                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 mb-1">
+                    Commercial
+                  </span>
+                  <div class="text-gray-600">Non-commercial(무료) / Commercial(유료)</div>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Grid.js -->
+            <tr class="hover:bg-gray-50">
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="w-3 h-3 bg-teal-500 rounded-full mr-2"></div>
+                  <div>
+                    <div class="text-sm font-medium text-gray-900">Grid.js</div>
+                    <div class="text-xs text-gray-500">경량화</div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <ul class="text-xs space-y-1">
+                  <li>✅ 매우 가벼움 (~12kb)</li>
+                  <li>✅ 프레임워크 독립적</li>
+                  <li>✅ TypeScript 지원</li>
+                  <li>✅ 플러그인 시스템</li>
+                </ul>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <ul class="text-xs space-y-1">
+                  <li>❌ 기능이 제한적</li>
+                  <li>❌ 상대적으로 새로운 라이브러리</li>
+                  <li>❌ 커뮤니티 규모 작음</li>
+                </ul>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-teal-100 text-teal-800">
+                  경량 테이블, 임베디드
+                </span>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                    <div class="bg-teal-500 h-2 rounded-full" style="width: 85%"></div>
+                  </div>
+                  <span class="text-xs text-gray-600">우수</span>
+                </div>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  쉬움
+                </span>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="text-xs">
+                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 mb-1">
+                    MIT
+                  </span>
+                  <div class="text-gray-600">완전 무료</div>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Basic Table -->
+            <tr class="hover:bg-gray-50">
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="w-3 h-3 bg-gray-500 rounded-full mr-2"></div>
+                  <div>
+                    <div class="text-sm font-medium text-gray-900">기본 테이블</div>
+                    <div class="text-xs text-gray-500">HTML/CSS</div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <ul class="text-xs space-y-1">
+                  <li>✅ 빠른 렌더링</li>
+                  <li>✅ 의존성 없음</li>
+                  <li>✅ 완전한 제어 가능</li>
+                  <li>✅ SEO 친화적</li>
+                </ul>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <ul class="text-xs space-y-1">
+                  <li>❌ 고급 기능 없음</li>
+                  <li>❌ 수동 구현 필요</li>
+                  <li>❌ 상호작용 제한적</li>
+                </ul>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                  단순 표시용
+                </span>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                    <div class="bg-green-500 h-2 rounded-full" style="width: 100%"></div>
+                  </div>
+                  <span class="text-xs text-gray-600">최고</span>
+                </div>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  쉬움
+                </span>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="text-xs">
+                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 mb-1">
+                    N/A
+                  </span>
+                  <div class="text-gray-600">표준 HTML/CSS</div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Usage Recommendations -->
+      <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+        <h4 class="font-semibold text-gray-900 mb-3">💡 사용 시나리오별 추천</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="bg-white p-3 rounded border-l-4 border-blue-500">
+            <h5 class="font-medium text-blue-900">📋 관리자 페이지</h5>
+            <p class="text-sm text-gray-700">DataTables (안정성) 또는 Tabulator (모던)</p>
+          </div>
+          <div class="bg-white p-3 rounded border-l-4 border-green-500">
+            <h5 class="font-medium text-green-900">📊 대용량 데이터</h5>
+            <p class="text-sm text-gray-700">AG Grid (가상화) 또는 Tabulator (성능)</p>
+          </div>
+          <div class="bg-white p-3 rounded border-l-4 border-purple-500">
+            <h5 class="font-medium text-purple-900">📱 모바일 우선</h5>
+            <p class="text-sm text-gray-700">Tabulator (반응형) 또는 Grid.js (경량)</p>
+          </div>
+          <div class="bg-white p-3 rounded border-l-4 border-orange-500">
+            <h5 class="font-medium text-orange-900">✏️ 인라인 편집</h5>
+            <p class="text-sm text-gray-700">Handsontable (엑셀형) 또는 AG Grid</p>
+          </div>
+          <div class="bg-white p-3 rounded border-l-4 border-teal-500">
+            <h5 class="font-medium text-teal-900">⚡ 빠른 프로토타입</h5>
+            <p class="text-sm text-gray-700">Grid.js (간단) 또는 기본 테이블</p>
+          </div>
+          <div class="bg-white p-3 rounded border-l-4 border-gray-500">
+            <h5 class="font-medium text-gray-900">🎯 SEO 중요</h5>
+            <p class="text-sm text-gray-700">기본 테이블 (서버 렌더링)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// 더미 데이터 (실제로는 서버에서 받아올 데이터)
+const inquiryData = {{{json inquiries}}};
+
+// 테이블 라이브러리 전환 함수
+async function updateTable(library) {
+  const container = document.getElementById('inquiry-table-container');
+  
+  if (!window.tableManager) {
+    console.error('TableManager가 로드되지 않았습니다.');
+    return;
+  }
+
+  try {
+    await window.tableManager.updateTable(library, container, inquiryData);
+    console.log(`테이블이 ${library}로 업데이트되었습니다.`);
+  } catch (error) {
+    console.error('테이블 업데이트 실패:', error);
+    // 실패시 기본 테이블로 폴백
+    location.reload();
+  }
+}
+
+
+// Helper 함수들 (Handlebars helpers는 서버에서 등록)
+// 여기서는 클라이언트 사이드에서 사용할 수 있는 함수들만 정의
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('ko-KR') + ' ' + date.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+}
+
+// 날짜 범위 설정 함수
+function setDateRange(period) {
+  const startDateInput = document.querySelector('input[name="startDate"]');
+  const endDateInput = document.querySelector('input[name="endDate"]');
+  const today = new Date();
+  let startDate, endDate;
+
+  switch(period) {
+    case 'today':
+      startDate = endDate = today;
+      break;
+    case 'yesterday':
+      startDate = endDate = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+      break;
+    case 'thisWeek':
+      const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+      const endOfWeek = new Date(today.setDate(startOfWeek.getDate() + 6));
+      startDate = startOfWeek;
+      endDate = endOfWeek;
+      break;
+    case 'lastWeek':
+      const lastWeekStart = new Date(today.setDate(today.getDate() - today.getDay() - 7));
+      const lastWeekEnd = new Date(today.setDate(lastWeekStart.getDate() + 6));
+      startDate = lastWeekStart;
+      endDate = lastWeekEnd;
+      break;
+    case 'thisMonth':
+      startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+      endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      break;
+    case 'lastMonth':
+      startDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+      endDate = new Date(today.getFullYear(), today.getMonth(), 0);
+      break;
+    case 'last7days':
+      endDate = new Date();
+      startDate = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+      break;
+    case 'last30days':
+      endDate = new Date();
+      startDate = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+      break;
+    case 'last90days':
+      endDate = new Date();
+      startDate = new Date(today.getTime() - 90 * 24 * 60 * 60 * 1000);
+      break;
+    default:
+      return;
+  }
+
+  if (startDate && endDate) {
+    startDateInput.value = startDate.toISOString().split('T')[0];
+    endDateInput.value = endDate.toISOString().split('T')[0];
+  }
+}
+
+// Turbo 이벤트 처리 - 페이지 로딩 완료 후 테이블 초기화
+document.addEventListener('turbo:load', function() {
+  console.log('Turbo load - 테이블 이벤트 리스너 재초기화');
+  
+  // 테이블 라이브러리 선택자가 존재하면 이벤트 리스너 재연결
+  const librarySelect = document.getElementById('table-library-select');
+  if (librarySelect) {
+    // 기존 이벤트 리스너 제거 후 새로 추가
+    librarySelect.removeEventListener('change', handleTableLibraryChange);
+    librarySelect.addEventListener('change', handleTableLibraryChange);
+    
+    // 현재 선택된 라이브러리에 따라 테이블 상태 복원
+    const selectedLibrary = librarySelect.value;
+    if (selectedLibrary && selectedLibrary !== 'basic' && window.tableManager) {
+      // 약간의 딜레이 후 테이블 재초기화
+      setTimeout(async () => {
+        try {
+          const container = document.getElementById('inquiry-table-container');
+          if (container && inquiryData) {
+            await window.tableManager.updateTable(selectedLibrary, container, inquiryData);
+            console.log(`Turbo load 후 테이블 재초기화 완료: ${selectedLibrary}`);
+          }
+        } catch (error) {
+          console.error('Turbo load 후 테이블 재초기화 실패:', error);
+          // 실패시 기본 테이블로 복원
+          librarySelect.value = 'basic';
+        }
+      }, 100);
+    }
+  }
+});
+
+// 테이블 라이브러리 변경 핸들러
+async function handleTableLibraryChange(event) {
+  await updateTable(event.target.value);
+}
+
+// Turbo 프레임 렌더링 완료 후에도 이벤트 처리
+document.addEventListener('turbo:frame-render', function(event) {
+  if (event.target.id === 'main-content') {
+    console.log('Turbo frame render - 테이블 컨텍스트 체크');
+    
+    // 문의사항 목록 페이지인지 확인
+    const tableContainer = document.getElementById('inquiry-table-container');
+    if (tableContainer) {
+      // 테이블 매니저가 로드되지 않았으면 로드 대기
+      if (!window.tableManager) {
+        console.log('TableManager 로딩 대기 중...');
+        let attempts = 0;
+        const waitForTableManager = setInterval(() => {
+          attempts++;
+          if (window.tableManager || attempts > 20) { // 10초 대기
+            clearInterval(waitForTableManager);
+            if (window.tableManager) {
+              console.log('TableManager 로딩 완료');
+            } else {
+              console.error('TableManager 로딩 실패 - 타임아웃');
+            }
+          }
+        }, 500);
+      }
+    }
+  }
+});
+
+// 페이지 캐시 전에 테이블 상태 저장
+document.addEventListener('turbo:before-cache', function() {
+  const librarySelect = document.getElementById('table-library-select');
+  if (librarySelect && librarySelect.value !== 'basic') {
+    // 현재 선택된 라이브러리를 기본으로 리셋하여 캐시 저장
+    // 이렇게 하면 다시 돌아올 때 기본 테이블로 시작
+    librarySelect.value = 'basic';
+  }
+});
+
+// 테이블 라이브러리 비교 대시보드 토글 함수
+function toggleComparisonTable() {
+  const comparisonTable = document.getElementById('detailed-comparison');
+  const toggleButton = document.getElementById('comparison-toggle');
+  const icon = toggleButton.querySelector('i');
+  
+  if (comparisonTable.style.display === 'none') {
+    comparisonTable.style.display = 'block';
+    icon.className = 'fas fa-chevron-up mr-1';
+    toggleButton.innerHTML = '<i class="fas fa-chevron-up mr-1"></i>간단히 보기';
+  } else {
+    comparisonTable.style.display = 'none';
+    icon.className = 'fas fa-chevron-down mr-1';
+    toggleButton.innerHTML = '<i class="fas fa-chevron-down mr-1"></i>상세 비교';
+  }
+}
+
+// 라이센스 툴팁 토글 함수
+function toggleLicenseTooltip() {
+  const tooltip = document.getElementById('license-tooltip');
+  if (tooltip) {
+    tooltip.classList.toggle('hidden');
+  }
+}
+</script>
+
+</div>

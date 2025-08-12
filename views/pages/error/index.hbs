@@ -1,0 +1,293 @@
+{{#> layouts/main title=title}}
+
+<div class="min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50 flex items-start justify-center p-4 py-8 overflow-y-auto">
+  <div class="max-w-lg w-full">
+    
+    <!-- 에러 상태에 따른 아이콘 -->
+    <div class="text-center mb-12">
+      <div class="relative inline-block">
+        <!-- 배경 그라데이션 블러 효과 -->
+        <div class="absolute inset-0 bg-gradient-to-r from-red-400 to-orange-500 rounded-full blur-3xl opacity-20 scale-150"></div>
+        
+        <!-- 상태 코드 -->
+        <div class="relative">
+          <h1 class="text-8xl font-black text-transparent bg-gradient-to-r from-red-600 via-orange-600 to-pink-600 bg-clip-text mb-4 tracking-tighter">
+            {{statusCode}}
+          </h1>
+          
+          <!-- 에러 아이콘 -->
+          <div class="absolute -inset-4 flex items-center justify-center">
+            {{#if (eq statusCode 500)}}
+              <i class="fas fa-server text-6xl text-red-400 opacity-20"></i>
+            {{else if (eq statusCode 403)}}
+              <i class="fas fa-lock text-6xl text-red-400 opacity-20"></i>
+            {{else if (eq statusCode 401)}}
+              <i class="fas fa-user-slash text-6xl text-red-400 opacity-20"></i>
+            {{else if (eq statusCode 400)}}
+              <i class="fas fa-exclamation-triangle text-6xl text-red-400 opacity-20"></i>
+            {{else}}
+              <i class="fas fa-bug text-6xl text-red-400 opacity-20"></i>
+            {{/if}}
+          </div>
+          
+          <!-- 장식 요소들 -->
+          <div class="absolute -top-4 -left-4 w-6 h-6 bg-red-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+          <div class="absolute -top-2 -right-6 w-4 h-4 bg-orange-400 rounded-full animate-bounce" style="animation-delay: 0.3s"></div>
+          <div class="absolute -bottom-2 -left-8 w-5 h-5 bg-pink-400 rounded-full animate-bounce" style="animation-delay: 0.5s"></div>
+          <div class="absolute -bottom-4 -right-2 w-3 h-3 bg-red-500 rounded-full animate-bounce" style="animation-delay: 0.7s"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 메시지 섹션 -->
+    <div class="text-center mb-12 space-y-4">
+      <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-red-500 to-orange-500 rounded-full mb-6">
+        {{#if (eq statusCode 500)}}
+          <i class="fas fa-server text-white text-2xl"></i>
+        {{else if (eq statusCode 403)}}
+          <i class="fas fa-lock text-white text-2xl"></i>
+        {{else if (eq statusCode 401)}}
+          <i class="fas fa-user-slash text-white text-2xl"></i>
+        {{else if (eq statusCode 400)}}
+          <i class="fas fa-exclamation-triangle text-white text-2xl"></i>
+        {{else}}
+          <i class="fas fa-bug text-white text-2xl"></i>
+        {{/if}}
+      </div>
+      
+      <h2 class="text-3xl font-bold text-gray-900 mb-4">
+        {{title}}
+      </h2>
+      
+      <div class="space-y-2">
+        <p class="text-lg text-gray-600">
+          {{message}}
+        </p>
+        {{#if path}}
+        <p class="text-sm text-gray-500">
+          <strong>요청 경로:</strong> <code class="bg-gray-100 px-2 py-1 rounded text-xs">{{path}}</code>
+        </p>
+        {{/if}}
+      </div>
+
+      <!-- 에러별 추가 안내사항 -->
+      <div class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-left">
+        {{#if (eq statusCode 500)}}
+          <h4 class="font-semibold text-yellow-800 mb-2">
+            <i class="fas fa-lightbulb mr-2"></i>해결 방법
+          </h4>
+          <ul class="text-sm text-yellow-700 space-y-1">
+            <li>• 잠시 후 다시 시도해 주세요</li>
+            <li>• 문제가 계속 발생하면 관리자에게 문의하세요</li>
+            <li>• 페이지를 새로고침 해보세요</li>
+          </ul>
+        {{else if (eq statusCode 403)}}
+          <h4 class="font-semibold text-yellow-800 mb-2">
+            <i class="fas fa-info-circle mr-2"></i>접근 권한 안내
+          </h4>
+          <ul class="text-sm text-yellow-700 space-y-1">
+            <li>• 해당 페이지에 접근할 권한이 없습니다</li>
+            <li>• 로그인이 필요할 수 있습니다</li>
+            <li>• 관리자 권한이 필요한 페이지입니다</li>
+          </ul>
+        {{else if (eq statusCode 401)}}
+          <h4 class="font-semibold text-yellow-800 mb-2">
+            <i class="fas fa-user-circle mr-2"></i>로그인 필요
+          </h4>
+          <ul class="text-sm text-yellow-700 space-y-1">
+            <li>• 로그인이 필요한 페이지입니다</li>
+            <li>• 세션이 만료되었을 수 있습니다</li>
+            <li>• 다시 로그인 후 이용해 주세요</li>
+          </ul>
+        {{else if (eq statusCode 400)}}
+          <h4 class="font-semibold text-yellow-800 mb-2">
+            <i class="fas fa-exclamation-circle mr-2"></i>요청 오류
+          </h4>
+          <ul class="text-sm text-yellow-700 space-y-1">
+            <li>• 요청 형식이 올바르지 않습니다</li>
+            <li>• 필수 정보가 누락되었을 수 있습니다</li>
+            <li>• 입력값을 확인해 주세요</li>
+          </ul>
+        {{/if}}
+      </div>
+    </div>
+
+    <!-- 액션 버튼들 -->
+    <div class="space-y-4">
+      <div class="flex flex-col sm:flex-row gap-4">
+        <button
+          onclick="history.back()"
+          class="flex-1 group relative overflow-hidden bg-gradient-to-r from-red-600 to-red-700 text-white px-8 py-4 rounded-2xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200"
+        >
+          <i class="fas fa-arrow-left mr-2"></i>
+          이전 페이지로
+          <div class="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors duration-200"></div>
+        </button>
+        
+        <a
+          href="/dashboard"
+          data-turbo="true"
+          class="flex-1 group relative overflow-hidden bg-gradient-to-r from-orange-600 to-orange-700 text-white px-8 py-4 rounded-2xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200 text-center"
+        >
+          <i class="fas fa-home mr-2"></i>
+          홈으로 이동
+          <div class="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors duration-200"></div>
+        </a>
+      </div>
+      
+      <div class="flex flex-col sm:flex-row gap-4">
+        <button
+          onclick="location.reload()"
+          class="flex-1 group relative overflow-hidden bg-gray-100 text-gray-700 px-8 py-4 rounded-2xl font-medium hover:bg-gray-200 transition-all duration-200"
+        >
+          <i class="fas fa-redo mr-2"></i>
+          페이지 새로고침
+        </button>
+        
+        {{#if (or (eq statusCode 401) (eq statusCode 403))}}
+        <a
+          href="/"
+          data-turbo="true"
+          class="flex-1 group relative overflow-hidden bg-blue-100 text-blue-700 px-8 py-4 rounded-2xl font-medium hover:bg-blue-200 transition-all duration-200 text-center"
+        >
+          <i class="fas fa-sign-in-alt mr-2"></i>
+          로그인 페이지
+        </a>
+        {{/if}}
+      </div>
+    </div>
+
+    <!-- 에러 신고 -->
+    {{#if (gte statusCode 500)}}
+    <div class="mt-8 p-4 bg-red-50 border border-red-200 rounded-lg">
+      <h4 class="font-semibold text-red-800 mb-2">
+        <i class="fas fa-exclamation-triangle mr-2"></i>
+        서버 오류 신고
+      </h4>
+      <p class="text-sm text-red-700 mb-3">
+        이 오류는 자동으로 로그에 기록되었습니다. 문제가 지속되면 아래 정보와 함께 관리자에게 문의해 주세요.
+      </p>
+      <div class="text-xs text-red-600 font-mono bg-red-100 p-2 rounded">
+        오류 시간: {{timestamp}}
+      </div>
+    </div>
+    {{/if}}
+
+    {{#if isDevelopment}}
+    <!-- 개발 모드 디버깅 정보 -->
+    <div class="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+      <h4 class="text-sm font-semibold text-yellow-800 mb-2">
+        <i class="fas fa-bug mr-2"></i>
+        개발 디버그 정보
+      </h4>
+      <div class="text-xs text-yellow-700 space-y-1 font-mono">
+        <div><strong>Time:</strong> {{timestamp}}</div>
+        <div><strong>Method:</strong> {{method}}</div>
+        <div><strong>Path:</strong> {{path}}</div>
+        <div><strong>Status:</strong> {{statusCode}}</div>
+        {{#if errorDetails.stack}}
+        <details class="mt-2">
+          <summary class="cursor-pointer text-yellow-800 hover:text-yellow-900">스택 트레이스</summary>
+          <pre class="mt-2 text-xs bg-yellow-100 p-2 rounded overflow-auto max-h-64 whitespace-pre-wrap break-all">{{errorDetails.stack}}</pre>
+        </details>
+        {{/if}}
+      </div>
+    </div>
+    {{/if}}
+
+  </div>
+</div>
+
+<!-- 에러 컨테이너 (Turbo Stream용) -->
+<div id="error-container"></div>
+
+<style>
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes pulse-red {
+  0%, 100% { 
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  50% { 
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+  }
+}
+
+.animate-pulse-red {
+  animation: pulse-red 2s infinite;
+}
+</style>
+
+<script>
+// 페이지 로드 시 부드러운 애니메이션
+document.addEventListener('DOMContentLoaded', function() {
+  const mainContent = document.querySelector('.max-w-lg');
+  if (mainContent) {
+    mainContent.style.opacity = '0';
+    mainContent.style.transform = 'translateY(20px)';
+    
+    setTimeout(() => {
+      mainContent.style.transition = 'all 0.8s ease-out';
+      mainContent.style.opacity = '1';
+      mainContent.style.transform = 'translateY(0)';
+    }, 100);
+  }
+
+  // 에러 타입에 따른 추가 애니메이션
+  const statusCode = {{statusCode}};
+  if (statusCode >= 500) {
+    // 서버 에러시 약간의 흔들림 효과
+    setTimeout(() => {
+      const errorIcon = document.querySelector('.text-8xl');
+      if (errorIcon) {
+        errorIcon.classList.add('animate-shake');
+      }
+    }, 1000);
+  }
+});
+
+// 키보드 단축키
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    history.back();
+  }
+  if (e.key === 'Enter') {
+    window.location.href = '/dashboard';
+  }
+  if (e.key === 'r' && e.ctrlKey) {
+    e.preventDefault();
+    location.reload();
+  }
+});
+
+// 자동 새로고침 (5xx 에러의 경우)
+{{#if (gte statusCode 500)}}
+let retryCount = 0;
+const maxRetries = 3;
+
+function autoRetry() {
+  if (retryCount < maxRetries) {
+    retryCount++;
+    console.log(`자동 재시도 ${retryCount}/${maxRetries}...`);
+    
+    // 30초 후 자동 새로고침
+    setTimeout(() => {
+      location.reload();
+    }, 30000);
+  }
+}
+
+// 페이지 로드 시 자동 재시도 시작
+setTimeout(autoRetry, 5000);
+{{/if}}
+</script>
+
+{{/layouts/main}}

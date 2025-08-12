@@ -1,0 +1,453 @@
+{{#if error}}
+<div>
+  <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+    {{error}}
+  </div>
+  <div class="mt-4">
+    <a href="/inquiry" data-turbo-frame="main-content" class="text-primary-600 hover:text-primary-700">
+      ← 문의사항 목록으로 돌아가기
+    </a>
+  </div>
+</div>
+{{else}}
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <div class="flex items-center space-x-4">
+      <a href="/inquiry" data-turbo-frame="main-content" class="text-gray-500 hover:text-gray-700">
+        <i class="fas fa-arrow-left text-lg"></i>
+      </a>
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">{{inquiry.title}}</h1>
+        <p class="text-gray-600 mt-1">문의사항 #{{inquiry.id}} 상세 정보</p>
+      </div>
+    </div>
+    <div class="flex items-center space-x-3">
+      <a 
+        href="/inquiry/{{inquiry.id}}/edit" 
+                class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200 flex items-center"
+      >
+        <i class="fas fa-edit mr-2"></i>
+        수정
+      </a>
+      <button 
+        onclick="deleteInquiry('{{inquiry.id}}')"
+        class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors duration-200 flex items-center"
+      >
+        <i class="fas fa-trash mr-2"></i>
+        삭제
+      </button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    
+    <!-- Main Content -->
+    <div class="lg:col-span-2 space-y-6">
+      
+      <!-- Inquiry Details -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">문의 내용</h3>
+        </div>
+        <div class="p-6">
+          <div class="prose max-w-none">
+            <p class="text-gray-700 leading-relaxed whitespace-pre-wrap">{{inquiry.content}}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Response Section -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">답변</h3>
+        </div>
+        <div class="p-6">
+          {{#if inquiry.response}}
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <div class="flex items-center mb-2">
+                <i class="fas fa-reply text-blue-500 mr-2"></i>
+                <span class="text-sm font-medium text-blue-800">
+                  {{#if inquiry.assignedTo}}{{inquiry.assignedTo}}{{else}}관리자{{/if}}
+                </span>
+                <span class="text-sm text-blue-600 ml-2">
+                  {{formatDate inquiry.responseAt}}
+                </span>
+              </div>
+              <p class="text-blue-900 whitespace-pre-wrap">{{inquiry.response}}</p>
+            </div>
+          {{else}}
+            <div class="text-center py-8">
+              <i class="fas fa-comment-slash text-gray-400 text-3xl mb-3"></i>
+              <p class="text-gray-500">아직 답변이 등록되지 않았습니다.</p>
+            </div>
+          {{/if}}
+
+          <!-- Quick Response Form -->
+          <form id="response-form" class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">답변 작성</label>
+              <div class="mb-4">
+                <div class="flex items-center space-x-2 mb-2">
+                  <label class="text-sm text-gray-600">에디터 라이브러리:</label>
+                  <select 
+                    id="editor-library-select" 
+                    class="text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    onchange="updateEditor(this.value)"
+                  >
+                    <option value="basic">기본 Textarea</option>
+                    <option value="tinymce">TinyMCE</option>
+                    <option value="ckeditor5">CKEditor5</option>
+                    <option value="quill">Quill.js</option>
+                    <option value="monaco">Monaco Editor</option>
+                    <option value="prosemirror">ProseMirror</option>
+                  </select>
+                </div>
+                <div id="editor-container">
+                  <textarea
+                    id="response-textarea"
+                    name="response"
+                    rows="6"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    placeholder="답변을 작성해주세요..."
+                  >{{inquiry.response}}</textarea>
+                </div>
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">담당자</label>
+                <input
+                  type="text"
+                  name="assignedTo"
+                  value="{{#if inquiry.assignedTo}}{{inquiry.assignedTo}}{{else}}Admin User{{/if}}"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                >
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">상태 변경</label>
+                <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
+                  {{#each statuses}}
+                  <option value="{{value}}" {{#if (eq ../inquiry.status value)}}selected{{/if}}>
+                    {{label}}
+                  </option>
+                  {{/each}}
+                </select>
+              </div>
+            </div>
+
+            <div class="flex justify-end">
+              <button 
+                type="submit"
+                class="bg-primary-600 text-white px-6 py-2 rounded-md hover:bg-primary-700 transition-colors duration-200"
+              >
+                <i class="fas fa-paper-plane mr-2"></i>
+                답변 저장
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="space-y-6">
+      
+      <!-- Status & Priority -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">상태 정보</h3>
+        </div>
+        <div class="p-6 space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">상태</label>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+              {{#if (eq inquiry.status 'pending')}}bg-orange-100 text-orange-800{{/if}}
+              {{#if (eq inquiry.status 'in_progress')}}bg-blue-100 text-blue-800{{/if}}
+              {{#if (eq inquiry.status 'completed')}}bg-green-100 text-green-800{{/if}}
+              {{#if (eq inquiry.status 'closed')}}bg-gray-100 text-gray-800{{/if}}">
+              {{#if (eq inquiry.status 'pending')}}대기{{/if}}
+              {{#if (eq inquiry.status 'in_progress')}}진행중{{/if}}
+              {{#if (eq inquiry.status 'completed')}}완료{{/if}}
+              {{#if (eq inquiry.status 'closed')}}종료{{/if}}
+            </span>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">우선순위</label>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+              {{#if (eq inquiry.priority 'low')}}bg-green-100 text-green-800{{/if}}
+              {{#if (eq inquiry.priority 'medium')}}bg-blue-100 text-blue-800{{/if}}
+              {{#if (eq inquiry.priority 'high')}}bg-orange-100 text-orange-800{{/if}}
+              {{#if (eq inquiry.priority 'urgent')}}bg-red-100 text-red-800{{/if}}">
+              {{#if (eq inquiry.priority 'low')}}낮음{{/if}}
+              {{#if (eq inquiry.priority 'medium')}}보통{{/if}}
+              {{#if (eq inquiry.priority 'high')}}높음{{/if}}
+              {{#if (eq inquiry.priority 'urgent')}}긴급{{/if}}
+            </span>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">카테고리</label>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+              {{#if (eq inquiry.category 'technical')}}기술 지원{{/if}}
+              {{#if (eq inquiry.category 'billing')}}결제/청구{{/if}}
+              {{#if (eq inquiry.category 'account')}}계정 관리{{/if}}
+              {{#if (eq inquiry.category 'general')}}일반 문의{{/if}}
+            </span>
+          </div>
+
+          {{#if inquiry.assignedTo}}
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">담당자</label>
+            <p class="text-gray-900">{{inquiry.assignedTo}}</p>
+          </div>
+          {{/if}}
+        </div>
+      </div>
+
+      <!-- Customer Info -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">고객 정보</h3>
+        </div>
+        <div class="p-6 space-y-3">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">이름</label>
+            <p class="text-gray-900">{{inquiry.customerName}}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700">이메일</label>
+            <a href="mailto:{{inquiry.customerEmail}}" class="text-primary-600 hover:text-primary-700">
+              {{inquiry.customerEmail}}
+            </a>
+          </div>
+          {{#if inquiry.customerPhone}}
+          <div>
+            <label class="block text-sm font-medium text-gray-700">전화번호</label>
+            <a href="tel:{{inquiry.customerPhone}}" class="text-primary-600 hover:text-primary-700">
+              {{inquiry.customerPhone}}
+            </a>
+          </div>
+          {{/if}}
+        </div>
+      </div>
+
+      <!-- Timeline -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">타임라인</h3>
+        </div>
+        <div class="p-6">
+          <div class="flow-root">
+            <ul class="space-y-4">
+              <li class="flex items-start">
+                <div class="flex-shrink-0">
+                  <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-plus text-blue-600 text-sm"></i>
+                  </div>
+                </div>
+                <div class="ml-3">
+                  <p class="text-sm font-medium text-gray-900">문의 등록</p>
+                  <p class="text-sm text-gray-500">{{formatDate inquiry.createdAt}}</p>
+                </div>
+              </li>
+              
+              {{#if inquiry.assignedTo}}
+              <li class="flex items-start">
+                <div class="flex-shrink-0">
+                  <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-user text-green-600 text-sm"></i>
+                  </div>
+                </div>
+                <div class="ml-3">
+                  <p class="text-sm font-medium text-gray-900">담당자 배정</p>
+                  <p class="text-sm text-gray-500">{{inquiry.assignedTo}}</p>
+                </div>
+              </li>
+              {{/if}}
+              
+              {{#if inquiry.response}}
+              <li class="flex items-start">
+                <div class="flex-shrink-0">
+                  <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-reply text-purple-600 text-sm"></i>
+                  </div>
+                </div>
+                <div class="ml-3">
+                  <p class="text-sm font-medium text-gray-900">답변 완료</p>
+                  <p class="text-sm text-gray-500">{{formatDate inquiry.responseAt}}</p>
+                </div>
+              </li>
+              {{/if}}
+              
+              <li class="flex items-start">
+                <div class="flex-shrink-0">
+                  <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-clock text-gray-600 text-sm"></i>
+                  </div>
+                </div>
+                <div class="ml-3">
+                  <p class="text-sm font-medium text-gray-900">최종 수정</p>
+                  <p class="text-sm text-gray-500">{{formatDate inquiry.updatedAt}}</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// 답변 폼 처리
+document.getElementById('response-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  
+  const formData = new FormData(this);
+  const data = Object.fromEntries(formData.entries());
+  
+  try {
+    const response = await fetch(`/inquiry/api/{{inquiry.id}}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'text/vnd.turbo-stream.html'
+      },
+      body: JSON.stringify(data)
+    });
+    
+    if (response.ok) {
+      const html = await response.text();
+      document.body.insertAdjacentHTML('beforeend', html);
+    }
+  } catch (error) {
+    console.error('Error updating inquiry:', error);
+  }
+});
+
+// 삭제 함수
+function deleteInquiry(id) {
+  if (confirm('이 문의사항을 삭제하시겠습니까?')) {
+    fetch(`/inquiry/api/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Accept': 'text/vnd.turbo-stream.html'
+      }
+    }).then(response => {
+      if (response.ok) {
+        return response.text();
+      }
+    }).then(html => {
+      if (html) {
+        document.body.insertAdjacentHTML('beforeend', html);
+      }
+    });
+  }
+}
+
+// 에디터 라이브러리 전환 함수
+function updateEditor(library) {
+  const container = document.getElementById('editor-container');
+  const currentValue = document.getElementById('response-textarea')?.value || '';
+  
+  switch(library) {
+    case 'basic':
+      container.innerHTML = `
+        <textarea
+          id="response-textarea"
+          name="response"
+          rows="6"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+          placeholder="답변을 작성해주세요..."
+        >${currentValue}</textarea>
+      `;
+      break;
+    case 'tinymce':
+      renderTinyMCE(container, currentValue);
+      break;
+    case 'ckeditor5':
+      renderCKEditor5(container, currentValue);
+      break;
+    case 'quill':
+      renderQuill(container, currentValue);
+      break;
+    case 'monaco':
+      renderMonaco(container, currentValue);
+      break;
+    case 'prosemirror':
+      renderProseMirror(container, currentValue);
+      break;
+  }
+}
+
+// 에디터 렌더링 함수들 (데모)
+function renderTinyMCE(container, value) {
+  container.innerHTML = `
+    <div class="border border-gray-300 rounded-md p-4 bg-yellow-50">
+      <div class="flex items-center mb-2">
+        <i class="fas fa-edit text-yellow-600 mr-2"></i>
+        <span class="text-yellow-800 font-medium">TinyMCE Editor</span>
+      </div>
+      <textarea name="response" class="w-full bg-transparent border-none resize-none">${value}</textarea>
+    </div>
+  `;
+}
+
+function renderCKEditor5(container, value) {
+  container.innerHTML = `
+    <div class="border border-gray-300 rounded-md p-4 bg-blue-50">
+      <div class="flex items-center mb-2">
+        <i class="fas fa-edit text-blue-600 mr-2"></i>
+        <span class="text-blue-800 font-medium">CKEditor5</span>
+      </div>
+      <textarea name="response" class="w-full bg-transparent border-none resize-none">${value}</textarea>
+    </div>
+  `;
+}
+
+function renderQuill(container, value) {
+  container.innerHTML = `
+    <div class="border border-gray-300 rounded-md p-4 bg-green-50">
+      <div class="flex items-center mb-2">
+        <i class="fas fa-edit text-green-600 mr-2"></i>
+        <span class="text-green-800 font-medium">Quill.js Editor</span>
+      </div>
+      <textarea name="response" class="w-full bg-transparent border-none resize-none">${value}</textarea>
+    </div>
+  `;
+}
+
+function renderMonaco(container, value) {
+  container.innerHTML = `
+    <div class="border border-gray-300 rounded-md p-4 bg-purple-50">
+      <div class="flex items-center mb-2">
+        <i class="fas fa-code text-purple-600 mr-2"></i>
+        <span class="text-purple-800 font-medium">Monaco Editor</span>
+      </div>
+      <textarea name="response" class="w-full bg-transparent border-none resize-none font-mono">${value}</textarea>
+    </div>
+  `;
+}
+
+function renderProseMirror(container, value) {
+  container.innerHTML = `
+    <div class="border border-gray-300 rounded-md p-4 bg-red-50">
+      <div class="flex items-center mb-2">
+        <i class="fas fa-edit text-red-600 mr-2"></i>
+        <span class="text-red-800 font-medium">ProseMirror Editor</span>
+      </div>
+      <textarea name="response" class="w-full bg-transparent border-none resize-none">${value}</textarea>
+    </div>
+  `;
+}
+
+// 날짜 포맷팅 함수
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('ko-KR') + ' ' + date.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+}
+</script>
+{{/if}}

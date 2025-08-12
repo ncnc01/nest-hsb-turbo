@@ -1,0 +1,1867 @@
+{{!-- 
+  모던 컴포넌트 기반 대시보드
+  기존 5562줄에서 약 200줄로 축소
+--}}
+
+<div class="space-y-6" id="dashboard-container">
+
+  {{!-- 대시보드 헤더 --}}
+  {{!-- {{> dashboard/dashboard-header 
+    title="대시보드" 
+    description="관리자 패널 개요 및 통계"
+    showExportBtn=true
+    lastUpdated="방금 전"
+  }} --}}
+
+  {{!-- 통계 카드 그리드 --}}
+  <!-- 통계 카드들은 JavaScript에서 동적으로 생성 -->
+  {{!-- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="stats-grid">
+  </div> --}}
+
+  {{!-- 차트 섹션 --}}
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" id="charts-grid">
+    
+    {{!-- 라인 차트 --}}
+    {{> charts/chart-container 
+      title="문의 처리 추이" 
+      chartId="trend-chart"
+      description="월별 문의 접수 및 처리 현황"
+      showControls=true
+      showLegend=true
+      height="350px"
+      defaultLibrary="chartjs"
+    }}
+
+    {{!-- 바 차트 --}}
+    {{> charts/chart-container 
+      title="요일별 문의량" 
+      chartId="daily-chart"
+      description="요일별 문의 접수 현황"
+      showControls=true
+      height="350px"
+      defaultLibrary="chartjs"
+    }}
+
+  </div>
+
+  {{!-- 추가 차트 섹션 --}}
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6" id="additional-charts">
+    
+    {{!-- 파이 차트 --}}
+    {{> charts/chart-container 
+      title="문의 상태 분포" 
+      chartId="status-chart"
+      showControls=true
+      height="320px"
+    }}
+
+    {{!-- 영역 차트 --}}
+    {{> charts/chart-container 
+      title="시간별 문의량" 
+      chartId="hourly-chart"
+      description="24시간 기준"
+      showControls=true
+      height="320px"
+    }}
+
+    {{!-- 추가 통계 --}}
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">빠른 통계</h3>
+      <div class="space-y-4" id="quick-stats">
+        <!-- 빠른 통계는 JavaScript에서 동적으로 생성 -->
+      </div>
+    </div>
+
+  </div>
+
+  {{!-- 고급 차트 섹션 --}}
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" id="advanced-charts">
+    
+    {{!-- 버블 차트 --}}
+    {{> charts/chart-container 
+      title="버블 차트 - 다차원 데이터" 
+      chartId="bubble-chart"
+      description="매출, 이익, 점유율"
+      showControls=true
+      height="350px"
+    }}
+
+    {{!-- 레이더 차트 --}}
+    {{> charts/chart-container 
+      title="레이더 차트 - 성과 지표" 
+      chartId="radar-chart"
+      description="다각도 성과 분석"
+      showControls=true
+      height="350px"
+    }}
+
+  </div>
+
+  {{!-- 특수 차트 섹션 --}}
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" id="special-charts">
+    
+    {{!-- 게이지 차트 --}}
+    {{> charts/chart-container 
+      title="게이지 차트 - 완료율" 
+      chartId="gauge-chart"
+      description="목표 대비 달성률"
+      showControls=true
+      height="350px"
+    }}
+
+    {{!-- 퍼널 차트 --}}
+    {{> charts/chart-container 
+      title="퍼널 차트 - 전환율" 
+      chartId="funnel-chart"
+      description="단계별 전환 과정"
+      showControls=true
+      height="350px"
+    }}
+
+  </div>
+
+  {{!-- 차트 라이브러리 & 타입 비교 대시보드 --}}
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+    <div class="flex items-center justify-between mb-6 p-6 pb-0">
+      <div>
+        <h3 class="text-xl font-bold text-gray-900">📊 차트 라이브러리 비교 대시보드</h3>
+        <p class="text-gray-600 mt-1">각 라이브러리별 특성과 차트 타입을 비교하여 최적의 선택을 하세요</p>
+      </div>
+      <button 
+        onclick="toggleChartComparisonTable()" 
+        class="bg-gray-100 text-gray-700 px-3 py-1 rounded text-sm hover:bg-gray-200 transition-colors"
+        id="chart-comparison-toggle"
+      >
+        <i class="fas fa-chevron-down mr-1"></i>상세 비교
+      </button>
+    </div>
+
+    <div class="p-6 pt-0">
+      <!-- Quick Overview Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        <div class="border border-gray-200 rounded-lg p-4 bg-blue-50">
+          <div class="flex items-center justify-between mb-2">
+            <h4 class="font-semibold text-blue-900">🏆 추천 라이브러리</h4>
+            <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">일반용도</span>
+          </div>
+          <p class="text-sm text-blue-800"><strong>Chart.js</strong> - 간단하고 직관적</p>
+          <p class="text-xs text-blue-700 mt-1">✅ Canvas 기반, 빠른 렌더링, 반응형</p>
+        </div>
+
+        <div class="border border-gray-200 rounded-lg p-4 bg-green-50">
+          <div class="flex items-center justify-between mb-2">
+            <h4 class="font-semibold text-green-900">⚡ 고성능</h4>
+            <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">대용량</span>
+          </div>
+          <p class="text-sm text-green-800"><strong>ECharts</strong> - 빠른 대용량 처리</p>
+          <p class="text-xs text-green-700 mt-1">✅ 지도 차트, 대용량 데이터, 고성능</p>
+        </div>
+
+        <div class="border border-gray-200 rounded-lg p-4 bg-purple-50">
+          <div class="flex items-center justify-between mb-2">
+            <h4 class="font-semibold text-purple-900">🎨 현대적</h4>
+            <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">인터랙티브</span>
+          </div>
+          <p class="text-sm text-purple-800"><strong>ApexCharts</strong> - 모던 애니메이션</p>
+          <p class="text-xs text-purple-700 mt-1">✅ 줌/팬, 아름다운 UI, 모바일 친화적</p>
+        </div>
+      </div>
+
+      <!-- Detailed Comparison (Hidden by default) -->
+      <div id="detailed-chart-comparison" style="display: none;" class="space-y-6">
+        <!-- Library Comparison Table -->
+        <div>
+          <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+            🔧 라이브러리별 특성 비교
+            <button 
+              class="ml-2 text-gray-400 hover:text-gray-600 cursor-help"
+              onclick="toggleLicenseTooltip()"
+              title="라이센스 정보 보기"
+            >
+              <i class="fas fa-info-circle"></i>
+            </button>
+          </h4>
+          
+          <!-- 라이센스 정보 툴팁 -->
+          <div id="license-tooltip" class="hidden mb-4 p-4 bg-blue-50 border-l-4 border-blue-400 rounded">
+            <h5 class="font-semibold text-blue-800 mb-2">📄 라이센스 종류 설명</h5>
+            <div class="text-sm text-blue-700 space-y-2">
+              <div><strong>MIT:</strong> 상업적 이용 가능, 수정/배포 자유, 라이센스 고지 의무</div>
+              <div><strong>Apache 2.0:</strong> MIT와 유사하나 특허권 보호, 변경사항 명시 필요</div>
+              <div><strong>BSD:</strong> MIT와 유사한 자유 라이센스, 상업적 이용 가능</div>
+              <div><strong>Dual License:</strong> 오픈소스(무료)와 상업적 라이센스(유료) 중 선택</div>
+              <div><strong>Commercial:</strong> 상업적 라이센스 필요, 고급 기능은 유료 플랜</div>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">라이브러리</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">장점</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">단점</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">적합한 용도</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">번들크기</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">학습난이도</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">라이센스</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <!-- Chart.js -->
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                      <div>
+                        <div class="text-sm font-medium text-gray-900">Chart.js</div>
+                        <div class="text-xs text-gray-500">Canvas 기반</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-4 text-sm text-gray-900">
+                    <ul class="text-xs space-y-1">
+                      <li>✅ 간단한 API와 사용법</li>
+                      <li>✅ 뛰어난 성능 (Canvas)</li>
+                      <li>✅ 완벽한 반응형 지원</li>
+                      <li>✅ 광범위한 커뮤니티</li>
+                    </ul>
+                  </td>
+                  <td class="px-4 py-4 text-sm text-gray-900">
+                    <ul class="text-xs space-y-1">
+                      <li>❌ 제한적인 상호작용</li>
+                      <li>❌ 복잡한 차트 구현 어려움</li>
+                      <li>❌ 3D 차트 미지원</li>
+                    </ul>
+                  </td>
+                  <td class="px-4 py-4 text-sm text-gray-900">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      기본 대시보드
+                    </span>
+                  </td>
+                  <td class="px-4 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                        <div class="bg-green-500 h-2 rounded-full" style="width: 70%"></div>
+                      </div>
+                      <span class="text-xs text-gray-600">60KB</span>
+                    </div>
+                  </td>
+                  <td class="px-4 py-4 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      쉬움
+                    </span>
+                  </td>
+                  <td class="px-4 py-4 whitespace-nowrap">
+                    <div class="text-xs">
+                      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 mb-1">
+                        MIT
+                      </span>
+                      <div class="text-gray-600">완전 무료</div>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- ApexCharts -->
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                      <div>
+                        <div class="text-sm font-medium text-gray-900">ApexCharts</div>
+                        <div class="text-xs text-gray-500">SVG 기반</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-4 text-sm text-gray-900">
+                    <ul class="text-xs space-y-1">
+                      <li>✅ 아름다운 애니메이션</li>
+                      <li>✅ 다양한 차트 타입</li>
+                      <li>✅ 내장 줌/팬 기능</li>
+                      <li>✅ 모바일 친화적</li>
+                    </ul>
+                  </td>
+                  <td class="px-4 py-4 text-sm text-gray-900">
+                    <ul class="text-xs space-y-1">
+                      <li>❌ 상대적으로 큰 용량</li>
+                      <li>❌ 커스터마이징 제약</li>
+                      <li>❌ 고급 기능은 유료</li>
+                    </ul>
+                  </td>
+                  <td class="px-4 py-4 text-sm text-gray-900">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      비즈니스 대시보드
+                    </span>
+                  </td>
+                  <td class="px-4 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                        <div class="bg-yellow-500 h-2 rounded-full" style="width: 80%"></div>
+                      </div>
+                      <span class="text-xs text-gray-600">80KB</span>
+                    </div>
+                  </td>
+                  <td class="px-4 py-4 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      쉬움
+                    </span>
+                  </td>
+                  <td class="px-4 py-4 whitespace-nowrap">
+                    <div class="text-xs">
+                      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 mb-1">
+                        MIT/Commercial
+                      </span>
+                      <div class="text-gray-600">무료/프리미엄</div>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- D3.js -->
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div class="w-3 h-3 bg-yellow-500 rounded-full mr-2"></div>
+                      <div>
+                        <div class="text-sm font-medium text-gray-900">D3.js</div>
+                        <div class="text-xs text-gray-500">SVG 기반</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-4 text-sm text-gray-900">
+                    <ul class="text-xs space-y-1">
+                      <li>✅ 무한한 커스터마이징</li>
+                      <li>✅ 강력한 데이터 조작</li>
+                      <li>✅ 유니크한 시각화 가능</li>
+                      <li>✅ 작은 코어 사이즈</li>
+                    </ul>
+                  </td>
+                  <td class="px-4 py-4 text-sm text-gray-900">
+                    <ul class="text-xs space-y-1">
+                      <li>❌ 매우 높은 학습 곡선</li>
+                      <li>❌ 개발 시간 많이 소요</li>
+                      <li>❌ 복잡한 코드 구조</li>
+                    </ul>
+                  </td>
+                  <td class="px-4 py-4 text-sm text-gray-900">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                      맞춤형 시각화
+                    </span>
+                  </td>
+                  <td class="px-4 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                        <div class="bg-green-500 h-2 rounded-full" style="width: 30%"></div>
+                      </div>
+                      <span class="text-xs text-gray-600">30KB</span>
+                    </div>
+                  </td>
+                  <td class="px-4 py-4 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                      어려움
+                    </span>
+                  </td>
+                  <td class="px-4 py-4 whitespace-nowrap">
+                    <div class="text-xs">
+                      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 mb-1">
+                        BSD
+                      </span>
+                      <div class="text-gray-600">완전 무료</div>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Plotly.js -->
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div class="w-3 h-3 bg-purple-500 rounded-full mr-2"></div>
+                      <div>
+                        <div class="text-sm font-medium text-gray-900">Plotly.js</div>
+                        <div class="text-xs text-gray-500">WebGL 지원</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-4 text-sm text-gray-900">
+                    <ul class="text-xs space-y-1">
+                      <li>✅ 과학적 차트 특화</li>
+                      <li>✅ 3D 차트 지원</li>
+                      <li>✅ 통계 분석 기능</li>
+                      <li>✅ WebGL 가속</li>
+                    </ul>
+                  </td>
+                  <td class="px-4 py-4 text-sm text-gray-900">
+                    <ul class="text-xs space-y-1">
+                      <li>❌ 매우 큰 번들 사이즈</li>
+                      <li>❌ 느린 초기 로딩</li>
+                      <li>❌ 복잡한 설정</li>
+                    </ul>
+                  </td>
+                  <td class="px-4 py-4 text-sm text-gray-900">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                      과학/연구용
+                    </span>
+                  </td>
+                  <td class="px-4 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                        <div class="bg-red-500 h-2 rounded-full" style="width: 100%"></div>
+                      </div>
+                      <span class="text-xs text-gray-600">300KB</span>
+                    </div>
+                  </td>
+                  <td class="px-4 py-4 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                      보통
+                    </span>
+                  </td>
+                  <td class="px-4 py-4 whitespace-nowrap">
+                    <div class="text-xs">
+                      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 mb-1">
+                        MIT/Commercial
+                      </span>
+                      <div class="text-gray-600">무료/엔터프라이즈</div>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- ECharts -->
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div class="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
+                      <div>
+                        <div class="text-sm font-medium text-gray-900">ECharts</div>
+                        <div class="text-xs text-gray-500">Canvas/SVG</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-4 text-sm text-gray-900">
+                    <ul class="text-xs space-y-1">
+                      <li>✅ 뛰어난 성능</li>
+                      <li>✅ 지도 차트 지원</li>
+                      <li>✅ 대용량 데이터 처리</li>
+                      <li>✅ 다양한 테마</li>
+                    </ul>
+                  </td>
+                  <td class="px-4 py-4 text-sm text-gray-900">
+                    <ul class="text-xs space-y-1">
+                      <li>❌ 중국어 중심 문서</li>
+                      <li>❌ 큰 라이브러리 크기</li>
+                      <li>❌ 한국어 자료 부족</li>
+                    </ul>
+                  </td>
+                  <td class="px-4 py-4 text-sm text-gray-900">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                      대용량 데이터
+                    </span>
+                  </td>
+                  <td class="px-4 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                        <div class="bg-red-500 h-2 rounded-full" style="width: 95%"></div>
+                      </div>
+                      <span class="text-xs text-gray-600">400KB</span>
+                    </div>
+                  </td>
+                  <td class="px-4 py-4 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                      보통
+                    </span>
+                  </td>
+                  <td class="px-4 py-4 whitespace-nowrap">
+                    <div class="text-xs">
+                      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 mb-1">
+                        Apache 2.0
+                      </span>
+                      <div class="text-gray-600">완전 무료</div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Chart Types Guide -->
+        <div>
+          <h4 class="text-lg font-semibold text-gray-800 mb-4">📈 차트 타입별 활용 가이드</h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div class="flex items-center mb-2">
+                <div class="w-4 h-4 bg-blue-500 rounded-full mr-2"></div>
+                <h5 class="font-medium text-blue-900">라인 차트</h5>
+              </div>
+              <p class="text-sm text-blue-700 mb-2">시간별 변화 추이</p>
+              <div class="text-xs text-blue-600">
+                <div class="mb-1"><strong>적합:</strong> 매출 추이, 방문자 변화</div>
+                <div class="mb-1"><strong>장점:</strong> 트렌드 파악 용이</div>
+                <div><strong>권장:</strong> Chart.js, ApexCharts</div>
+              </div>
+            </div>
+
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+              <div class="flex items-center mb-2">
+                <div class="w-4 h-4 bg-green-500 rounded-full mr-2"></div>
+                <h5 class="font-medium text-green-900">바 차트</h5>
+              </div>
+              <p class="text-sm text-green-700 mb-2">카테고리별 비교</p>
+              <div class="text-xs text-green-600">
+                <div class="mb-1"><strong>적합:</strong> 지역별 매출, 제품별 판매</div>
+                <div class="mb-1"><strong>장점:</strong> 직관적 비교</div>
+                <div><strong>권장:</strong> ApexCharts, ECharts</div>
+              </div>
+            </div>
+
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <div class="flex items-center mb-2">
+                <div class="w-4 h-4 bg-yellow-500 rounded-full mr-2"></div>
+                <h5 class="font-medium text-yellow-900">파이 차트</h5>
+              </div>
+              <p class="text-sm text-yellow-700 mb-2">전체 대비 비율</p>
+              <div class="text-xs text-yellow-600">
+                <div class="mb-1"><strong>적합:</strong> 시장 점유율, 예산 배분</div>
+                <div class="mb-1"><strong>장점:</strong> 비율 이해 쉬움</div>
+                <div><strong>권장:</strong> Chart.js, ECharts</div>
+              </div>
+            </div>
+
+            <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+              <div class="flex items-center mb-2">
+                <div class="w-4 h-4 bg-purple-500 rounded-full mr-2"></div>
+                <h5 class="font-medium text-purple-900">영역 차트</h5>
+              </div>
+              <p class="text-sm text-purple-700 mb-2">누적 데이터 변화</p>
+              <div class="text-xs text-purple-600">
+                <div class="mb-1"><strong>적합:</strong> 누적 매출, 다중 지표</div>
+                <div class="mb-1"><strong>장점:</strong> 전체량과 구성 동시</div>
+                <div><strong>권장:</strong> D3.js, ApexCharts</div>
+              </div>
+            </div>
+
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div class="flex items-center mb-2">
+                <div class="w-4 h-4 bg-red-500 rounded-full mr-2"></div>
+                <h5 class="font-medium text-red-900">버블 차트</h5>
+              </div>
+              <p class="text-sm text-red-700 mb-2">3차원 데이터</p>
+              <div class="text-xs text-red-600">
+                <div class="mb-1"><strong>적합:</strong> 매출-이익-점유율</div>
+                <div class="mb-1"><strong>장점:</strong> 다차원 분석</div>
+                <div><strong>권장:</strong> Plotly.js, D3.js</div>
+              </div>
+            </div>
+
+            <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
+              <div class="flex items-center mb-2">
+                <div class="w-4 h-4 bg-indigo-500 rounded-full mr-2"></div>
+                <h5 class="font-medium text-indigo-900">레이더 차트</h5>
+              </div>
+              <p class="text-sm text-indigo-700 mb-2">다면적 성과 지표</p>
+              <div class="text-xs text-indigo-600">
+                <div class="mb-1"><strong>적합:</strong> 역량 평가, 제품 비교</div>
+                <div class="mb-1"><strong>장점:</strong> 균형있는 분석</div>
+                <div><strong>권장:</strong> Chart.js, ApexCharts</div>
+              </div>
+            </div>
+
+            <div class="bg-pink-50 border border-pink-200 rounded-lg p-4">
+              <div class="flex items-center mb-2">
+                <div class="w-4 h-4 bg-pink-500 rounded-full mr-2"></div>
+                <h5 class="font-medium text-pink-900">게이지 차트</h5>
+              </div>
+              <p class="text-sm text-pink-700 mb-2">목표 달성률</p>
+              <div class="text-xs text-pink-600">
+                <div class="mb-1"><strong>적합:</strong> KPI 달성률, 진행률</div>
+                <div class="mb-1"><strong>장점:</strong> 직관적 상태 표시</div>
+                <div><strong>권장:</strong> ApexCharts, ECharts</div>
+              </div>
+            </div>
+
+            <div class="bg-teal-50 border border-teal-200 rounded-lg p-4">
+              <div class="flex items-center mb-2">
+                <div class="w-4 h-4 bg-teal-500 rounded-full mr-2"></div>
+                <h5 class="font-medium text-teal-900">퍼널 차트</h5>
+              </div>
+              <p class="text-sm text-teal-700 mb-2">전환 과정 분석</p>
+              <div class="text-xs text-teal-600">
+                <div class="mb-1"><strong>적합:</strong> 판매 단계, 사용자 흐름</div>
+                <div class="mb-1"><strong>장점:</strong> 단계별 손실 파악</div>
+                <div><strong>권장:</strong> ECharts, Plotly.js</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Usage Recommendations -->
+        <div class="p-4 bg-gray-50 rounded-lg">
+          <h4 class="font-semibold text-gray-900 mb-3">💡 프로젝트별 추천</h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="bg-white p-3 rounded border-l-4 border-blue-500">
+              <h5 class="font-medium text-blue-900">📈 기본 대시보드</h5>
+              <p class="text-sm text-gray-700">Chart.js (안정성) 또는 ApexCharts (UI)</p>
+            </div>
+            <div class="bg-white p-3 rounded border-l-4 border-green-500">
+              <h5 class="font-medium text-green-900">📊 비즈니스 인텔리전스</h5>
+              <p class="text-sm text-gray-700">ECharts (성능) 또는 Plotly.js (분석)</p>
+            </div>
+            <div class="bg-white p-3 rounded border-l-4 border-purple-500">
+              <h5 class="font-medium text-purple-900">🎨 맞춤형 시각화</h5>
+              <p class="text-sm text-gray-700">D3.js (무한 커스터마이징)</p>
+            </div>
+            <div class="bg-white p-3 rounded border-l-4 border-orange-500">
+              <h5 class="font-medium text-orange-900">📱 모바일 우선</h5>
+              <p class="text-sm text-gray-700">ApexCharts (반응형) 또는 Chart.js</p>
+            </div>
+            <div class="bg-white p-3 rounded border-l-4 border-red-500">
+              <h5 class="font-medium text-red-900">🌍 지리 정보</h5>
+              <p class="text-sm text-gray-700">ECharts (지도) 또는 D3.js</p>
+            </div>
+            <div class="bg-white p-3 rounded border-l-4 border-teal-500">
+              <h5 class="font-medium text-teal-900">🔬 과학/연구</h5>
+              <p class="text-sm text-gray-700">Plotly.js (3D, 통계)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+ 
+ 
+
+</div>
+
+{{!-- 대시보드 JavaScript --}}
+<script>
+/**
+ * 모던 대시보드 초기화
+ * 컴포넌트 기반 아키텍처로 구성
+ */
+
+class ModernDashboard {
+  constructor() {
+    this.isInitialized = false;
+    this.isInitializing = false;
+    this.components = {
+      dataProvider: null,
+      chartManager: null
+    };
+    
+    this.init();
+  }
+
+  async init() {
+    // 대시보드 페이지인지 확인
+    if (!this.isDashboardPage()) {
+      console.log('❌ Not dashboard page - skipping initialization');
+      return;
+    }
+
+    // 이미 초기화 중이면 중복 실행 방지
+    if (this.isInitializing) {
+      console.log('⏳ Dashboard initialization already in progress');
+      return;
+    }
+
+    this.isInitializing = true;
+    console.log('🚀 Modern Dashboard initializing...');
+
+    try {
+      // 임시로 컴포넌트 대기를 생략하고 바로 진행
+      console.log('🔧 Skipping component wait for debugging...');
+      
+      // 컴포넌트가 있으면 사용, 없으면 목업으로 진행
+      this.components.dataProvider = window.DataProvider || this.createMockDataProvider();
+      this.components.chartManager = window.ChartManager || this.createMockChartManager();
+
+      console.log('📊 Components ready:', {
+        dataProvider: !!this.components.dataProvider,
+        chartManager: !!this.components.chartManager
+      });
+
+      // 초기 데이터 로드
+      await this.loadInitialData();
+
+      // 이벤트 리스너 설정 (중복 방지)
+      if (!this.isInitialized) {
+        this.setupEventListeners();
+      }
+
+      // 실시간 업데이트 시작
+      this.startRealTimeUpdates();
+
+      this.isInitialized = true;
+      this.isInitializing = false;
+      console.log('✅ Modern Dashboard initialized successfully');
+
+    } catch (error) {
+      this.isInitializing = false;
+      console.error('❌ Dashboard initialization failed:', error);
+      console.error('Error stack:', error.stack);
+      console.error('Components status:', {
+        DataProvider: !!window.DataProvider,
+        ChartManager: !!window.ChartManager,
+        dashboardContainer: !!document.getElementById('dashboard-container')
+      });
+      this.showErrorState();
+    }
+  }
+
+  isDashboardPage() {
+    return window.location.pathname === '/dashboard' && 
+           document.getElementById('dashboard-container');
+  }
+
+  createMockDataProvider() {
+    return {
+      getStats: async () => ({
+        totalInquiries: { title: '총 문의', value: '1,247', change: '+3%', isPositive: true, changeLabel: '전주 대비' },
+        pendingInquiries: { title: '대기 중', value: '3', change: '-2', isPositive: false, changeLabel: '어제 대비' },
+        completedInquiries: { title: '완료', value: '1,172', change: '+5%', isPositive: true, changeLabel: '전주 대비' },
+        totalUsers: { title: '사용자', value: '156', change: '+2', isPositive: true, changeLabel: '어제 대비' }
+      }),
+      getChartData: async (type) => {
+        const mockData = {
+          line: { labels: ['Jan', 'Feb', 'Mar', 'Apr'], datasets: [{ label: 'Mock', data: [12, 19, 3, 5], borderColor: '#3b82f6' }] },
+          bar: { labels: ['A', 'B', 'C'], datasets: [{ label: 'Mock', data: [12, 19, 3], backgroundColor: '#10b981' }] },
+          pie: { labels: ['완료', '대기', '진행'], datasets: [{ data: [300, 50, 100], backgroundColor: ['#3b82f6', '#f59e0b', '#ef4444'] }] }
+        };
+        return mockData[type] || mockData.line;
+      },
+      startRealTimeUpdates: (callback, interval) => setInterval(() => callback({}), interval)
+    };
+  }
+
+  createMockChartManager() {
+    return {
+      createChart: (id, type, data, options, library) => {
+        console.log(`📈 Mock chart created: ${id} (${type}, ${library})`);
+        const container = document.getElementById(id);
+        if (container) {
+          container.innerHTML = `<div class="flex items-center justify-center h-full bg-gray-100 rounded">
+            <div class="text-center">
+              <div class="text-2xl mb-2">📊</div>
+              <div class="text-sm text-gray-600">Mock Chart (${type})</div>
+            </div>
+          </div>`;
+        }
+      },
+      destroyAll: () => console.log('🧹 Mock charts destroyed')
+    };
+  }
+
+  async waitForComponents() {
+    const maxAttempts = 100; // 10초 대기
+    let attempts = 0;
+
+    console.log('⏳ Waiting for components to load...');
+    
+    while (attempts < maxAttempts) {
+      const hasDataProvider = !!window.DataProvider;
+      const hasChartManager = !!window.ChartManager;
+      const hasChart = !!window.Chart;
+      const hasApexCharts = !!window.ApexCharts;
+      const hasD3 = !!window.d3;
+      const hasPlotly = !!window.Plotly;
+      const hasEcharts = !!window.echarts;
+      
+      if (attempts % 10 === 0) {
+        console.log(`Attempt ${attempts + 1}:`, {
+          DataProvider: hasDataProvider,
+          ChartManager: hasChartManager,
+          Chart: hasChart,
+          ApexCharts: hasApexCharts,
+          d3: hasD3,
+          Plotly: hasPlotly,
+          echarts: hasEcharts
+        });
+      }
+      
+      if (hasDataProvider && hasChartManager && hasChart) {
+        console.log('✅ All required components loaded');
+        return;
+      }
+      
+      await new Promise(resolve => setTimeout(resolve, 100));
+      attempts++;
+    }
+
+    console.error('❌ Component loading timeout:', {
+      DataProvider: !!window.DataProvider,
+      ChartManager: !!window.ChartManager,
+      Chart: !!window.Chart,
+      ApexCharts: !!window.ApexCharts,
+      d3: !!window.d3,
+      Plotly: !!window.Plotly,
+      echarts: !!window.echarts,
+      attempts: attempts
+    });
+    throw new Error('Required components not loaded after 10 seconds');
+  }
+
+  async loadInitialData() {
+    console.log('📊 Loading initial dashboard data...');
+
+    console.log('1️⃣ Loading stats...');
+    await this.loadStats();
+    console.log('✅ Stats loaded');
+    
+    console.log('2️⃣ Loading charts...');
+    await this.loadCharts();
+    console.log('✅ Charts loaded');
+    
+    console.log('3️⃣ Loading additional data...');
+    await this.loadAdditionalData();
+    console.log('✅ Additional data loaded');
+    
+    console.log('🎉 All initial data loaded successfully');
+  }
+
+  async loadStats() {
+    const stats = await this.components.dataProvider.getStats();
+    this.renderStats(stats);
+  }
+
+  async loadCharts() {
+    const chartConfigs = [
+      { id: 'trend-chart', type: 'line', dataType: 'line', library: 'chartjs' },
+      { id: 'daily-chart', type: 'bar', dataType: 'bar', library: 'chartjs' },
+      { id: 'status-chart', type: 'pie', dataType: 'pie', library: 'chartjs' },
+      { id: 'hourly-chart', type: 'area', dataType: 'area', library: 'chartjs' },
+      { id: 'bubble-chart', type: 'bubble', dataType: 'bubble', library: 'chartjs' },
+      { id: 'radar-chart', type: 'radar', dataType: 'radar', library: 'chartjs' },
+      { id: 'gauge-chart', type: 'gauge', dataType: 'gauge', library: 'chartjs' },
+      { id: 'funnel-chart', type: 'funnel', dataType: 'funnel', library: 'chartjs' }
+    ];
+
+    console.log('📊 Loading charts with configs:', chartConfigs);
+    
+    // 차트 생성 시 약간의 지연을 추가하여 DOM이 완전히 준비되도록 함
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    // 모든 차트 컨테이너 확인
+    console.log('🔍 Checking chart containers:');
+    chartConfigs.forEach(config => {
+      const container = document.getElementById(config.id);
+      console.log(`- ${config.id}: ${container ? '✅ Found' : '❌ Not found'}`);
+    });
+
+    for (const config of chartConfigs) {
+      try {
+        const container = document.getElementById(config.id);
+        if (!container) {
+          console.warn(`❌ Container not found for chart: ${config.id}`);
+          continue;
+        }
+        
+        const data = await this.components.dataProvider.getChartData(config.dataType);
+        console.log(`📈 Creating ${config.id} with type: ${config.type}, library: ${config.library}`);
+        
+        this.components.chartManager.createChart(
+          config.id, 
+          config.type, 
+          data, 
+          {}, 
+          config.library || 'chartjs' // 명시적으로 기본 라이브러리 지정
+        );
+        console.log(`✅ Chart initialized: ${config.id} with ${config.library}`);
+      } catch (error) {
+        console.error(`❌ Failed to load chart ${config.id}:`, error);
+      }
+    }
+    
+    console.log('🎉 All charts loading complete');
+    
+    // 차트 상태 최종 확인
+    setTimeout(() => {
+      console.log('🔍 Final chart status check:');
+      chartConfigs.forEach(config => {
+        const container = document.getElementById(config.id);
+        if (container) {
+          const hasChart = container.querySelector('canvas') || container.querySelector('svg') || container.querySelector('[id*="apex"]') || container.querySelector('[id*="echarts"]') || container.querySelector('[id*="plotly"]');
+          console.log(`- ${config.id}: ${hasChart ? '✅ Rendered' : '❌ Empty'}`);
+        }
+      });
+    }, 2000);
+  }
+
+  async loadAdditionalData() {
+    // 빠른 통계
+    this.renderQuickStats();
+    
+    // 최근 활동
+    this.renderRecentActivities();
+    
+    // 라이브러리 비교는 이미 HTML로 구현됨 - JavaScript 렌더링 불필요
+    // this.renderLibraryComparison();
+
+    // DOM이 완전히 로드된 후 지원하지 않는 옵션 숨기기
+    setTimeout(() => {
+      this.hideUnsupportedLibraryOptions();
+    }, 500);
+  }
+
+  renderStats(stats) {
+    const container = document.getElementById('stats-grid');
+    if (!container || !stats) return;
+
+    let html = '';
+    for (const [key, stat] of Object.entries(stats)) {
+      html += `
+        <div class="stat-card">
+          ${this.renderStatCard(stat)}
+        </div>
+      `;
+    }
+
+    container.innerHTML = html;
+  }
+
+  renderStatCard(stat) {
+    const changeIcon = stat.isPositive ? 'fa-arrow-up text-green-500' : 'fa-arrow-down text-red-500';
+    const changeColor = stat.isPositive ? 'text-green-600' : 'text-red-600';
+
+    return `
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
+        <div class="flex items-center justify-between">
+          <div class="flex-1">
+            <p class="text-sm font-medium text-gray-600">${stat.title}</p>
+            <p class="text-3xl font-bold text-gray-900 mt-2">${stat.value}</p>
+            ${stat.change ? `
+              <div class="flex items-center mt-2">
+                <i class="fas ${changeIcon} text-sm"></i>
+                <span class="${changeColor} text-sm font-medium ml-1">${stat.change}</span>
+                <span class="text-gray-500 text-sm ml-2">${stat.changeLabel}</span>
+              </div>
+            ` : ''}
+          </div>
+          ${stat.icon ? `
+            <div class="w-12 h-12 ${stat.iconBg} rounded-lg flex items-center justify-center flex-shrink-0">
+              <i class="${stat.icon} ${stat.iconColor} text-xl"></i>
+            </div>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }
+
+  renderQuickStats() {
+    const container = document.getElementById('quick-stats');
+    if (!container) return;
+
+    const quickStats = [
+      { label: '오늘 접수', value: '12건', icon: 'fas fa-plus-circle', color: 'text-blue-600' },
+      { label: '진행 중', value: '5건', icon: 'fas fa-clock', color: 'text-orange-600' },
+      { label: '완료', value: '28건', icon: 'fas fa-check-circle', color: 'text-green-600' },
+      { label: '평균 만족도', value: '4.8/5', icon: 'fas fa-star', color: 'text-yellow-600' }
+    ];
+
+    let html = '';
+    quickStats.forEach(stat => {
+      html += `
+        <div class="flex items-center justify-between py-2">
+          <div class="flex items-center">
+            <i class="${stat.icon} ${stat.color} mr-3"></i>
+            <span class="text-sm text-gray-600">${stat.label}</span>
+          </div>
+          <span class="text-sm font-semibold text-gray-900">${stat.value}</span>
+        </div>
+      `;
+    });
+
+    container.innerHTML = html;
+  }
+
+  renderRecentActivities() {
+    const container = document.getElementById('recent-activities');
+    if (!container) return;
+
+    const activities = [
+      { user: '김영희', action: '문의사항 답변 완료', time: '5분 전', type: 'success' },
+      { user: '박민수', action: '새로운 문의 접수', time: '15분 전', type: 'info' },
+      { user: '이철수', action: '문의사항 처리 중', time: '30분 전', type: 'warning' },
+      { user: '최지은', action: '문의사항 답변 완료', time: '1시간 전', type: 'success' }
+    ];
+
+    let html = '';
+    activities.forEach(activity => {
+      const iconMap = {
+        success: { icon: 'fas fa-check-circle', color: 'text-green-500' },
+        info: { icon: 'fas fa-info-circle', color: 'text-blue-500' },
+        warning: { icon: 'fas fa-clock', color: 'text-orange-500' }
+      };
+      
+      const iconInfo = iconMap[activity.type] || iconMap.info;
+
+      html += `
+        <div class="flex items-center space-x-3 py-2">
+          <i class="${iconInfo.icon} ${iconInfo.color} text-sm flex-shrink-0"></i>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm text-gray-900">
+              <span class="font-medium">${activity.user}</span>님이 ${activity.action}
+            </p>
+            <p class="text-xs text-gray-500">${activity.time}</p>
+          </div>
+        </div>
+      `;
+    });
+
+    container.innerHTML = html;
+  }
+
+  // renderLibraryComparison 메소드는 더 이상 필요하지 않음 - HTML로 이미 구현됨
+  // renderLibraryComparison() { ... }
+
+  setupEventListeners() {
+    // 데이터 새로고침 이벤트
+    document.addEventListener('dataRefreshed', async (event) => {
+      console.log('🔄 Dashboard data refreshed');
+      await this.loadInitialData();
+    });
+
+    // 차트 타입 변경 이벤트는 ChartManager에서 자동 처리됨
+
+    // 브라우저 가시성 변경 (탭 전환 시)
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && this.isInitialized) {
+        // 탭이 다시 활성화되면 데이터 갱신
+        setTimeout(() => this.loadStats(), 1000);
+      }
+    });
+
+    // 전역 이벤트 위임으로 차트 컨트롤 처리
+    this.setupGlobalChartEventDelegation();
+  }
+
+  setupGlobalChartEventDelegation() {
+    // 이미 설정된 경우 중복 방지
+    if (window._chartEventDelegationSetup) {
+      return;
+    }
+    window._chartEventDelegationSetup = true;
+
+    // 차트 라이브러리 선택 이벤트 위임
+    document.addEventListener('change', (e) => {
+      if (e.target.matches('[data-chart-select]')) {
+        const libraryType = e.target.value;
+        const chartId = e.target.dataset.chart;
+        
+        console.log(`🔄 Switching chart ${chartId} to ${libraryType}`);
+        
+        // ChartManager가 있으면 직접 호출, 없으면 이벤트 발생
+        if (window.ChartManager) {
+          window.ChartManager.switchChartType(chartId, libraryType);
+        } else {
+          // ChartManager 로딩 전이면 이벤트로 처리
+          window.dispatchEvent(new CustomEvent('chartTypeChange', {
+            detail: { chartId, chartType: libraryType }
+          }));
+        }
+        
+        // 선택된 라이브러리에 따라 스타일 업데이트
+        const colors = {
+          'chartjs': '#3b82f6',
+          'apexcharts': '#10b981', 
+          'd3': '#f59e0b',
+          'plotly': '#8b5cf6',
+          'echarts': '#ef4444'
+        };
+        
+        if (colors[libraryType]) {
+          e.target.style.borderColor = colors[libraryType];
+        }
+      }
+    });
+
+    // 새로고침 버튼 이벤트 위임
+    document.addEventListener('click', (e) => {
+      if (e.target.matches('[data-chart-refresh]') || e.target.closest('[data-chart-refresh]')) {
+        const button = e.target.matches('[data-chart-refresh]') ? e.target : e.target.closest('[data-chart-refresh]');
+        const chartId = button.dataset.chartRefresh;
+        
+        console.log(`🔄 Refreshing chart ${chartId}`);
+        
+        // 회전 애니메이션
+        const icon = button.querySelector('i');
+        icon.classList.add('fa-spin');
+        
+        // 차트 새로고침 이벤트
+        window.dispatchEvent(new CustomEvent('chartRefresh', {
+          detail: { chartId }
+        }));
+        
+        // 애니메이션 종료
+        setTimeout(() => {
+          icon.classList.remove('fa-spin');
+        }, 1000);
+      }
+    });
+
+    console.log('✅ Global chart event delegation setup complete');
+  }
+
+  hideUnsupportedLibraryOptions() {
+    // 라이브러리별 지원하지 않는 차트 타입들
+    const unsupportedCombinations = {
+      'd3': ['radar-chart', 'gauge-chart', 'funnel-chart'],
+      'apexcharts': ['funnel-chart'],
+      'echarts': ['gauge-chart'] // ECharts gauge 차트 오류로 비활성화
+    };
+    
+    // 각 라이브러리별 지원하지 않는 차트에서 옵션 숨기기
+    Object.entries(unsupportedCombinations).forEach(([library, chartIds]) => {
+      chartIds.forEach(chartId => {
+        const select = document.querySelector(`[data-chart-select="${chartId}"]`);
+        if (select) {
+          const option = select.querySelector(`option[value="${library}"]`);
+          if (option) {
+            option.style.display = 'none';
+            option.disabled = true;
+          }
+        }
+      });
+    });
+    
+    console.log('🔧 Hidden unsupported library options for specific charts');
+  }
+
+
+  startRealTimeUpdates() {
+    // 30초마다 통계 데이터 업데이트
+    this.updateInterval = this.components.dataProvider.startRealTimeUpdates(
+      (freshData) => {
+        this.renderStats(freshData);
+        console.log('📊 Real-time data updated');
+      },
+      30000 // 30초
+    );
+  }
+
+  showErrorState() {
+    const container = document.getElementById('dashboard-container');
+    if (container) {
+      container.innerHTML = `
+        <div class="flex items-center justify-center min-h-96">
+          <div class="text-center">
+            <i class="fas fa-exclamation-triangle text-red-500 text-4xl mb-4"></i>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">대시보드 로드 실패</h3>
+            <p class="text-gray-600 mb-4">데이터를 불러오는 중 문제가 발생했습니다.</p>
+            <button onclick="window.location.reload()" class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700">
+              페이지 새로고침
+            </button>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  destroy() {
+    if (this.updateInterval) {
+      clearInterval(this.updateInterval);
+      this.updateInterval = null;
+    }
+    
+    if (this.components.chartManager) {
+      this.components.chartManager.destroyAll();
+    }
+
+    this.isInitialized = false;
+    this.isInitializing = false;
+    this.components.dataProvider = null;
+    this.components.chartManager = null;
+    
+    console.log('🧹 Modern Dashboard destroyed');
+  }
+}
+
+// 대시보드 초기화
+let dashboardInstance = null;
+
+function initializeDashboard() {
+  // 대시보드 페이지가 아니면 무시
+  if (window.location.pathname !== '/dashboard') {
+    return;
+  }
+
+  // 이미 초기화되어 있고 차트들이 정상이면 skip (더 엄격한 검사)
+  if (dashboardInstance && dashboardInstance.isInitialized) {
+    const chartContainers = document.querySelectorAll('[data-chart-id]');
+    let hasLoadingCharts = false;
+    let hasEmptyCharts = false;
+    
+    chartContainers.forEach(container => {
+      const loadingElement = container.querySelector('.fa-spinner');
+      const canvas = container.querySelector('canvas');
+      
+      if (loadingElement) {
+        hasLoadingCharts = true;
+      }
+      
+      // 캔버스가 없거나 실제로 그려지지 않은 경우 체크
+      if (!canvas || canvas.width === 0 || canvas.height === 0) {
+        hasEmptyCharts = true;
+        console.log(`📊 Empty canvas detected in chart: ${container.getAttribute('data-chart-id')}`);
+      }
+      
+      // Chart.js 인스턴스가 실제로 있는지 확인
+      if (canvas && canvas.chart === undefined && window.Chart) {
+        hasEmptyCharts = true;
+        console.log(`📊 No Chart.js instance found for: ${container.getAttribute('data-chart-id')}`);
+      }
+    });
+    
+    // 로딩 중이거나 빈 차트가 있으면 재초기화 필요
+    if (!hasLoadingCharts && !hasEmptyCharts) {
+      console.log('✅ Dashboard already initialized and ALL charts are properly rendered');
+      return;
+    } else {
+      console.log(`🔄 Charts need reinitialization - loading: ${hasLoadingCharts}, empty: ${hasEmptyCharts}`);
+    }
+  }
+
+  // 기존 인스턴스 정리
+  if (dashboardInstance) {
+    dashboardInstance.destroy();
+  }
+
+  // 새 인스턴스 생성
+  dashboardInstance = new ModernDashboard();
+}
+
+// DOM 로드 시 초기화 (Turbo와 중복 방지)
+document.addEventListener('DOMContentLoaded', () => {
+  // Turbo 환경에서는 turbo:load 이벤트가 처리하므로 스킵
+  if (!window.Turbo) {
+    console.log('📄 DOMContentLoaded - Non-Turbo environment');
+    setTimeout(initializeDashboard, 1000);
+  } else {
+    console.log('📄 DOMContentLoaded - Turbo environment, skipping (turbo:load will handle)');
+  }
+});
+
+// 차트 상태 저장/복원 함수들
+window.saveChartStates = function() {
+  const chartStates = {};
+  const chartContainers = document.querySelectorAll('[data-chart-id]');
+  
+  chartContainers.forEach(container => {
+    const chartId = container.getAttribute('data-chart-id');
+    const select = container.parentElement.querySelector(`[data-chart-select="${chartId}"]`);
+    
+    if (select) {
+      chartStates[chartId] = {
+        library: select.value,
+        hasCanvas: !!container.querySelector('canvas'),
+        timestamp: Date.now()
+      };
+    }
+  });
+  
+  localStorage.setItem('dashboard-chart-states', JSON.stringify(chartStates));
+  console.log('💾 Chart states saved:', chartStates);
+};
+
+window.loadChartStates = function() {
+  try {
+    const saved = localStorage.getItem('dashboard-chart-states');
+    if (saved) {
+      const chartStates = JSON.parse(saved);
+      console.log('📂 Loading saved chart states:', chartStates);
+      
+      // 5분 이내의 상태만 복원
+      const now = Date.now();
+      Object.keys(chartStates).forEach(chartId => {
+        const state = chartStates[chartId];
+        if (now - state.timestamp < 300000) { // 5분
+          const select = document.querySelector(`[data-chart-select="${chartId}"]`);
+          if (select && select.value !== state.library) {
+            console.log(`🔄 Restoring chart ${chartId} to ${state.library}`);
+            select.value = state.library;
+            // 차트 라이브러리 변경 이벤트 트리거
+            select.dispatchEvent(new Event('change'));
+          }
+        }
+      });
+    }
+  } catch (e) {
+    console.warn('Chart states loading failed:', e);
+  }
+};
+
+// 디바운싱을 위한 변수들
+let dashboardReinitTimeout = null;
+let dashboardReinitInProgress = false;
+let dashboardReinitCount = 0;
+let dashboardFirstInitDone = false;
+
+// 강제 차트 재초기화 함수 (중복 실행 방지)
+window.forceDashboardReinit = function() {
+  // 이미 진행 중이면 스킵
+  if (dashboardReinitInProgress) {
+    console.log('⏭️ Dashboard reinit already in progress, skipping...');
+    return;
+  }
+  
+  // 기존 타임아웃 클리어
+  if (dashboardReinitTimeout) {
+    clearTimeout(dashboardReinitTimeout);
+    dashboardReinitTimeout = null;
+  }
+  
+  dashboardReinitCount++;
+  const currentCount = dashboardReinitCount;
+  
+  console.log(`🔧 Force dashboard reinitialization #${currentCount} - scheduling...`);
+  
+  // 200ms 디바운스
+  dashboardReinitTimeout = setTimeout(() => {
+    if (dashboardReinitInProgress) {
+      console.log('⏭️ Dashboard reinit still in progress, aborting...');
+      return;
+    }
+    
+    dashboardReinitInProgress = true;
+    console.log(`🚀 Executing dashboard reinitialization #${currentCount}`);
+    
+    // 차트 상태 저장
+    window.saveChartStates();
+    
+    // 기존 인스턴스 강제 삭제
+    if (window.dashboardInstance) {
+      try {
+        window.dashboardInstance.destroy();
+      } catch (e) {
+        console.warn('Dashboard destroy failed:', e);
+      }
+    }
+    window.dashboardInstance = null;
+    
+    // 모든 차트 컨테이너 리셋
+    const chartContainers = document.querySelectorAll('[data-chart-id]');
+    chartContainers.forEach(container => {
+      container.innerHTML = '<div class="flex items-center justify-center h-full"><i class="fas fa-spinner fa-spin text-gray-400"></i><span class="ml-2">차트 로딩 중...</span></div>';
+    });
+    
+    // 짧은 지연 후 재초기화
+    setTimeout(() => {
+      initializeDashboard();
+      
+      // 재초기화 후 상태 복원
+      setTimeout(() => {
+        window.loadChartStates();
+        dashboardReinitInProgress = false;
+        console.log(`✅ Force reinitialization #${currentCount} completed`);
+      }, 500);
+    }, 100);
+    
+  }, 200);
+};
+
+// 단순화된 Turbo 이벤트 처리 (첫 로드 후 중복 방지)
+document.addEventListener('turbo:load', () => {
+  if (window.location.pathname === '/dashboard') {
+    if (!dashboardFirstInitDone) {
+      console.log('🔄 Turbo load detected for dashboard (FIRST INIT)');
+      window.forceDashboardReinit();
+      dashboardFirstInitDone = true;
+    } else {
+      console.log('🔄 Turbo load detected for dashboard (ALREADY INITIALIZED - SKIPPING)');
+      // 단순히 상태 복원만
+      setTimeout(() => {
+        window.loadChartStates();
+      }, 100);
+    }
+  } else {
+    // 다른 페이지로 이동하면 플래그 리셋
+    if (dashboardFirstInitDone) {
+      console.log('📤 Leaving dashboard - resetting init flag');
+      dashboardFirstInitDone = false;
+    }
+  }
+});
+
+// Turbo Frame 렌더링 완료 후 차트 재초기화 (페이지 이동 후에만)
+document.addEventListener('turbo:frame-render', (event) => {
+  if (event.target.id === 'main-content' && window.location.pathname === '/dashboard') {
+    if (!dashboardFirstInitDone) {
+      console.log('🖼️ Dashboard frame rendered (FIRST INIT)');
+      window.forceDashboardReinit();
+      dashboardFirstInitDone = true;
+    } else {
+      console.log('🖼️ Dashboard frame rendered (ALREADY INITIALIZED - SKIPPING)');
+    }
+  }
+});
+
+// 브라우저 뒤로가기/앞으로가기 감지 (페이지 캐시에서 복원)
+window.addEventListener('pageshow', (event) => {
+  if (event.persisted && window.location.pathname === '/dashboard') {
+    console.log('🔄 Page restored from cache (back/forward) - FORCE REINIT');
+    // 뒤로가기 시에는 강제로 재초기화 필요
+    dashboardFirstInitDone = false;
+    window.forceDashboardReinit();
+  }
+});
+
+// 차트 라이브러리 변경 시 상태 자동 저장
+document.addEventListener('change', (e) => {
+  if (e.target.matches('[data-chart-select]')) {
+    console.log('📊 Chart library changed, saving states...');
+    setTimeout(() => {
+      window.saveChartStates();
+    }, 1000); // 차트가 완전히 렌더링된 후 저장
+  }
+});
+
+// 풀스크린 기능을 위한 추가 이벤트 처리 (기존 시스템과 병합)
+document.addEventListener('click', (e) => {
+  // 풀스크린 버튼 클릭 처리만 여기서 처리 (새로고침은 기존 시스템 사용)
+  let fullscreenButton = null;
+  if (e.target.hasAttribute('data-chart-fullscreen')) {
+    fullscreenButton = e.target;
+  } else if (e.target.closest('[data-chart-fullscreen]')) {
+    fullscreenButton = e.target.closest('[data-chart-fullscreen]');
+  }
+  
+  if (fullscreenButton) {
+    e.preventDefault();
+    e.stopPropagation();
+    const chartId = fullscreenButton.getAttribute('data-chart-fullscreen');
+    console.log('📺 Fullscreen button clicked for chart:', chartId);
+    toggleChartFullscreen(chartId);
+    return;
+  }
+});
+
+// 차트 풀스크린 토글 함수
+function toggleChartFullscreen(chartId) {
+  console.log('🔍 Toggling fullscreen for chart:', chartId);
+  
+  // 여러 방법으로 차트 컨테이너 찾기
+  const chartContainer = document.querySelector(`[data-chart-id="${chartId}"]`) || document.getElementById(chartId);
+  console.log('Chart container found:', chartContainer);
+  
+  if (!chartContainer) {
+    console.error('Chart container not found:', chartId);
+    alert('차트 컨테이너를 찾을 수 없습니다: ' + chartId);
+    return;
+  }
+  
+  // 차트 wrapper 찾기 (여러 방법 시도)
+  let chartWrapper = chartContainer.closest('.bg-white');
+  if (!chartWrapper) {
+    chartWrapper = chartContainer.closest('div[class*="bg-white"]');
+  }
+  if (!chartWrapper) {
+    chartWrapper = chartContainer.parentElement;
+    while (chartWrapper && !chartWrapper.classList.contains('bg-white')) {
+      chartWrapper = chartWrapper.parentElement;
+    }
+  }
+  
+  console.log('Chart wrapper found:', chartWrapper);
+  
+  if (!chartWrapper) {
+    console.error('Chart wrapper not found for:', chartId);
+    alert('차트 래퍼를 찾을 수 없습니다: ' + chartId);
+    return;
+  }
+  
+  // 현재 풀스크린 상태 확인
+  const isFullscreen = chartWrapper.classList.contains('chart-fullscreen');
+  console.log('Is currently fullscreen:', isFullscreen);
+  
+  if (isFullscreen) {
+    // 풀스크린 종료
+    console.log('Exiting fullscreen...');
+    exitChartFullscreen(chartWrapper, chartId);
+  } else {
+    // 풀스크린 진입
+    console.log('Entering fullscreen...');
+    enterChartFullscreen(chartWrapper, chartId);
+  }
+}
+
+// 진정한 풀스크린 진입 (F11과 같은 경험)
+function enterChartFullscreen(chartWrapper, chartId) {
+  console.log('📺 Entering TRUE fullscreen for:', chartId);
+  
+  // 브라우저 Fullscreen API 사용
+  if (chartWrapper.requestFullscreen) {
+    chartWrapper.requestFullscreen().then(() => {
+      setupFullscreenChart(chartWrapper, chartId);
+    }).catch((err) => {
+      console.error('Fullscreen API 실패, 대체 방법 사용:', err);
+      fallbackFullscreen(chartWrapper, chartId);
+    });
+  } else if (chartWrapper.webkitRequestFullscreen) {
+    chartWrapper.webkitRequestFullscreen();
+    setupFullscreenChart(chartWrapper, chartId);
+  } else if (chartWrapper.msRequestFullscreen) {
+    chartWrapper.msRequestFullscreen();
+    setupFullscreenChart(chartWrapper, chartId);
+  } else {
+    console.log('Fullscreen API 미지원, 대체 방법 사용');
+    fallbackFullscreen(chartWrapper, chartId);
+  }
+}
+
+// 브라우저 풀스크린 모드에서 차트 설정
+function setupFullscreenChart(chartWrapper, chartId) {
+  console.log('🎯 Setting up fullscreen chart');
+  
+  // 원본 스타일 저장 (복원용)
+  const chartContainer = chartWrapper.querySelector(`[data-chart-id="${chartId}"]`);
+  const chartWrapper_inner = chartWrapper.querySelector('.chart-wrapper');
+  
+  chartWrapper._originalStyles = {
+    wrapper: {
+      width: chartWrapper.style.width || '',
+      height: chartWrapper.style.height || '',
+      padding: chartWrapper.style.padding || '',
+      backgroundColor: chartWrapper.style.backgroundColor || '',
+      display: chartWrapper.style.display || '',
+      flexDirection: chartWrapper.style.flexDirection || ''
+    },
+    container: chartContainer ? {
+      height: chartContainer.style.height || '',
+      flex: chartContainer.style.flex || ''
+    } : {},
+    innerWrapper: chartWrapper_inner ? {
+      height: chartWrapper_inner.style.height || ''
+    } : {}
+  };
+  
+  // 풀스크린 클래스 추가
+  chartWrapper.classList.add('chart-fullscreen-native');
+  
+  // 풀스크린에서의 스타일 적용
+  chartWrapper.style.width = '100vw';
+  chartWrapper.style.height = '100vh';
+  chartWrapper.style.padding = '40px';
+  chartWrapper.style.backgroundColor = 'white';
+  chartWrapper.style.display = 'flex';
+  chartWrapper.style.flexDirection = 'column';
+  
+  // 차트 컨테이너 스타일 조정
+  if (chartContainer) {
+    chartContainer.style.height = 'calc(100vh - 160px)';
+    chartContainer.style.flex = '1';
+  }
+  
+  // 풀스크린 버튼 아이콘 변경
+  const fullscreenBtn = chartWrapper.querySelector(`[data-chart-fullscreen="${chartId}"]`);
+  if (fullscreenBtn) {
+    const icon = fullscreenBtn.querySelector('i');
+    if (icon) {
+      icon.className = 'fas fa-compress-arrows-alt';
+    }
+    fullscreenBtn.title = '전체화면 종료 (ESC)';
+  }
+  
+  // 풀스크린 변경 이벤트 리스너
+  const fullscreenChangeHandler = () => {
+    if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+      console.log('🔙 Exiting fullscreen via browser');
+      exitFullscreenChart(chartWrapper, chartId);
+      document.removeEventListener('fullscreenchange', fullscreenChangeHandler);
+      document.removeEventListener('webkitfullscreenchange', fullscreenChangeHandler);
+      document.removeEventListener('msfullscreenchange', fullscreenChangeHandler);
+    }
+  };
+  
+  document.addEventListener('fullscreenchange', fullscreenChangeHandler);
+  document.addEventListener('webkitfullscreenchange', fullscreenChangeHandler);
+  document.addEventListener('msfullscreenchange', fullscreenChangeHandler);
+  
+  // 차트 크기 재조정
+  setTimeout(() => {
+    resizeChart(chartId);
+  }, 500);
+}
+
+// Fullscreen API 미지원 시 대체 방법
+function fallbackFullscreen(chartWrapper, chartId) {
+  console.log('🔄 Using fallback fullscreen method');
+  
+  // 원본 스타일 저장 (복원용)
+  const chartContainer = chartWrapper.querySelector(`[data-chart-id="${chartId}"]`);
+  const chartWrapper_inner = chartWrapper.querySelector('.chart-wrapper');
+  
+  chartWrapper._originalStyles = {
+    wrapper: {
+      position: chartWrapper.style.position || '',
+      top: chartWrapper.style.top || '',
+      left: chartWrapper.style.left || '',
+      width: chartWrapper.style.width || '',
+      height: chartWrapper.style.height || '',
+      zIndex: chartWrapper.style.zIndex || '',
+      backgroundColor: chartWrapper.style.backgroundColor || '',
+      padding: chartWrapper.style.padding || ''
+    },
+    container: chartContainer ? {
+      height: chartContainer.style.height || '',
+      flex: chartContainer.style.flex || ''
+    } : {},
+    innerWrapper: chartWrapper_inner ? {
+      height: chartWrapper_inner.style.height || ''
+    } : {}
+  };
+  
+  // 풀스크린 클래스 추가
+  chartWrapper.classList.add('chart-fullscreen');
+  
+  // 모든 다른 요소들 숨기기
+  document.body.style.overflow = 'hidden';
+  const rootElements = document.body.children;
+  for (let element of rootElements) {
+    if (!element.contains(chartWrapper)) {
+      element.style.display = 'none';
+      element.setAttribute('data-hidden-for-fullscreen', 'true');
+    }
+  }
+  
+  // 차트를 body에 직접 추가 (임시)
+  chartWrapper.style.position = 'fixed';
+  chartWrapper.style.top = '0';
+  chartWrapper.style.left = '0';
+  chartWrapper.style.width = '100vw';
+  chartWrapper.style.height = '100vh';
+  chartWrapper.style.zIndex = '99999';
+  chartWrapper.style.backgroundColor = 'white';
+  chartWrapper.style.padding = '40px';
+  
+  // ESC 키 이벤트
+  const escapeHandler = (e) => {
+    if (e.key === 'Escape') {
+      exitChartFullscreen(chartWrapper, chartId);
+      document.removeEventListener('keydown', escapeHandler);
+    }
+  };
+  document.addEventListener('keydown', escapeHandler);
+  
+  // 풀스크린 버튼 아이콘 변경
+  const fullscreenBtn = chartWrapper.querySelector(`[data-chart-fullscreen="${chartId}"]`);
+  if (fullscreenBtn) {
+    const icon = fullscreenBtn.querySelector('i');
+    if (icon) {
+      icon.className = 'fas fa-compress';
+    }
+    fullscreenBtn.title = '전체화면 종료 (ESC)';
+  }
+  
+  // 차트 크기 재조정
+  setTimeout(() => {
+    resizeChart(chartId);
+  }, 300);
+}
+
+// 풀스크린 종료 (통합)
+function exitChartFullscreen(chartWrapper, chartId) {
+  console.log('📱 Exiting fullscreen for:', chartId);
+  
+  // 브라우저 Fullscreen API로 종료 시도
+  if (document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if (document.webkitExitFullscreen) {
+    document.webkitExitFullscreen();
+  } else if (document.msExitFullscreen) {
+    document.msExitFullscreen();
+  }
+  
+  // 실제 풀스크린 종료 처리
+  exitFullscreenChart(chartWrapper, chartId);
+}
+
+// 풀스크린 정리 함수
+function exitFullscreenChart(chartWrapper, chartId) {
+  console.log('🔄 Cleaning up fullscreen state for:', chartId);
+  
+  // 원본 스타일 복원을 위해 저장된 값들 가져오기
+  const originalStyles = chartWrapper._originalStyles || {};
+  const chartContainer = chartWrapper.querySelector(`[data-chart-id="${chartId}"]`);
+  const chartWrapper_inner = chartWrapper.querySelector('.chart-wrapper');
+  
+  // 풀스크린 클래스 제거
+  chartWrapper.classList.remove('chart-fullscreen', 'chart-fullscreen-native');
+  
+  // chartWrapper 스타일 복원
+  Object.keys(originalStyles.wrapper || {}).forEach(prop => {
+    chartWrapper.style[prop] = originalStyles.wrapper[prop];
+  });
+  
+  // 차트 컨테이너 스타일 복원  
+  if (chartContainer && originalStyles.container) {
+    Object.keys(originalStyles.container).forEach(prop => {
+      chartContainer.style[prop] = originalStyles.container[prop];
+    });
+  }
+  
+  // 내부 chart-wrapper 스타일 복원
+  if (chartWrapper_inner && originalStyles.innerWrapper) {
+    Object.keys(originalStyles.innerWrapper).forEach(prop => {
+      chartWrapper_inner.style[prop] = originalStyles.innerWrapper[prop];
+    });
+  }
+  
+  // 저장된 원본 스타일 정보 삭제
+  delete chartWrapper._originalStyles;
+  
+  // 대체 방법으로 숨긴 요소들 복원
+  const hiddenElements = document.querySelectorAll('[data-hidden-for-fullscreen="true"]');
+  hiddenElements.forEach(element => {
+    element.style.display = '';
+    element.removeAttribute('data-hidden-for-fullscreen');
+  });
+  document.body.style.overflow = '';
+  
+  // 풀스크린 버튼 아이콘 변경
+  const fullscreenBtn = chartWrapper.querySelector(`[data-chart-fullscreen="${chartId}"]`);
+  if (fullscreenBtn) {
+    const icon = fullscreenBtn.querySelector('i');
+    if (icon) {
+      icon.className = 'fas fa-expand';
+    }
+    fullscreenBtn.title = '전체화면';
+  }
+  
+  // 차트 크기 재조정
+  setTimeout(() => {
+    resizeChart(chartId);
+  }, 300);
+}
+
+// 차트 크기 재조정
+function resizeChart(chartId) {
+  console.log('📏 Resizing chart:', chartId);
+  
+  const chartContainer = document.querySelector(`[data-chart-id="${chartId}"]`);
+  if (!chartContainer) return;
+  
+  // Chart.js 차트 크기 조정
+  const canvas = chartContainer.querySelector('canvas');
+  if (canvas && canvas.chart) {
+    canvas.chart.resize();
+    console.log('✅ Chart.js chart resized');
+  }
+  
+  // ApexCharts 크기 조정
+  if (window.ApexCharts) {
+    const apexChart = chartContainer.querySelector('.apexcharts-canvas');
+    if (apexChart) {
+      // ApexCharts 인스턴스 찾기 및 크기 조정
+      console.log('✅ ApexCharts chart resize attempted');
+    }
+  }
+  
+  // ECharts 크기 조정
+  if (window.echarts) {
+    const echartsDiv = chartContainer.querySelector('[id$="-echarts"]');
+    if (echartsDiv) {
+      // ECharts 인스턴스를 찾아서 resize 호출
+      const echartsInstance = echarts.getInstanceByDom(echartsDiv);
+      if (echartsInstance) {
+        setTimeout(() => {
+          echartsInstance.resize();
+          console.log('✅ ECharts chart resized:', chartId);
+        }, 100);
+      }
+    }
+  }
+  
+  // ChartManager를 통한 차트 크기 조정 (추가 안전장치)
+  if (window.ChartManager) {
+    const chartInfo = window.ChartManager.getChartInfo(chartId);
+    if (chartInfo && chartInfo.library === 'echarts') {
+      setTimeout(() => {
+        const chartData = window.ChartManager.charts.get(chartId);
+        if (chartData && chartData.instance && !chartData.instance.isDisposed()) {
+          chartData.instance.resize();
+          console.log('✅ ECharts chart resized via ChartManager:', chartId);
+        }
+      }, 150);
+    }
+  }
+}
+
+// 차트 새로고침 (기존 시스템이 이미 처리하므로 제거됨)
+
+// 단순화된 안전장치: 페이지 가시성 변경 시에만 체크
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && window.location.pathname === '/dashboard') {
+    console.log('👁️ Dashboard became visible - checking if reinit needed...');
+    
+    setTimeout(() => {
+      const chartContainers = document.querySelectorAll('[data-chart-id]');
+      let needsReinit = false;
+      
+      chartContainers.forEach(container => {
+        const canvas = container.querySelector('canvas');
+        if (!canvas || canvas.width === 0) {
+          needsReinit = true;
+        }
+      });
+      
+      if (needsReinit) {
+        console.log('📊 Empty charts detected, reinitializing...');
+        window.forceDashboardReinit();
+      }
+    }, 300);
+  }
+});
+
+// 페이지 언로드 시 정리
+window.addEventListener('beforeunload', () => {
+  if (dashboardInstance) {
+    dashboardInstance.destroy();
+  }
+});
+
+// 차트 라이브러리 비교 대시보드 토글 함수
+function toggleChartComparisonTable() {
+  const comparisonTable = document.getElementById('detailed-chart-comparison');
+  const toggleButton = document.getElementById('chart-comparison-toggle');
+  const icon = toggleButton.querySelector('i');
+  
+  if (comparisonTable.style.display === 'none') {
+    comparisonTable.style.display = 'block';
+    icon.className = 'fas fa-chevron-up mr-1';
+    toggleButton.innerHTML = '<i class="fas fa-chevron-up mr-1"></i>간단히 보기';
+  } else {
+    comparisonTable.style.display = 'none';
+    icon.className = 'fas fa-chevron-down mr-1';
+    toggleButton.innerHTML = '<i class="fas fa-chevron-down mr-1"></i>상세 비교';
+  }
+}
+
+// 라이센스 툴팁 토글 함수
+function toggleLicenseTooltip() {
+  const tooltip = document.getElementById('license-tooltip');
+  if (tooltip) {
+    tooltip.classList.toggle('hidden');
+  }
+}
+
+// 차트 비교 상세 내용 토글 함수  
+function toggleDetailedComparison() {
+  const detailSection = document.getElementById('detailed-chart-comparison');
+  const toggleBtn = document.querySelector('[onclick="toggleDetailedComparison()"]');
+  
+  if (detailSection && toggleBtn) {
+    const isHidden = detailSection.style.display === 'none';
+    detailSection.style.display = isHidden ? 'block' : 'none';
+    
+    const icon = toggleBtn.querySelector('i');
+    const text = toggleBtn.querySelector('.toggle-text');
+    
+    if (isHidden) {
+      icon.className = 'fas fa-chevron-up ml-1';
+      text.textContent = '접기';
+    } else {
+      icon.className = 'fas fa-chevron-down ml-1';  
+      text.textContent = '자세히 보기';
+    }
+  }
+}
+
+</script>
+

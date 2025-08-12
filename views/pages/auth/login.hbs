@@ -1,0 +1,160 @@
+<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full space-y-8">
+
+    <!-- Header -->
+    <div class="text-center">
+      <div class="mx-auto h-16 w-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+        <i class="fas fa-crown text-white text-2xl"></i>
+      </div>
+      <h2 class="mt-6 text-3xl font-extrabold text-white">
+        Admin Panel
+      </h2>
+      <p class="mt-2 text-sm text-white text-opacity-80">
+        관리자 계정으로 로그인하세요
+      </p>
+    </div>
+
+    <!-- Login Form -->
+    <turbo-frame id="login-form">
+      <form
+        class="mt-8 space-y-6"
+        action="/auth/login"
+        method="POST"
+        data-turbo-frame="login-form"
+        x-data="{ loading: false }"
+        @submit="loading = true"
+      >
+
+        <div class="space-y-4">
+          <!-- Username/Email -->
+          <div>
+            <label for="username" class="block text-sm font-medium text-white mb-2">
+              <i class="fas fa-user mr-2"></i>
+              사용자명 또는 이메일
+            </label>
+            <input
+              id="username"
+              name="username"
+              type="text"
+              required
+              class="appearance-none relative block w-full px-4 py-3 border border-white border-opacity-30 placeholder-gray-400 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-transparent bg-white bg-opacity-90 backdrop-blur-sm"
+              placeholder="admin 또는 admin@example.com"
+              value="admin"
+            />
+          </div>
+
+          <!-- Password -->
+          <div>
+            <label for="password" class="block text-sm font-medium text-white mb-2">
+              <i class="fas fa-lock mr-2"></i>
+              비밀번호
+            </label>
+            <div class="relative">
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                class="appearance-none relative block w-full px-4 py-3 border border-white border-opacity-30 placeholder-gray-400 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:border-transparent bg-white bg-opacity-90 backdrop-blur-sm pr-12"
+                placeholder="비밀번호를 입력하세요"
+                value="admin123"
+                x-data="{ show: false }"
+                :type="show ? 'text' : 'password'"
+              />
+              <button
+                type="button"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                @click="show = !show"
+              >
+                <i class="fas fa-eye text-sm" x-show="!show"></i>
+                <i class="fas fa-eye-slash text-sm" x-show="show" x-cloak></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Remember me -->
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <input
+              id="remember-me"
+              name="remember-me"
+              type="checkbox"
+              class="h-4 w-4 text-white focus:ring-white border-white border-opacity-30 rounded bg-white bg-opacity-20"
+            />
+            <label for="remember-me" class="ml-2 block text-sm text-white">
+              로그인 상태 유지
+            </label>
+          </div>
+
+          <div class="text-sm">
+            <a
+              href="/auth/forgot-password"
+              class="text-white text-opacity-80 hover:text-white transition-colors duration-200"
+            >
+              비밀번호를 잊으셨나요?
+            </a>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div>
+          <button
+            type="submit"
+            class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-purple-600 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-purple-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            :disabled="loading"
+          >
+            <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+              <i class="fas fa-sign-in-alt text-purple-500 group-hover:text-purple-400" x-show="!loading"></i>
+              <i class="fas fa-spinner fa-spin text-purple-500" x-show="loading" x-cloak></i>
+            </span>
+            <span x-show="!loading">로그인</span>
+            <span x-show="loading" x-cloak>로그인 중...</span>
+          </button>
+        </div>
+
+        <!-- Demo Credentials -->
+        <div class="mt-6 p-4 bg-white bg-opacity-10 backdrop-blur-sm rounded-lg">
+          <h4 class="text-sm font-medium text-white mb-2">
+            <i class="fas fa-info-circle mr-2"></i>
+            데모 계정
+          </h4>
+          <div class="text-xs text-white text-opacity-80 space-y-1">
+            <p><strong>사용자명:</strong> admin</p>
+            <p><strong>비밀번호:</strong> admin123</p>
+          </div>
+        </div>
+
+      </form>
+    </turbo-frame>
+
+    <!-- Additional Info -->
+    <div class="text-center">
+      <p class="text-xs text-white text-opacity-60">
+        © 2024 Admin Panel. All rights reserved.
+      </p>
+      <div class="mt-4 flex justify-center space-x-4 text-white text-opacity-60">
+        <a href="/terms" class="hover:text-white transition-colors duration-200">이용약관</a>
+        <span>•</span>
+        <a href="/privacy" class="hover:text-white transition-colors duration-200">개인정보처리방침</a>
+        <span>•</span>
+        <a href="/support" class="hover:text-white transition-colors duration-200">지원</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Background Animation -->
+<div class="fixed inset-0 overflow-hidden pointer-events-none">
+  <div
+    class="absolute -top-40 -right-40 w-80 h-80 bg-white opacity-10 rounded-full mix-blend-multiply filter blur-xl animate-pulse"
+  ></div>
+  <div
+    class="absolute -bottom-40 -left-40 w-80 h-80 bg-white opacity-10 rounded-full mix-blend-multiply filter blur-xl animate-pulse"
+    style="animation-delay: 2s;"
+  ></div>
+  <div
+    class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-60 h-60 bg-white opacity-5 rounded-full mix-blend-multiply filter blur-xl animate-pulse"
+    style="animation-delay: 4s;"
+  ></div>
+</div>

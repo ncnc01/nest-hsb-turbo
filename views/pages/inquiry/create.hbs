@@ -1,0 +1,765 @@
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex items-center space-x-4">
+    <a href="/inquiry" data-turbo-frame="main-content" class="text-gray-500 hover:text-gray-700">
+      <i class="fas fa-arrow-left text-lg"></i>
+    </a>
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">새 문의사항 등록</h1>
+      <p class="text-gray-600 mt-1">고객 문의사항을 등록합니다</p>
+    </div>
+  </div>
+
+  <div class="max-w-4xl mx-auto">
+    <form id="create-inquiry-form" class="space-y-6">
+      
+      <!-- Basic Information -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">기본 정보</h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              제목 <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              name="title"
+              required
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+              placeholder="문의사항 제목을 입력하세요"
+            >
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              카테고리 <span class="text-red-500">*</span>
+            </label>
+            <select 
+              name="category" 
+              required
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+            >
+              <option value="">카테고리를 선택하세요</option>
+              {{#each categories}}
+              <option value="{{value}}">{{label}}</option>
+              {{/each}}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customer Information -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">고객 정보</h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              고객명 <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              name="customerName"
+              required
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+              placeholder="고객 이름을 입력하세요"
+            >
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              이메일 <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="email"
+              name="customerEmail"
+              required
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+              placeholder="고객 이메일을 입력하세요"
+            >
+          </div>
+          
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1">전화번호</label>
+            <input
+              type="tel"
+              name="customerPhone"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+              placeholder="고객 전화번호를 입력하세요 (선택사항)"
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-gray-900">
+            문의 내용 <span class="text-red-500">*</span>
+          </h3>
+          
+          <!-- Editor Library Selector -->
+          <div class="flex items-center space-x-2">
+            <label class="text-sm text-gray-600">에디터:</label>
+            <select 
+              id="editor-library-select" 
+              class="text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              onchange="updateEditor(this.value)"
+            >
+              <option value="basic">기본 Textarea</option>
+              <option value="tinymce">TinyMCE</option>
+              <option value="ckeditor5">CKEditor5</option>
+              <option value="quill">Quill.js</option>
+              <option value="monaco">Monaco Editor</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- Editor Container -->
+        <div id="editor-container">
+          <textarea
+            id="content-editor"
+            name="content"
+            rows="12"
+            required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 resize-vertical"
+            placeholder="문의사항의 상세 내용을 입력하세요..."
+          ></textarea>
+        </div>
+        
+        <div class="mt-2 text-sm text-gray-500">
+          <i class="fas fa-info-circle mr-1"></i>
+          문의사항의 구체적인 내용을 작성해주세요. 문제 상황, 요청사항 등을 자세히 기술하면 더 정확한 답변을 받을 수 있습니다.
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="flex items-center justify-between bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <a 
+          href="/inquiry" 
+                    class="bg-gray-100 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-200 transition-colors duration-200"
+        >
+          취소
+        </a>
+        
+        <div class="flex items-center space-x-3">
+          <button 
+            type="button"
+            onclick="saveDraft()"
+            class="bg-yellow-100 text-yellow-800 px-6 py-2 rounded-md hover:bg-yellow-200 transition-colors duration-200"
+          >
+            <i class="fas fa-save mr-2"></i>
+            임시저장
+          </button>
+          
+          <button 
+            type="submit"
+            class="bg-primary-600 text-white px-6 py-2 rounded-md hover:bg-primary-700 transition-colors duration-200"
+          >
+            <i class="fas fa-paper-plane mr-2"></i>
+            문의사항 등록
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Editor Library Comparison Dashboard -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mt-6">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h3 class="text-xl font-bold text-gray-900">✍️ 에디터 라이브러리 비교 대시보드</h3>
+        <p class="text-gray-600 mt-1">각 에디터의 특성을 비교하여 용도에 맞는 최적의 선택을 하세요</p>
+      </div>
+      <button 
+        onclick="toggleEditorComparison()" 
+        class="bg-gray-100 text-gray-700 px-3 py-1 rounded text-sm hover:bg-gray-200 transition-colors"
+        id="editor-comparison-toggle"
+      >
+        <i class="fas fa-chevron-down mr-1"></i>상세 비교
+      </button>
+    </div>
+
+    <!-- Quick Overview Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+      <div class="border border-gray-200 rounded-lg p-4 bg-blue-50">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="font-semibold text-blue-900">🏆 최고 기능</h4>
+          <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">리치 에디터</span>
+        </div>
+        <p class="text-sm text-blue-800"><strong>TinyMCE</strong> - 최고의 WYSIWYG 경험</p>
+        <p class="text-xs text-blue-700 mt-1">✅ 풍부한 플러그인, 커스터마이징 자유도</p>
+      </div>
+
+      <div class="border border-gray-200 rounded-lg p-4 bg-green-50">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="font-semibold text-green-900">⚡ 간편함</h4>
+          <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">올인원</span>
+        </div>
+        <p class="text-sm text-green-800"><strong>CKEditor 5</strong> - 완성도 높은 편집</p>
+        <p class="text-xs text-green-700 mt-1">✅ 모던 아키텍처, 접근성 우수</p>
+      </div>
+
+      <div class="border border-gray-200 rounded-lg p-4 bg-purple-50">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="font-semibold text-purple-900">🎨 모던</h4>
+          <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">경량화</span>
+        </div>
+        <p class="text-sm text-purple-800"><strong>Quill.js</strong> - 모던하고 가벼움</p>
+        <p class="text-xs text-purple-700 mt-1">✅ 깔끔한 UI, 빠른 성능</p>
+      </div>
+    </div>
+
+    <!-- Detailed Comparison Table -->
+    <div id="detailed-editor-comparison" style="display: none;">
+      <div class="mb-4">
+        <h4 class="text-lg font-semibold text-gray-800 mb-2 flex items-center">
+          🔧 에디터 라이브러리별 특성 비교
+          <button 
+            class="ml-2 text-gray-400 hover:text-gray-600 cursor-help"
+            onclick="toggleEditorLicenseTooltip()"
+            title="라이센스 정보 보기"
+          >
+            <i class="fas fa-info-circle"></i>
+          </button>
+        </h4>
+        
+        <!-- 라이센스 정보 툴팁 -->
+        <div id="editor-license-tooltip" class="hidden mb-4 p-4 bg-blue-50 border-l-4 border-blue-400 rounded">
+          <h5 class="font-semibold text-blue-800 mb-2">📄 에디터 라이센스 종류 설명</h5>
+          <div class="text-sm text-blue-700 space-y-2">
+            <div><strong>MIT:</strong> 상업적 이용 가능, 수정/배포 자유, 라이센스 고지 의무</div>
+            <div><strong>LGPL:</strong> 수정된 라이브러리는 오픈소스로 공개해야 함</div>
+            <div><strong>Apache 2.0:</strong> MIT와 유사하나 특허권 보호, 변경사항 명시 필요</div>
+            <div><strong>GPL v2+:</strong> 연결된 코드도 GPL로 공개해야 함</div>
+            <div><strong>Commercial:</strong> 상업적 라이센스 필요, 고급 기능은 유료 플랜</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">에디터</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">장점</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">단점</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">적합한 용도</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">파일크기</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">학습난이도</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">라이센스</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <!-- 기본 Textarea -->
+            <tr class="hover:bg-gray-50">
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="w-3 h-3 bg-gray-500 rounded-full mr-2"></div>
+                  <div>
+                    <div class="text-sm font-medium text-gray-900">기본 Textarea</div>
+                    <div class="text-xs text-gray-500">HTML 표준</div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <ul class="text-xs space-y-1">
+                  <li>✅ 의존성 없음</li>
+                  <li>✅ 빠른 렌더링</li>
+                  <li>✅ 가벼움</li>
+                  <li>✅ 접근성 우수</li>
+                </ul>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <ul class="text-xs space-y-1">
+                  <li>❌ 서식 기능 없음</li>
+                  <li>❌ WYSIWYG 불가</li>
+                  <li>❌ 기본적인 편집만 가능</li>
+                </ul>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                  단순 텍스트 입력
+                </span>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                    <div class="bg-green-500 h-2 rounded-full" style="width: 100%"></div>
+                  </div>
+                  <span class="text-xs text-gray-600">0KB</span>
+                </div>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  없음
+                </span>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="text-xs">
+                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 mb-1">
+                    N/A
+                  </span>
+                  <div class="text-gray-600">HTML 표준</div>
+                </div>
+              </td>
+            </tr>
+
+            <!-- TinyMCE -->
+            <tr class="hover:bg-gray-50">
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                  <div>
+                    <div class="text-sm font-medium text-gray-900">TinyMCE</div>
+                    <div class="text-xs text-gray-500">WYSIWYG 에디터</div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <ul class="text-xs space-y-1">
+                  <li>✅ 가장 풍부한 기능</li>
+                  <li>✅ 많은 플러그인</li>
+                  <li>✅ 강력한 커스터마이징</li>
+                  <li>✅ 우수한 호환성</li>
+                </ul>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <ul class="text-xs space-y-1">
+                  <li>❌ 큰 파일 크기</li>
+                  <li>❌ 복잡한 설정</li>
+                  <li>❌ 일부 기능 유료</li>
+                </ul>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  본격적인 문서 편집
+                </span>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                    <div class="bg-red-500 h-2 rounded-full" style="width: 20%"></div>
+                  </div>
+                  <span class="text-xs text-gray-600">~400KB</span>
+                </div>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                  어려움
+                </span>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="text-xs">
+                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 mb-1">
+                    LGPL
+                  </span>
+                  <div class="text-gray-600">오픈소스(무료) / 상업플랜 유료</div>
+                </div>
+              </td>
+            </tr>
+
+            <!-- CKEditor 5 -->
+            <tr class="hover:bg-gray-50">
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                  <div>
+                    <div class="text-sm font-medium text-gray-900">CKEditor 5</div>
+                    <div class="text-xs text-gray-500">모던 에디터</div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <ul class="text-xs space-y-1">
+                  <li>✅ 모던 아키텍처</li>
+                  <li>✅ 접근성 우수</li>
+                  <li>✅ 실시간 협업</li>
+                  <li>✅ 플러그인 시스템</li>
+                </ul>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <ul class="text-xs space-y-1">
+                  <li>❌ 상대적으로 새로움</li>
+                  <li>❌ 프리미엄 기능 유료</li>
+                  <li>❌ 학습 곡선 존재</li>
+                </ul>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  블로그, CMS 편집
+                </span>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                    <div class="bg-yellow-500 h-2 rounded-full" style="width: 60%"></div>
+                  </div>
+                  <span class="text-xs text-gray-600">~200KB</span>
+                </div>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                  보통
+                </span>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="text-xs">
+                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 mb-1">
+                    GPL v2+
+                  </span>
+                  <div class="text-gray-600">오픈소스(무료) / 상업라이센스 유료</div>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Quill.js -->
+            <tr class="hover:bg-gray-50">
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="w-3 h-3 bg-purple-500 rounded-full mr-2"></div>
+                  <div>
+                    <div class="text-sm font-medium text-gray-900">Quill.js</div>
+                    <div class="text-xs text-gray-500">모던 & 경량</div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <ul class="text-xs space-y-1">
+                  <li>✅ 가볍고 빠름</li>
+                  <li>✅ 깔끔한 API</li>
+                  <li>✅ 모바일 친화적</li>
+                  <li>✅ 커스터마이징 쉬움</li>
+                </ul>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <ul class="text-xs space-y-1">
+                  <li>❌ 기능이 제한적</li>
+                  <li>❌ 플러그인 생태계 작음</li>
+                  <li>❌ 고급 편집 기능 부족</li>
+                </ul>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                  댓글, 게시글 작성
+                </span>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                    <div class="bg-green-500 h-2 rounded-full" style="width: 85%"></div>
+                  </div>
+                  <span class="text-xs text-gray-600">~43KB</span>
+                </div>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  쉬움
+                </span>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="text-xs">
+                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 mb-1">
+                    BSD 3-Clause
+                  </span>
+                  <div class="text-gray-600">완전 무료</div>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Monaco Editor -->
+            <tr class="hover:bg-gray-50">
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="w-3 h-3 bg-indigo-500 rounded-full mr-2"></div>
+                  <div>
+                    <div class="text-sm font-medium text-gray-900">Monaco Editor</div>
+                    <div class="text-xs text-gray-500">VS Code 에디터</div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <ul class="text-xs space-y-1">
+                  <li>✅ VS Code와 동일한 경험</li>
+                  <li>✅ 뛰어난 코드 편집</li>
+                  <li>✅ 문법 하이라이팅</li>
+                  <li>✅ IntelliSense 지원</li>
+                </ul>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <ul class="text-xs space-y-1">
+                  <li>❌ 코드 편집용</li>
+                  <li>❌ 큰 번들 크기</li>
+                  <li>❌ 일반 문서 편집 부적합</li>
+                </ul>
+              </td>
+              <td class="px-4 py-4 text-sm text-gray-900">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                  코드/마크다운 편집
+                </span>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                    <div class="bg-red-500 h-2 rounded-full" style="width: 15%"></div>
+                  </div>
+                  <span class="text-xs text-gray-600">~1.7MB</span>
+                </div>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                  보통
+                </span>
+              </td>
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="text-xs">
+                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 mb-1">
+                    MIT
+                  </span>
+                  <div class="text-gray-600">완전 무료</div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Usage Recommendations -->
+      <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+        <h4 class="font-semibold text-gray-900 mb-3">💡 사용 시나리오별 추천</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="bg-white p-3 rounded border-l-4 border-blue-500">
+            <h5 class="font-medium text-blue-900">📝 문서 작성</h5>
+            <p class="text-sm text-gray-700">TinyMCE (풍부한 기능) 또는 CKEditor 5</p>
+          </div>
+          <div class="bg-white p-3 rounded border-l-4 border-green-500">
+            <h5 class="font-medium text-green-900">💬 댓글/게시글</h5>
+            <p class="text-sm text-gray-700">Quill.js (경량) 또는 기본 Textarea</p>
+          </div>
+          <div class="bg-white p-3 rounded border-l-4 border-purple-500">
+            <h5 class="font-medium text-purple-900">🔧 개발자 도구</h5>
+            <p class="text-sm text-gray-700">Monaco Editor (코드) 또는 기본 Textarea</p>
+          </div>
+          <div class="bg-white p-3 rounded border-l-4 border-orange-500">
+            <h5 class="font-medium text-orange-900">⚡ 빠른 프로토타입</h5>
+            <p class="text-sm text-gray-700">기본 Textarea 또는 Quill.js</p>
+          </div>
+          <div class="bg-white p-3 rounded border-l-4 border-teal-500">
+            <h5 class="font-medium text-teal-900">📱 모바일 우선</h5>
+            <p class="text-sm text-gray-700">Quill.js (터치 지원) 또는 기본 Textarea</p>
+          </div>
+          <div class="bg-white p-3 rounded border-l-4 border-indigo-500">
+            <h5 class="font-medium text-indigo-900">🏢 엔터프라이즈</h5>
+            <p class="text-sm text-gray-700">TinyMCE (유료 플랜) 또는 CKEditor 5</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// 폼 제출 처리
+document.getElementById('create-inquiry-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  
+  const formData = new FormData(this);
+  
+  // 에디터 내용 가져오기
+  const editorType = document.getElementById('editor-library-select').value;
+  const content = getEditorContent(editorType);
+  formData.set('content', content);
+  
+  const data = Object.fromEntries(formData.entries());
+  
+  // 유효성 검사
+  if (!validateForm(data)) {
+    return;
+  }
+  
+  try {
+    const response = await fetch('/inquiry/api', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'text/vnd.turbo-stream.html'
+      },
+      body: JSON.stringify(data)
+    });
+    
+    if (response.ok) {
+      const html = await response.text();
+      document.body.insertAdjacentHTML('beforeend', html);
+    } else {
+      const error = await response.json();
+      showError(error.message || '등록 중 오류가 발생했습니다.');
+    }
+  } catch (error) {
+    showError('네트워크 오류가 발생했습니다.');
+    console.error('Error creating inquiry:', error);
+  }
+});
+
+// 폼 유효성 검사
+function validateForm(data) {
+  const errors = [];
+  
+  if (!data.title?.trim()) {
+    errors.push('제목을 입력해주세요.');
+  }
+  
+  if (!data.content?.trim()) {
+    errors.push('문의 내용을 입력해주세요.');
+  }
+  
+  if (!data.customerName?.trim()) {
+    errors.push('고객명을 입력해주세요.');
+  }
+  
+  if (!data.customerEmail?.trim()) {
+    errors.push('고객 이메일을 입력해주세요.');
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.customerEmail)) {
+    errors.push('올바른 이메일 형식을 입력해주세요.');
+  }
+  
+  if (!data.category?.trim()) {
+    errors.push('카테고리를 선택해주세요.');
+  }
+  
+  if (errors.length > 0) {
+    showError(errors.join('\n'));
+    return false;
+  }
+  
+  return true;
+}
+
+// 에러 메시지 표시
+function showError(message) {
+  const existingError = document.querySelector('.form-error');
+  if (existingError) {
+    existingError.remove();
+  }
+  
+  const errorDiv = document.createElement('div');
+  errorDiv.className = 'form-error bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4';
+  errorDiv.innerHTML = `
+    <div class="flex">
+      <i class="fas fa-exclamation-circle mr-2 mt-0.5"></i>
+      <div>
+        ${message.split('\n').map(msg => `<div>${msg}</div>`).join('')}
+      </div>
+    </div>
+  `;
+  
+  document.querySelector('form').insertBefore(errorDiv, document.querySelector('form').firstChild);
+  errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// 임시저장 기능
+function saveDraft() {
+  const formData = new FormData(document.getElementById('create-inquiry-form'));
+  const data = Object.fromEntries(formData.entries());
+  
+  // 에디터 내용 포함
+  const editorType = document.getElementById('editor-library-select').value;
+  data.content = getEditorContent(editorType);
+  
+  localStorage.setItem('inquiry_draft', JSON.stringify(data));
+  
+  // 임시저장 알림
+  const notification = document.createElement('div');
+  notification.className = 'fixed top-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded shadow-lg z-50';
+  notification.innerHTML = '<i class="fas fa-check mr-2"></i>임시저장 되었습니다.';
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.remove();
+  }, 3000);
+}
+
+// 페이지 로드 시 임시저장 데이터 복원
+document.addEventListener('DOMContentLoaded', function() {
+  const draft = localStorage.getItem('inquiry_draft');
+  if (draft) {
+    try {
+      const data = JSON.parse(draft);
+      const form = document.getElementById('create-inquiry-form');
+      
+      // 폼 필드 복원
+      Object.keys(data).forEach(key => {
+        const field = form.querySelector(`[name="${key}"]`);
+        if (field) {
+          field.value = data[key] || '';
+        }
+      });
+      
+      // 임시저장된 데이터가 있음을 알림
+      if (Object.keys(data).length > 0) {
+        const notification = document.createElement('div');
+        notification.className = 'bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded mb-4';
+        notification.innerHTML = `
+          <div class="flex justify-between items-center">
+            <div><i class="fas fa-info-circle mr-2"></i>임시저장된 데이터가 복원되었습니다.</div>
+            <button onclick="clearDraft()" class="text-blue-600 hover:text-blue-800 underline text-sm">삭제</button>
+          </div>
+        `;
+        document.querySelector('form').insertBefore(notification, document.querySelector('form').firstChild);
+      }
+    } catch (error) {
+      console.error('임시저장 데이터 복원 실패:', error);
+    }
+  }
+});
+
+// 임시저장 데이터 삭제
+function clearDraft() {
+  localStorage.removeItem('inquiry_draft');
+  location.reload();
+}
+
+// 에디터 전환은 editors-simple.js의 전역 함수 사용
+// updateEditor 함수는 이미 editors-simple.js에서 정의됨
+
+// 에디터 내용 가져오기 (editors-simple.js 함수 사용)
+function getEditorContent(editorType) {
+  // editors-simple.js의 getCurrentContent 함수 사용
+  if (typeof getCurrentContent === 'function') {
+    return getCurrentContent();
+  } else {
+    // 폴백: 기본 textarea에서 값 가져오기
+    const textarea = document.querySelector('#editor-container textarea[name="content"]');
+    return textarea ? textarea.value : '';
+  }
+}
+
+// 에디터 렌더링은 editors-simple.js에서 처리됨
+
+// 에디터 라이브러리 비교 대시보드 토글 함수
+function toggleEditorComparison() {
+  const comparisonTable = document.getElementById('detailed-editor-comparison');
+  const toggleButton = document.getElementById('editor-comparison-toggle');
+  const icon = toggleButton.querySelector('i');
+  
+  if (comparisonTable.style.display === 'none') {
+    comparisonTable.style.display = 'block';
+    icon.className = 'fas fa-chevron-up mr-1';
+    toggleButton.innerHTML = '<i class="fas fa-chevron-up mr-1"></i>간단히 보기';
+  } else {
+    comparisonTable.style.display = 'none';
+    icon.className = 'fas fa-chevron-down mr-1';
+    toggleButton.innerHTML = '<i class="fas fa-chevron-down mr-1"></i>상세 비교';
+  }
+}
+
+// 에디터 라이센스 툴팁 토글 함수
+function toggleEditorLicenseTooltip() {
+  const tooltip = document.getElementById('editor-license-tooltip');
+  if (tooltip) {
+    tooltip.classList.toggle('hidden');
+  }
+}
+</script>
+
+</div>

@@ -1,0 +1,418 @@
+<!-- Sidebar Wrapper with Toggle Logic -->
+<div id="sidebar-manager" x-data="sidebarManager()" x-init="initSidebar()" data-permanent-element="true">
+
+  <!-- Mobile Backdrop -->
+  <div
+    x-show="isMobile && sidebarOpen"
+    x-transition:enter="transition-opacity ease-linear duration-300"
+    x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100"
+    x-transition:leave="transition-opacity ease-linear duration-300"
+    x-transition:leave-start="opacity-100"
+    x-transition:leave-end="opacity-0"
+    class="fixed inset-0 flex z-40 md:hidden"
+    x-cloak
+  >
+    <div class="fixed inset-0 bg-gray-600 bg-opacity-75" @click="closeSidebar()"></div>
+  </div>
+
+  <!-- Main Sidebar -->
+  <div
+    class="fixed inset-y-0 left-0 flex flex-col z-50 transition-all duration-300 ease-in-out bg-white border-r border-gray-200"
+    :class="{
+      // Desktop
+      'w-16': !isMobile && !sidebarOpen,
+      'w-64': !isMobile && sidebarOpen
+    }"
+    :style="isMobile ? (sidebarOpen ? 'transform: translateX(0); width: 256px;' : 'transform: translateX(-100%); width: 256px;') : ''"
+  >
+
+    <!-- Sidebar Header -->
+    <div class="flex items-center h-16 px-4 border-b border-gray-200 flex-shrink-0">
+      <div class="flex items-center w-full">
+        <!-- Logo (Always Clickable) -->
+        <button
+          @click="toggleSidebar()"
+          class="flex items-center focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-lg p-1 hover:bg-gray-100 transition-colors duration-200"
+        >
+          <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center flex-shrink-0">
+            <i class="fas fa-crown text-white text-sm"></i>
+          </div>
+          <!-- Title (Hidden when collapsed on desktop) -->
+          <h1
+            class="ml-3 text-xl font-bold text-gray-900 truncate"
+            :class="{ 'md:hidden': !isMobile && !sidebarOpen }"
+            x-show="isMobile || sidebarOpen"
+            x-transition:enter="transition-opacity duration-200 delay-100"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition-opacity duration-150"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+          >
+            Admin Panel
+          </h1>
+        </button>
+
+        <!-- Mobile Close Button -->
+        <button
+          x-show="isMobile && sidebarOpen"
+          @click="closeSidebar()"
+          class="ml-auto md:hidden p-1 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
+
+      <!-- Dashboard -->
+      <a
+        href="/dashboard"
+        class="sidebar-link group flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:text-primary-600 hover:bg-primary-50 transition-colors duration-200"
+        :class="{ 'current-page': isCurrentPage('/dashboard') }"
+        :title="(!isMobile && !sidebarOpen) ? 'Dashboard' : ''"
+      >
+        <i
+          class="fas fa-tachometer-alt flex-shrink-0 text-gray-400 group-hover:text-primary-500"
+          :class="(!isMobile && !sidebarOpen) ? 'mr-0' : 'mr-3'"
+        ></i>
+        <span
+          x-show="isMobile || sidebarOpen"
+          x-transition:enter="transition-opacity duration-200 delay-100"
+          x-transition:enter-start="opacity-0"
+          x-transition:enter-end="opacity-100"
+          x-transition:leave="transition-opacity duration-150"
+          x-transition:leave-start="opacity-100"
+          x-transition:leave-end="opacity-0"
+          class="truncate"
+        >
+          Dashboard
+        </span>
+      </a>
+
+      <!-- 개발 도구 -->
+      <div
+        class="menu-section"
+        :class="{ 'has-current-page': hasCurrentPageInSection(['/interactive-demo', '/style-guide', '/ui-demo']) }"
+        x-data="{ 
+          open: $store.sidebarManager.getMenuState('dev-tools', true),
+          toggle() {
+            this.open = !this.open;
+            $store.sidebarManager.saveMenuState('dev-tools', this.open);
+          }
+        }"
+      >
+        <button
+          @click="(isMobile || sidebarOpen) ? toggle() : null"
+          class="w-full sidebar-link group flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:text-primary-600 hover:bg-primary-50 transition-colors duration-200"
+          :class="{ 'current-section': hasCurrentPageInSection(['/interactive-demo', '/style-guide', '/ui-demo']) }"
+          :title="(!isMobile && !sidebarOpen) ? '개발 도구' : ''"
+        >
+          <div class="flex items-center">
+            <i
+              class="fas fa-code flex-shrink-0 text-gray-400 group-hover:text-primary-500"
+              :class="(!isMobile && !sidebarOpen) ? 'mr-0' : 'mr-3'"
+            ></i>
+            <span
+              x-show="isMobile || sidebarOpen"
+              x-transition:enter="transition-opacity duration-200 delay-100"
+              x-transition:enter-start="opacity-0"
+              x-transition:enter-end="opacity-100"
+              x-transition:leave="transition-opacity duration-150"
+              x-transition:leave-start="opacity-100"
+              x-transition:leave-end="opacity-0"
+              class="truncate"
+            >
+              개발 도구
+            </span>
+          </div>
+          <i
+            x-show="isMobile || sidebarOpen"
+            class="fas fa-chevron-down transition-transform duration-200 flex-shrink-0"
+            :class="{ 'rotate-180': open }"
+          ></i>
+        </button>
+
+        <div x-show="(isMobile || sidebarOpen) && open" x-transition class="ml-6 mt-1 space-y-1" x-cloak>
+          <a
+            href="/interactive-demo"
+            class="sidebar-link group flex items-center px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-primary-600 hover:bg-primary-50"
+            :class="{ 'current-page': isCurrentPage('/interactive-demo') }"
+          >
+            <i class="fas fa-play mr-3 text-gray-400 group-hover:text-primary-500 flex-shrink-0"></i>
+            <span class="truncate">Interactive Demo</span>
+          </a>
+          <a
+            href="/style-guide"
+            class="sidebar-link group flex items-center px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-primary-600 hover:bg-primary-50"
+            :class="{ 'current-page': isCurrentPage('/style-guide') }"
+          >
+            <i class="fas fa-palette mr-3 text-gray-400 group-hover:text-primary-500 flex-shrink-0"></i>
+            <span class="truncate">Style Guide</span>
+          </a>
+          <a
+            href="/ui-demo"
+            class="sidebar-link group flex items-center px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-primary-600 hover:bg-primary-50"
+            :class="{ 'current-page': isCurrentPage('/ui-demo') }"
+          >
+            <i class="fas fa-sparkles mr-3 text-gray-400 group-hover:text-primary-500 flex-shrink-0"></i>
+            <span class="truncate">UI Demo</span>
+          </a>
+          <a
+            href="/dev-tools"
+            class="sidebar-link group flex items-center px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-primary-600 hover:bg-primary-50"
+            :class="{ 'current-page': isCurrentPage('/dev-tools') }"
+          >
+            <i class="fas fa-tools mr-3 text-gray-400 group-hover:text-primary-500 flex-shrink-0"></i>
+            <span class="truncate">Dev Tools</span>
+          </a>
+          <a
+            href="/dev-tools/interaction-logger"
+            class="sidebar-link group flex items-center px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-primary-600 hover:bg-primary-50"
+            :class="{ 'current-page': isCurrentPage('/dev-tools/interaction-logger') }"
+          >
+            <i class="fas fa-chart-line mr-3 text-gray-400 group-hover:text-primary-500 flex-shrink-0"></i>
+            <span class="truncate">Interaction Logger</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 문의사항 관리 -->
+      <div
+        class="menu-section"
+        :class="{ 'has-current-page': hasCurrentPageInSection(['/inquiry', '/inquiry/new/create', '/inquiry?status=pending']) }"
+        x-data="{ 
+          open: $store.sidebarManager.getMenuState('inquiry-management', true),
+          toggle() {
+            this.open = !this.open;
+            $store.sidebarManager.saveMenuState('inquiry-management', this.open);
+          }
+        }"
+      >
+        <button
+          @click="(isMobile || sidebarOpen) ? toggle() : null"
+          class="w-full sidebar-link group flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:text-primary-600 hover:bg-primary-50 transition-colors duration-200"
+          :class="{ 'current-section': hasCurrentPageInSection(['/inquiry', '/inquiry/new/create', '/inquiry?status=pending']) }"
+          :title="(!isMobile && !sidebarOpen) ? '문의사항 관리' : ''"
+        >
+          <div class="flex items-center">
+            <i
+              class="fas fa-question-circle flex-shrink-0 text-gray-400 group-hover:text-primary-500"
+              :class="(!isMobile && !sidebarOpen) ? 'mr-0' : 'mr-3'"
+            ></i>
+            <span
+              x-show="isMobile || sidebarOpen"
+              x-transition:enter="transition-opacity duration-200 delay-100"
+              x-transition:enter-start="opacity-0"
+              x-transition:enter-end="opacity-100"
+              x-transition:leave="transition-opacity duration-150"
+              x-transition:leave-start="opacity-100"
+              x-transition:leave-end="opacity-0"
+              class="truncate"
+            >
+              문의사항 관리
+            </span>
+          </div>
+          <i
+            x-show="isMobile || sidebarOpen"
+            class="fas fa-chevron-down transition-transform duration-200 flex-shrink-0"
+            :class="{ 'rotate-180': open }"
+          ></i>
+        </button>
+
+        <div x-show="(isMobile || sidebarOpen) && open" x-transition class="ml-6 mt-1 space-y-1" x-cloak>
+          <a
+            href="/inquiry"
+            class="sidebar-link group flex items-center px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-primary-600 hover:bg-primary-50"
+            :class="{ 'current-page': isCurrentPage('/inquiry') }"
+          >
+            <i class="fas fa-list mr-3 text-gray-400 group-hover:text-primary-500 flex-shrink-0"></i>
+            <span class="truncate">전체 문의</span>
+          </a>
+          <a
+            href="/inquiry/new/create"
+            class="sidebar-link group flex items-center px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-primary-600 hover:bg-primary-50"
+            :class="{ 'current-page': isCurrentPage('/inquiry/new/create') }"
+          >
+            <i class="fas fa-plus mr-3 text-gray-400 group-hover:text-primary-500 flex-shrink-0"></i>
+            <span class="truncate">새 문의 등록</span>
+          </a>
+          {{!-- <a
+            href="/inquiry?status=pending"
+            class="sidebar-link group flex items-center px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-primary-600 hover:bg-primary-50"
+            :class="{ 'current-page': isCurrentPage('/inquiry', 'status=pending') }"
+          >
+            <i class="fas fa-clock mr-3 text-gray-400 group-hover:text-primary-500 flex-shrink-0"></i>
+            <span class="truncate">답변 대기</span>
+            <span
+              x-show="isMobile || sidebarOpen"
+              class="ml-auto inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"
+            >
+              3
+            </span>
+          </a> --}}
+        </div>
+      </div>
+
+    </nav>
+
+    <!-- Sidebar Footer -->
+    <div class="p-4 border-t border-gray-200 flex-shrink-0">
+      <!-- Desktop Collapsed View -->
+      <div 
+        x-show="!isMobile && !sidebarOpen"
+        class="flex items-center justify-center"
+      >
+        <div class="flex flex-col items-center space-y-2">
+          <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+            <i class="fas fa-user text-gray-600 text-sm"></i>
+          </div>
+          <form action="/auth/logout" method="POST" data-turbo-method="post">
+            <button
+              type="submit"
+              @click="clearSidebarState()"
+              class="p-1 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+              title="로그아웃"
+            >
+              <i class="fas fa-sign-out-alt text-sm"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Desktop Expanded & Mobile View -->
+      <div 
+        x-show="isMobile || sidebarOpen"
+        class="flex items-center space-x-3"
+        x-transition:enter="transition-opacity duration-200 delay-100"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition-opacity duration-150"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+      >
+        <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
+          <i class="fas fa-user text-gray-600 text-sm"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium text-gray-900 truncate">{{user.name}}</p>
+          <p class="text-xs text-gray-500 truncate">관리자</p>
+        </div>
+        <form action="/auth/logout" method="POST" data-turbo-method="post">
+          <button
+            type="submit"
+            @click="clearSidebarState()"
+            class="p-1 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 flex-shrink-0"
+          >
+            <i class="fas fa-sign-out-alt"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Sidebar Manager Script -->
+<script src="/js/sidebar-manager.js" data-turbo-permanent></script>
+
+<style>
+  /* Current page styles */
+  .sidebar-link.current-page {
+    @apply bg-primary-100 text-primary-700 border-l-4 border-primary-500;
+  }
+
+  .sidebar-link.current-page i {
+    @apply text-primary-600;
+  }
+
+  /* Enhanced hover styles for current page */
+  .sidebar-link.current-page:hover {
+    @apply bg-primary-200 text-primary-800;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+  }
+
+  .sidebar-link.current-page:hover i {
+    @apply text-primary-700;
+  }
+
+  /* Regular hover styles */
+  .sidebar-link:not(.current-page):hover {
+    @apply bg-primary-50 text-primary-700;
+    transform: translateX(2px);
+    transition: all 0.2s ease-in-out;
+  }
+
+  .sidebar-link:not(.current-page):hover i {
+    @apply text-primary-600;
+  }
+
+  /* Menu button hover for current section */
+  .sidebar-link button.current-section {
+    @apply bg-primary-50 text-primary-700;
+  }
+
+  .sidebar-link button.current-section i {
+    @apply text-primary-600;
+  }
+
+  /* Collapsed sidebar tooltip */
+  .sidebar [title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1000;
+    margin-left: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.2s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Smooth transitions for all sidebar links */
+  .sidebar-link {
+    transition: all 0.2s ease-in-out;
+  }
+
+  /* Badge animation in current page */
+  .sidebar-link.current-page .bg-red-100 {
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.8;
+    }
+  }
+
+  /* Active menu section indicator */
+  .menu-section.has-current-page > button {
+    @apply bg-primary-50 text-primary-700;
+  }
+
+  .menu-section.has-current-page > button i {
+    @apply text-primary-600;
+  }
+</style>

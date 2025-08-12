@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Admin Panel</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              900: '#1e3a8a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Custom Components CSS -->
+  <link rel="stylesheet" href="/public/css/components.css">
+  
+  <!-- Chart Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  
+  <!-- Turbo -->
+  <script type="module">
+    import { Application } from "https://unpkg.com/@hotwired/turbo@8.0.0/dist/turbo.es2017-esm.js"
+    
+    // Turbo 설정 최적화
+    Application.start()
+    
+    // 로딩 표시 클래스 관리
+    document.addEventListener('turbo:before-visit', () => {
+      document.documentElement.classList.add('turbo-loading');
+    });
+    
+    document.addEventListener('turbo:visit', () => {
+      document.documentElement.classList.add('turbo-loading');
+    });
+    
+    document.addEventListener('turbo:load', () => {
+      document.documentElement.classList.remove('turbo-loading');
+    });
+    
+    // Turbo와 Alpine.js 호환성 설정
+    document.addEventListener('turbo:before-render', () => {
+      // Alpine 정리
+      if (window.Alpine) {
+        document.querySelectorAll('[x-data]').forEach(el => {
+          if (el._x_dataStack) {
+            el._x_dataStack.forEach(data => {
+              if (data.$destroy) data.$destroy();
+            });
+          }
+        });
+      }
+    });
+    
+    document.addEventListener('turbo:render', () => {
+      // Alpine 재초기화
+      if (window.Alpine) {
+        Alpine.initTree(document.body);
+      }
+    });
+    
+    // 캐시 최적화
+    document.addEventListener('turbo:before-cache', () => {
+      // 캐시 전 정리 작업
+      document.querySelectorAll('[data-turbo-temporary]').forEach(el => el.remove());
+    });
+  </script>
+  
+  <!-- Alpine.js -->
+  <script defer src="https://unpkg.com/alpinejs@3.13.0/dist/cdn.min.js"></script>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Chart Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.44.0/dist/apexcharts.min.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  
+  <style>
+    /* 깜박임 방지 스타일 */
+    [x-cloak] { display: none !important; }
+    
+    /* Turbo로딩 중 깜박임 방지 */
+    html.turbo-loading body {
+      opacity: 0.95;
+      transition: opacity 150ms ease-out;
+    }
+    
+    /* 기본 스타일로 FOUC 방지 */
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f9fafb;
+      transition: opacity 150ms ease-in;
+    }
+    
+    /* 중요한 UI 요소들의 기본 스타일 */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-weight: 500;
+      transition: all 150ms ease;
+    }
+    
+    /* 사이드바 기본 스타일 */
+    .sidebar-base {
+      background: white;
+      border-right: 1px solid #e5e7eb;
+    }
+  </style>
+</head>
+<body class="bg-gray-50" x-data="{ sidebarOpen: false }">
+  
+  <!-- Mobile sidebar backdrop -->
+  <div 
+    x-show="sidebarOpen" 
+    x-transition:enter="transition-opacity ease-linear duration-300"
+    x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100"
+    x-transition:leave="transition-opacity ease-linear duration-300"
+    x-transition:leave-start="opacity-100"
+    x-transition:leave-end="opacity-0"
+    class="fixed inset-0 flex z-40 md:hidden" 
+    x-cloak
+  >
+    <div class="fixed inset-0 bg-gray-600 bg-opacity-75" @click="sidebarOpen = false"></div>
+  </div>
+
+  <!-- Sidebar -->
+  <!-- Sidebar -->
+  <div
+    class="sidebar-base fixed inset-y-0 left-0 flex flex-col w-64 bg-white border-r border-gray-200 transition-transform duration-300 ease-in-out transform z-30"
+    :class="{ '-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen }"
+    x-cloak
+  >
+    <!-- Sidebar Header -->
+    <div class="flex items-center justify-between h-16 px-4 border-b border-gray-200">
+      <div class="flex items-center">
+        <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
+          <i class="fas fa-crown text-white text-sm"></i>
+        </div>
+        <h1 class="ml-3 text-xl font-bold text-gray-900">Admin Panel</h1>
+      </div>
+      <button
+        @click="sidebarOpen = false"
+        class="md:hidden p-1 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+      >
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  
+    <!-- Navigation Menu -->
+    <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
+  
+      <!-- Dashboard -->
+      <a
+        href="/dashboard"
+        data-turbo-frame="main-content"
+        class="group flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:text-primary-600 hover:bg-primary-50 transition-colors duration-200"
+      >
+        <i class="fas fa-tachometer-alt mr-3 text-gray-400 group-hover:text-primary-500"></i>
+        Dashboard
+      </a>
+  
+      <!-- Analytics -->
+      <a
+        href="/analytics"
+        data-turbo-frame="main-content"
+        class="group flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:text-primary-600 hover:bg-primary-50"
+      >
+        <i class="fas fa-chart-line mr-3 text-gray-400 group-hover:text-primary-500"></i>
+        Analytics
+      </a>
+  
+      <!-- Settings -->
+      <div x-data="{ open: false }">
+        <button
+          @click="open = !open"
+          class="w-full group flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:text-primary-600 hover:bg-primary-50"
+        >
+          <div class="flex items-center">
+            <i class="fas fa-cog mr-3 text-gray-400 group-hover:text-primary-500"></i>
+            설정
+          </div>
+          <i class="fas fa-chevron-down transition-transform duration-200" :class="{ 'rotate-180': open }"></i>
+        </button>
+  
+        <div x-show="open" x-transition class="ml-6 mt-1 space-y-1" x-cloak>
+          <a
+            href="/settings/general"
+            data-turbo-frame="main-content"
+            class="group flex items-center px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-primary-600 hover:bg-primary-50"
+          >
+            <i class="fas fa-sliders-h mr-3 text-gray-400 group-hover:text-primary-500"></i>
+            일반 설정
+          </a>
+          <a
+            href="/settings/users"
+            data-turbo-frame="main-content"
+            class="group flex items-center px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-primary-600 hover:bg-primary-50"
+          >
+            <i class="fas fa-users mr-3 text-gray-400 group-hover:text-primary-500"></i>
+            사용자 관리
+          </a>
+        </div>
+      </div>
+  
+    </nav>
+  
+    <!-- Sidebar Footer -->
+    <div class="p-4 border-t border-gray-200">
+      <div class="flex items-center space-x-3">
+        <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+          <i class="fas fa-user text-gray-600 text-sm"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium text-gray-900 truncate">Admin User</p>
+          <p class="text-xs text-gray-500 truncate">관리자</p>
+        </div>
+        <form action="/auth/logout" method="POST" data-turbo-method="post">
+          <button
+            type="submit"
+            class="p-1 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+            title="로그아웃"
+          >
+            <i class="fas fa-sign-out-alt"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Desktop Sidebar (Always Visible) -->
+  <div class="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
+    <div class="sidebar-base flex flex-col min-h-0 bg-white border-r border-gray-200">
+      <!-- Sidebar content same as above but without mobile controls -->
+      <div class="flex items-center h-16 px-4 border-b border-gray-200">
+        <div class="flex items-center">
+          <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
+            <i class="fas fa-crown text-white text-sm"></i>
+          </div>
+          <h1 class="ml-3 text-xl font-bold text-gray-900">Admin Panel</h1>
+        </div>
+      </div>
+  
+      <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
+        <!-- Same navigation menu as mobile -->
+        <a
+          href="/dashboard"
+          data-turbo-frame="main-content"
+          class="group flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:text-primary-600 hover:bg-primary-50"
+        >
+  
+          <i class="fas fa-tachometer-alt mr-3 text-gray-400 group-hover:text-primary-500"></i>
+          Dashboard⚡
+        </a>
+  
+        <!-- Interactive Development -->
+        <div x-data="{ open: true }">
+          <button
+            @click="open = !open"
+            class="w-full group flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:text-primary-600 hover:bg-primary-50"
+          >
+            <div class="flex items-center">
+              <i class="fas fa-code mr-3 text-gray-400 group-hover:text-primary-500"></i>
+              개발 도구
+            </div>
+            <i class="fas fa-chevron-down transition-transform duration-200" :class="{ 'rotate-180': open }"></i>
+          </button>
+  
+          <div x-show="open" x-transition class="ml-6 mt-1 space-y-1">
+            <a
+              href="/interactive-demo"
+              data-turbo-frame="main-content"
+              class="group flex items-center px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-primary-600 hover:bg-primary-50"
+            >
+              <i class="fas fa-play mr-3 text-gray-400 group-hover:text-primary-500"></i>
+              Interactive Demo
+            </a>
+            <a
+              href="/style-guide"
+              data-turbo-frame="main-content"
+              class="group flex items-center px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-primary-600 hover:bg-primary-50"
+            >
+              <i class="fas fa-palette mr-3 text-gray-400 group-hover:text-primary-500"></i>
+              Style Guide
+            </a>
+            <a
+              href="/ui-demo"
+              data-turbo-frame="main-content"
+              class="group flex items-center px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-primary-600 hover:bg-primary-50"
+            >
+              <i class="fas fa-sparkles mr-3 text-gray-400 group-hover:text-primary-500"></i>
+              UI Demo
+            </a>
+          </div>
+        </div>
+  
+        <div x-data="{ open: true }">
+          <button
+            @click="open = !open"
+            class="w-full group flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:text-primary-600 hover:bg-primary-50"
+          >
+            <div class="flex items-center">
+              <i class="fas fa-question-circle mr-3 text-gray-400 group-hover:text-primary-500"></i>
+              문의사항 관리
+            </div>
+            <i class="fas fa-chevron-down transition-transform duration-200" :class="{ 'rotate-180': open }"></i>
+          </button>
+  
+          <div x-show="open" x-transition class="ml-6 mt-1 space-y-1">
+            <a
+              href="/inquiry"
+              data-turbo-frame="main-content"
+              class="group flex items-center px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-primary-600 hover:bg-primary-50"
+            >
+              <i class="fas fa-list mr-3 text-gray-400 group-hover:text-primary-500"></i>
+              전체 문의
+            </a>
+            <a
+              href="/inquiry/new/create"
+              data-turbo-frame="main-content"
+              class="group flex items-center px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-primary-600 hover:bg-primary-50"
+            >
+              <i class="fas fa-plus mr-3 text-gray-400 group-hover:text-primary-500"></i>
+              새 문의 등록
+            </a>
+            <a
+              href="/inquiry?status=pending"
+              data-turbo-frame="main-content"
+              class="group flex items-center px-3 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-primary-600 hover:bg-primary-50"
+            >
+              <i class="fas fa-clock mr-3 text-gray-400 group-hover:text-primary-500"></i>
+              답변 대기
+              <span
+                class="ml-auto inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"
+              >
+                3
+              </span>
+            </a>
+          </div>
+        </div>
+  
+      </nav>
+  
+      <div class="p-4 border-t border-gray-200">
+        <div class="flex items-center space-x-3">
+          <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+            <i class="fas fa-user text-gray-600 text-sm"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-gray-900 truncate">Admin User</p>
+            <p class="text-xs text-gray-500 truncate">관리자</p>
+          </div>
+          <form action="/auth/logout" method="POST" data-turbo-method="post">
+            <button
+              type="submit"
+              class="p-1 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+              title="로그아웃"
+            >
+              <i class="fas fa-sign-out-alt"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>  
+  <!-- Main Content Area -->
+  <div class="md:pl-64 flex flex-col flex-1">
+    
+    <!-- Top Header -->
+    <!-- Top Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
+      <div class="px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+          
+          <!-- Left side -->
+          <div class="flex items-center">
+            <!-- Mobile menu button -->
+            <button 
+              @click="sidebarOpen = true"
+              class="md:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+            >
+              <i class="fas fa-bars"></i>
+            </button>
+            
+            <!-- Page title -->
+            <div class="ml-4 md:ml-0">
+              <h2 class="text-lg font-semibold text-gray-900">Dashboard</h2>
+            </div>
+          </div>
+    
+          <!-- Right side -->
+          <div class="flex items-center space-x-4">
+            
+            <!-- Notifications -->
+            <div class="relative" x-data="{ open: false }">
+              <button 
+                @click="open = !open"
+                class="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 relative"
+              >
+                <i class="fas fa-bell"></i>
+                <span class="absolute -top-1 -right-1 h-4 w-4 bg-red-500 rounded-full flex items-center justify-center text-xs text-white">
+                  3
+                </span>
+              </button>
+              
+              <!-- Notifications dropdown -->
+              <div 
+                x-show="open" 
+                @click.away="open = false"
+                x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="transform opacity-0 scale-95"
+                x-transition:enter-end="transform opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-75"
+                x-transition:leave-start="transform opacity-100 scale-100"
+                x-transition:leave-end="transform opacity-0 scale-95"
+                class="absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50"
+                x-cloak
+              >
+                <div class="py-1">
+                  <div class="px-4 py-2 border-b border-gray-200">
+                    <h3 class="text-sm font-medium text-gray-900">알림</h3>
+                  </div>
+                  
+                  <!-- Notification items -->
+                  <div class="max-h-64 overflow-y-auto">
+                    <a href="#" class="block px-4 py-3 hover:bg-gray-50 border-b border-gray-100">
+                      <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                          <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-question-circle text-blue-600 text-sm"></i>
+                          </div>
+                        </div>
+                        <div class="ml-3 flex-1">
+                          <p class="text-sm font-medium text-gray-900">새 문의사항</p>
+                          <p class="text-sm text-gray-500 truncate">웹사이트 접속 문제에 대한 문의가...</p>
+                          <p class="text-xs text-gray-400 mt-1">5분 전</p>
+                        </div>
+                      </div>
+                    </a>
+                    
+                    <a href="#" class="block px-4 py-3 hover:bg-gray-50 border-b border-gray-100">
+                      <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                          <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-check-circle text-green-600 text-sm"></i>
+                          </div>
+                        </div>
+                        <div class="ml-3 flex-1">
+                          <p class="text-sm font-medium text-gray-900">답변 완료</p>
+                          <p class="text-sm text-gray-500 truncate">결제 관련 문의에 대한 답변이...</p>
+                          <p class="text-xs text-gray-400 mt-1">1시간 전</p>
+                        </div>
+                      </div>
+                    </a>
+                    
+                    <a href="#" class="block px-4 py-3 hover:bg-gray-50">
+                      <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                          <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-exclamation-triangle text-yellow-600 text-sm"></i>
+                          </div>
+                        </div>
+                        <div class="ml-3 flex-1">
+                          <p class="text-sm font-medium text-gray-900">시스템 알림</p>
+                          <p class="text-sm text-gray-500 truncate">정기 점검이 예정되어 있습니다.</p>
+                          <p class="text-xs text-gray-400 mt-1">2시간 전</p>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                  
+                  <div class="px-4 py-2 border-t border-gray-200">
+                    <a href="/notifications" class="text-sm text-primary-600 hover:text-primary-700">
+                      모든 알림 보기
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+            <!-- Quick Actions -->
+            <div class="relative" x-data="{ open: false }">
+              <button 
+                @click="open = !open"
+                class="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+              >
+                <i class="fas fa-plus"></i>
+              </button>
+              
+              <!-- Quick actions dropdown -->
+              <div 
+                x-show="open" 
+                @click.away="open = false"
+                x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="transform opacity-0 scale-95"
+                x-transition:enter-end="transform opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-75"
+                x-transition:leave-start="transform opacity-100 scale-100"
+                x-transition:leave-end="transform opacity-0 scale-95"
+                class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50"
+                x-cloak
+              >
+                <div class="py-1">
+                  <a 
+                    href="/inquiry/create" 
+                    data-turbo-frame="main-content"
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    @click="open = false"
+                  >
+                    <i class="fas fa-plus mr-2"></i>
+                    새 문의 등록
+                  </a>
+                  <a 
+                    href="/users/create" 
+                    data-turbo-frame="main-content"
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    @click="open = false"
+                  >
+                    <i class="fas fa-user-plus mr-2"></i>
+                    사용자 추가
+                  </a>
+                  <a 
+                    href="/reports/generate" 
+                    data-turbo-frame="main-content"
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    @click="open = false"
+                  >
+                    <i class="fas fa-file-alt mr-2"></i>
+                    리포트 생성
+                  </a>
+                </div>
+              </div>
+            </div>
+    
+            <!-- User menu -->
+            <div class="relative" x-data="{ open: false }">
+              <button 
+                @click="open = !open"
+                class="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+              >
+                <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                  <i class="fas fa-user text-gray-600 text-sm"></i>
+                </div>
+                <span class="hidden sm:block text-sm font-medium text-gray-700">Admin</span>
+                <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+              </button>
+              
+              <!-- User dropdown -->
+              <div 
+                x-show="open" 
+                @click.away="open = false"
+                x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="transform opacity-0 scale-95"
+                x-transition:enter-end="transform opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-75"
+                x-transition:leave-start="transform opacity-100 scale-100"
+                x-transition:leave-end="transform opacity-0 scale-95"
+                class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50"
+                x-cloak
+              >
+                <div class="py-1">
+                  <a 
+                    href="/profile" 
+                    data-turbo-frame="main-content"
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    @click="open = false"
+                  >
+                    <i class="fas fa-user mr-2"></i>
+                    프로필
+                  </a>
+                  <a 
+                    href="/settings" 
+                    data-turbo-frame="main-content"
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    @click="open = false"
+                  >
+                    <i class="fas fa-cog mr-2"></i>
+                    설정
+                  </a>
+                  <div class="border-t border-gray-100"></div>
+                  <form action="/auth/logout" method="POST" data-turbo-method="post" class="block">
+                    <button 
+                      type="submit"
+                      class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      @click="open = false"
+                    >
+                      <i class="fas fa-sign-out-alt mr-2"></i>
+                      로그아웃
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </header>    
+    <!-- Main Content -->
+    <main class="flex-1">
+      <turbo-frame id="main-content">
+        <turbo-frame id="main-content">
+<div class="p-6 space-y-6">
+  <!-- Dashboard Header -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">대시보드</h1>
+      <p class="text-gray-600 mt-1">관리자 패널 개요 및 통계</p>
+    </div>
+    <div class="flex items-center space-x-3">
+      <button class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200">
+        <i class="fas fa-download mr-2"></i>
+        리포트 다운로드
+      </button>
+      <div class="text-sm text-gray-500">
+        마지막 업데이트: <span class="font-medium">5분 전</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    
+    <!-- Total Inquiries -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">전체 문의</p>
+          <p class="text-3xl font-bold text-gray-900 mt-2">1,247</p>
+          <div class="flex items-center mt-2">
+            <i class="fas fa-arrow-up text-green-500 text-sm"></i>
+            <span class="text-green-600 text-sm font-medium ml-1">12%</span>
+            <span class="text-gray-500 text-sm ml-2">전월 대비</span>
+          </div>
+        </div>
+        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+          <i class="fas fa-envelope text-blue-600 text-xl"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pending Inquiries -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">답변 대기</p>
+          <p class="text-3xl font-bold text-gray-900 mt-2">23</p>
+          <div class="flex items-center mt-2">
+            <i class="fas fa-arrow-down text-red-500 text-sm"></i>
+            <span class="text-red-600 text-sm font-medium ml-1">5%</span>
+            <span class="text-gray-500 text-sm ml-2">어제 대비</span>
+          </div>
+        </div>
+        <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+          <i class="fas fa-clock text-orange-600 text-xl"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Completion Rate -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">완료율</p>
+          <p class="text-3xl font-bold text-gray-900 mt-2">94%</p>
+          <div class="flex items-center mt-2">
+            <i class="fas fa-arrow-up text-green-500 text-sm"></i>
+            <span class="text-green-600 text-sm font-medium ml-1">2%</span>
+            <span class="text-gray-500 text-sm ml-2">이번 주</span>
+          </div>
+        </div>
+        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+          <i class="fas fa-check-circle text-green-600 text-xl"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Avg Response Time -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">평균 응답시간</p>
+          <p class="text-3xl font-bold text-gray-900 mt-2">2.4h</p>
+          <div class="flex items-center mt-2">
+            <i class="fas fa-arrow-down text-green-500 text-sm"></i>
+            <span class="text-green-600 text-sm font-medium ml-1">15min</span>
+            <span class="text-gray-500 text-sm ml-2">향상됨</span>
+          </div>
+        </div>
+        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+          <i class="fas fa-stopwatch text-purple-600 text-xl"></i>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Charts Section -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    
+    <!-- Chart Library Selector & Line Chart -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-lg font-semibold text-gray-900">문의 동향</h3>
+        <div class="flex items-center space-x-2">
+          <label class="text-sm text-gray-600">차트 라이브러리:</label>
+          <select 
+            id="chart-library-select" 
+            class="text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary-500"
+            onchange="updateChart(this.value)"
+          >
+            <option value="chartjs">Chart.js</option>
+            <option value="apexcharts">ApexCharts</option>
+            <option value="d3js">D3.js</option>
+            <option value="plotly">Plotly.js</option>
+            <option value="echarts">ECharts</option>
+          </select>
+        </div>
+      </div>
+      
+      <!-- Chart Container -->
+      <div id="trend-chart" class="h-80 flex items-center justify-center">
+        <div class="text-center">
+          <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+            <i class="fas fa-chart-line text-gray-400 text-xl"></i>
+          </div>
+          <p class="text-gray-500">차트 라이브러리 로딩 중...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status Distribution Pie Chart -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-lg font-semibold text-gray-900">문의 상태 분포</h3>
+        <div class="flex items-center space-x-2">
+          <select 
+            id="pie-chart-library-select" 
+            class="text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary-500"
+            onchange="updatePieChart(this.value)"
+          >
+            <option value="chartjs">Chart.js</option>
+            <option value="apexcharts">ApexCharts</option>
+            <option value="d3js">D3.js</option>
+            <option value="plotly">Plotly.js</option>
+            <option value="echarts">ECharts</option>
+          </select>
+        </div>
+      </div>
+      
+      <div id="status-pie-chart" class="h-80 flex items-center justify-center">
+        <div class="text-center">
+          <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+            <i class="fas fa-chart-pie text-gray-400 text-xl"></i>
+          </div>
+          <p class="text-gray-500">파이 차트 로딩 중...</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Recent Inquiries -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-semibold text-gray-900">최근 문의사항</h3>
+        <a 
+          href="/inquiry" 
+          data-turbo-frame="main-content"
+          class="text-primary-600 hover:text-primary-700 text-sm font-medium flex items-center"
+        >
+          전체 보기 <i class="fas fa-arrow-right ml-1 text-xs"></i>
+        </a>
+      </div>
+    </div>
+    
+    <div class="p-6">
+      <div class="space-y-4">
+        
+        <!-- Inquiry Item 1 -->
+        <div class="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+          <div class="flex-shrink-0">
+            <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-exclamation-triangle text-orange-600 text-sm"></i>
+            </div>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between">
+              <h4 class="text-sm font-medium text-gray-900 truncate">웹사이트 접속 문제</h4>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                높음
+              </span>
+            </div>
+            <p class="text-sm text-gray-600 mt-1 line-clamp-2">
+              웹사이트에 접속이 되지 않습니다. 로그인 페이지에서 계속 오류가 발생하고...
+            </p>
+            <div class="flex items-center mt-2 text-xs text-gray-500">
+              <i class="fas fa-user mr-1"></i>
+              <span class="mr-3">customer1@example.com</span>
+              <i class="fas fa-clock mr-1"></i>
+              <span>15분 전</span>
+            </div>
+          </div>
+          <div class="flex-shrink-0">
+            <a 
+              href="/inquiry/1" 
+              data-turbo-frame="main-content"
+              class="text-primary-600 hover:text-primary-700 text-sm"
+            >
+              답변하기
+            </a>
+          </div>
+        </div>
+
+        <!-- Inquiry Item 2 -->
+        <div class="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+          <div class="flex-shrink-0">
+            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-credit-card text-blue-600 text-sm"></i>
+            </div>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between">
+              <h4 class="text-sm font-medium text-gray-900 truncate">결제 관련 문의</h4>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                보통
+              </span>
+            </div>
+            <p class="text-sm text-gray-600 mt-1 line-clamp-2">
+              결제가 완료되었는데 제품이 배송되지 않았습니다. 확인 부탁드립니다.
+            </p>
+            <div class="flex items-center mt-2 text-xs text-gray-500">
+              <i class="fas fa-user mr-1"></i>
+              <span class="mr-3">customer2@example.com</span>
+              <i class="fas fa-clock mr-1"></i>
+              <span>1시간 전</span>
+            </div>
+          </div>
+          <div class="flex-shrink-0">
+            <a 
+              href="/inquiry/2" 
+              data-turbo-frame="main-content"
+              class="text-primary-600 hover:text-primary-700 text-sm"
+            >
+              답변하기
+            </a>
+          </div>
+        </div>
+
+        <!-- Inquiry Item 3 -->
+        <div class="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+          <div class="flex-shrink-0">
+            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-user-cog text-green-600 text-sm"></i>
+            </div>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between">
+              <h4 class="text-sm font-medium text-gray-900 truncate">계정 복구 요청</h4>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                완료
+              </span>
+            </div>
+            <p class="text-sm text-gray-600 mt-1 line-clamp-2">
+              계정 비밀번호를 잊어버렸습니다. 복구 도와주세요.
+            </p>
+            <div class="flex items-center mt-2 text-xs text-gray-500">
+              <i class="fas fa-user mr-1"></i>
+              <span class="mr-3">customer3@example.com</span>
+              <i class="fas fa-clock mr-1"></i>
+              <span>3시간 전</span>
+            </div>
+          </div>
+          <div class="flex-shrink-0">
+            <span class="text-green-600 text-sm font-medium">
+              <i class="fas fa-check mr-1"></i>완료됨
+            </span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Chart Scripts -->
+<script>
+// 더미 데이터
+const trendData = {
+  labels: ['1월', '2월', '3월', '4월', '5월', '6월'],
+  datasets: [{
+    label: '새 문의',
+    data: [65, 59, 80, 81, 56, 85],
+    borderColor: 'rgb(59, 130, 246)',
+    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+    tension: 0.3
+  }, {
+    label: '완료',
+    data: [28, 48, 40, 75, 52, 80],
+    borderColor: 'rgb(34, 197, 94)',
+    backgroundColor: 'rgba(34, 197, 94, 0.1)',
+    tension: 0.3
+  }]
+};
+
+const statusData = {
+  labels: ['대기', '진행중', '완료', '종료'],
+  datasets: [{
+    data: [23, 45, 156, 12],
+    backgroundColor: [
+      'rgb(249, 115, 22)',
+      'rgb(59, 130, 246)', 
+      'rgb(34, 197, 94)',
+      'rgb(107, 114, 128)'
+    ]
+  }]
+};
+
+// 라이브러리 로드 확인 및 차트 초기화
+function initializeCharts() {
+  // 라이브러리 로딩 상태 체크
+  const librariesLoaded = {
+    chartjs: typeof Chart !== 'undefined',
+    apexcharts: typeof ApexCharts !== 'undefined',
+    plotly: typeof Plotly !== 'undefined',
+    echarts: typeof echarts !== 'undefined',
+    d3js: typeof d3 !== 'undefined'
+  };
+  
+  console.log('라이브러리 로딩 상태:', librariesLoaded);
+  
+  // Chart.js가 로드되었으면 기본 차트 렌더링
+  if (librariesLoaded.chartjs) {
+    updateChart('chartjs');
+    updatePieChart('chartjs');
+  } else {
+    // Chart.js 로딩 실패시 대체 메시지
+    document.getElementById('trend-chart').innerHTML = '<div class="flex items-center justify-center h-80"><p class="text-gray-500">차트 라이브러리 로딩 중...</p></div>';
+    document.getElementById('status-pie-chart').innerHTML = '<div class="flex items-center justify-center h-80"><p class="text-gray-500">차트 라이브러리 로딩 중...</p></div>';
+  }
+}
+
+// DOM 로드 후 약간의 지연을 두고 초기화 (라이브러리 로딩 대기)
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(initializeCharts, 500);
+});
+
+// Turbo Frame 로드 시에도 차트 초기화
+document.addEventListener('turbo:frame-load', function(event) {
+  // 대시보드 프레임이 로드된 경우에만 실행
+  if (event.target.id === 'main-content') {
+    setTimeout(initializeCharts, 200);
+  }
+});
+
+// Turbo 방문 후에도 차트 초기화
+document.addEventListener('turbo:load', function() {
+  // 페이지가 대시보드인지 확인
+  if (window.location.pathname === '/dashboard') {
+    setTimeout(initializeCharts, 200);
+  }
+});
+
+function updateChart(library) {
+  const container = document.getElementById('trend-chart');
+  
+  switch(library) {
+    case 'chartjs':
+      renderChartJS(container, trendData);
+      break;
+    case 'apexcharts':
+      renderApexChart(container, trendData);
+      break;
+    case 'd3js':
+      renderD3Chart(container, trendData);
+      break;
+    case 'plotly':
+      renderPlotlyChart(container, trendData);
+      break;
+    case 'echarts':
+      renderEChart(container, trendData);
+      break;
+  }
+}
+
+function updatePieChart(library) {
+  const container = document.getElementById('status-pie-chart');
+  
+  switch(library) {
+    case 'chartjs':
+      renderChartJSPie(container, statusData);
+      break;
+    case 'apexcharts':
+      renderApexPieChart(container, statusData);
+      break;
+    case 'd3js':
+      renderD3PieChart(container, statusData);
+      break;
+    case 'plotly':
+      renderPlotlyPieChart(container, statusData);
+      break;
+    case 'echarts':
+      renderEChartPie(container, statusData);
+      break;
+  }
+}
+
+// Chart.js 구현
+function renderChartJS(container, data) {
+  const chartId = 'chartjs-line-' + Date.now();
+  container.innerHTML = `<canvas id="${chartId}"></canvas>`;
+  const ctx = document.getElementById(chartId).getContext('2d');
+  
+  new Chart(ctx, {
+    type: 'line',
+    data: data,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom'
+        }
+      }
+    }
+  });
+}
+
+function renderChartJSPie(container, data) {
+  const chartId = 'chartjs-pie-' + Date.now();
+  container.innerHTML = `<canvas id="${chartId}"></canvas>`;
+  const ctx = document.getElementById(chartId).getContext('2d');
+  
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: data,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom'
+        }
+      }
+    }
+  });
+}
+
+// ApexCharts 구현
+function renderApexChart(container, data) {
+  // ApexCharts 로딩을 기다리는 함수
+  function waitForApexCharts(callback, maxAttempts = 10) {
+    let attempts = 0;
+    const checkInterval = setInterval(() => {
+      attempts++;
+      if (typeof ApexCharts !== 'undefined') {
+        clearInterval(checkInterval);
+        callback();
+      } else if (attempts >= maxAttempts) {
+        clearInterval(checkInterval);
+        container.innerHTML = '<div class="flex items-center justify-center h-80"><p class="text-red-500">ApexCharts 로딩 실패</p></div>';
+      }
+    }, 100);
+  }
+  
+  function renderChart() {
+    const chartId = 'apex-line-' + Date.now();
+    container.innerHTML = `<div id="${chartId}" style="width: 100%; height: 320px;"></div>`;
+    
+    const apexOptions = {
+      series: data.datasets.map(dataset => ({
+        name: dataset.label,
+        data: dataset.data
+      })),
+      chart: {
+        type: 'line',
+        height: 320,
+        width: '100%',
+        toolbar: { show: false },
+        parentHeightOffset: 0,
+        animations: {
+          enabled: true,
+          easing: 'easeinout'
+        }
+      },
+      xaxis: {
+        categories: data.labels
+      },
+      colors: ['#3b82f6', '#22c55e'],
+      stroke: {
+        curve: 'smooth',
+        width: 3
+      },
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shadeIntensity: 1,
+          opacityFrom: 0.7,
+          opacityTo: 0.1
+        }
+      },
+      legend: {
+        position: 'bottom'
+      },
+      responsive: [{
+        breakpoint: 768,
+        options: {
+          chart: {
+            height: 250
+          }
+        }
+      }]
+    };
+    
+    try {
+      const chart = new ApexCharts(document.querySelector(`#${chartId}`), apexOptions);
+      chart.render();
+    } catch (error) {
+      console.error('ApexCharts 렌더링 오류:', error);
+      container.innerHTML = '<div class="flex items-center justify-center h-80"><p class="text-red-500">차트 로딩 실패: ' + error.message + '</p></div>';
+    }
+  }
+  
+  if (typeof ApexCharts === 'undefined') {
+    container.innerHTML = '<div class="flex items-center justify-center h-80"><p class="text-gray-500">ApexCharts 로딩 중...</p></div>';
+    waitForApexCharts(renderChart);
+  } else {
+    renderChart();
+  }
+}
+
+function renderApexPieChart(container, data) {
+  function waitForApexCharts(callback, maxAttempts = 10) {
+    let attempts = 0;
+    const checkInterval = setInterval(() => {
+      attempts++;
+      if (typeof ApexCharts !== 'undefined') {
+        clearInterval(checkInterval);
+        callback();
+      } else if (attempts >= maxAttempts) {
+        clearInterval(checkInterval);
+        container.innerHTML = '<div class="flex items-center justify-center h-80"><p class="text-red-500">ApexCharts 로딩 실패</p></div>';
+      }
+    }, 100);
+  }
+  
+  function renderChart() {
+    const chartId = 'apex-pie-' + Date.now();
+    container.innerHTML = `<div id="${chartId}" style="width: 100%; height: 320px;"></div>`;
+    
+    const apexOptions = {
+      series: data.datasets[0].data,
+      chart: {
+        type: 'donut',
+        height: 320,
+        width: '100%',
+        animations: {
+          enabled: true,
+          easing: 'easeinout'
+        }
+      },
+      labels: data.labels,
+      colors: data.datasets[0].backgroundColor,
+      legend: {
+        position: 'bottom'
+      },
+      plotOptions: {
+        pie: {
+          donut: {
+            size: '70%'
+          }
+        }
+      },
+      responsive: [{
+        breakpoint: 768,
+        options: {
+          chart: {
+            height: 250
+          }
+        }
+      }]
+    };
+    
+    try {
+      const chart = new ApexCharts(document.querySelector(`#${chartId}`), apexOptions);
+      chart.render();
+    } catch (error) {
+      console.error('ApexCharts 파이차트 렌더링 오류:', error);
+      container.innerHTML = '<div class="flex items-center justify-center h-80"><p class="text-red-500">차트 로딩 실패: ' + error.message + '</p></div>';
+    }
+  }
+  
+  if (typeof ApexCharts === 'undefined') {
+    container.innerHTML = '<div class="flex items-center justify-center h-80"><p class="text-gray-500">ApexCharts 로딩 중...</p></div>';
+    waitForApexCharts(renderChart);
+  } else {
+    renderChart();
+  }
+}
+
+// D3.js 구현
+function renderD3Chart(container, data) {
+  const chartId = 'd3-line-' + Date.now();
+  container.innerHTML = `<svg id="${chartId}" width="100%" height="320"></svg>`;
+  
+  const svg = d3.select(`#${chartId}`);
+  const margin = {top: 20, right: 30, bottom: 40, left: 50};
+  const width = container.clientWidth - margin.left - margin.right;
+  const height = 320 - margin.top - margin.bottom;
+  
+  const g = svg.append('g')
+    .attr('transform', `translate(${margin.left},${margin.top})`);
+  
+  const x = d3.scaleBand()
+    .rangeRound([0, width])
+    .padding(0.1)
+    .domain(data.labels);
+  
+  const y = d3.scaleLinear()
+    .rangeRound([height, 0])
+    .domain([0, d3.max(data.datasets.flatMap(d => d.data))]);
+  
+  const line = d3.line()
+    .x((d, i) => x(data.labels[i]) + x.bandwidth() / 2)
+    .y(d => y(d))
+    .curve(d3.curveMonotoneX);
+  
+  g.append('g')
+    .attr('transform', `translate(0,${height})`)
+    .call(d3.axisBottom(x));
+  
+  g.append('g')
+    .call(d3.axisLeft(y));
+  
+  data.datasets.forEach((dataset, i) => {
+    g.append('path')
+      .datum(dataset.data)
+      .attr('fill', 'none')
+      .attr('stroke', ['#3b82f6', '#22c55e'][i])
+      .attr('stroke-width', 2)
+      .attr('d', line);
+  });
+}
+
+function renderD3PieChart(container, data) {
+  const chartId = 'd3-pie-' + Date.now();
+  container.innerHTML = `<svg id="${chartId}" width="100%" height="320"></svg>`;
+  
+  const svg = d3.select(`#${chartId}`);
+  const width = container.clientWidth;
+  const height = 320;
+  const radius = Math.min(width, height) / 2 - 40;
+  
+  const g = svg.append('g')
+    .attr('transform', `translate(${width/2},${height/2})`);
+  
+  const color = d3.scaleOrdinal()
+    .domain(data.labels)
+    .range(data.datasets[0].backgroundColor);
+  
+  const pie = d3.pie()
+    .value(d => d);
+  
+  const path = d3.arc()
+    .outerRadius(radius - 10)
+    .innerRadius(radius / 2);
+  
+  const arcs = g.selectAll('.arc')
+    .data(pie(data.datasets[0].data))
+    .enter().append('g')
+    .attr('class', 'arc');
+  
+  arcs.append('path')
+    .attr('d', path)
+    .attr('fill', (d, i) => color(i));
+  
+  arcs.append('text')
+    .attr('transform', d => `translate(${path.centroid(d)})`)
+    .attr('dy', '0.35em')
+    .style('text-anchor', 'middle')
+    .style('font-size', '12px')
+    .style('fill', 'white')
+    .text((d, i) => data.labels[i]);
+}
+
+// Plotly.js 구현
+function renderPlotlyChart(container, data) {
+  if (typeof Plotly === 'undefined') {
+    container.innerHTML = '<div class="flex items-center justify-center h-80"><p class="text-gray-500">Plotly 로딩 중...</p></div>';
+    return;
+  }
+  
+  const chartId = 'plotly-line-' + Date.now();
+  container.innerHTML = `<div id="${chartId}" style="width: 100%; height: 320px; overflow: hidden;"></div>`;
+  
+  const traces = data.datasets.map(dataset => ({
+    x: data.labels,
+    y: dataset.data,
+    type: 'scatter',
+    mode: 'lines+markers',
+    name: dataset.label,
+    line: {
+      color: dataset.borderColor,
+      width: 3,
+      shape: 'spline'
+    }
+  }));
+  
+  const layout = {
+    height: 300,
+    width: container.clientWidth - 20,
+    margin: { t: 20, r: 20, b: 60, l: 40 },
+    showlegend: true,
+    legend: { 
+      orientation: 'h', 
+      y: -0.3,
+      x: 0.5,
+      xanchor: 'center'
+    },
+    autosize: false
+  };
+  
+  try {
+    Plotly.newPlot(chartId, traces, layout, {
+      responsive: true,
+      displayModeBar: false
+    });
+  } catch (error) {
+    console.error('Plotly 렌더링 오류:', error);
+    container.innerHTML = '<div class="flex items-center justify-center h-80"><p class="text-red-500">차트 로딩 실패</p></div>';
+  }
+}
+
+function renderPlotlyPieChart(container, data) {
+  if (typeof Plotly === 'undefined') {
+    container.innerHTML = '<div class="flex items-center justify-center h-80"><p class="text-gray-500">Plotly 로딩 중...</p></div>';
+    return;
+  }
+  
+  const chartId = 'plotly-pie-' + Date.now();
+  container.innerHTML = `<div id="${chartId}" style="width: 100%; height: 320px; overflow: hidden;"></div>`;
+  
+  const trace = {
+    values: data.datasets[0].data,
+    labels: data.labels,
+    type: 'pie',
+    hole: 0.4,
+    marker: {
+      colors: data.datasets[0].backgroundColor
+    }
+  };
+  
+  const layout = {
+    height: 300,
+    width: container.clientWidth - 20,
+    margin: { t: 20, r: 20, b: 60, l: 20 },
+    showlegend: true,
+    legend: { 
+      orientation: 'h', 
+      y: -0.3,
+      x: 0.5,
+      xanchor: 'center'
+    },
+    autosize: false
+  };
+  
+  try {
+    Plotly.newPlot(chartId, [trace], layout, {
+      responsive: true,
+      displayModeBar: false
+    });
+  } catch (error) {
+    console.error('Plotly 파이차트 렌더링 오류:', error);
+    container.innerHTML = '<div class="flex items-center justify-center h-80"><p class="text-red-500">차트 로딩 실패</p></div>';
+  }
+}
+
+// ECharts 구현
+function renderEChart(container, data) {
+  if (typeof echarts === 'undefined') {
+    container.innerHTML = '<div class="flex items-center justify-center h-80"><p class="text-gray-500">ECharts 로딩 중...</p></div>';
+    return;
+  }
+  
+  const chartId = 'echarts-line-' + Date.now();
+  container.innerHTML = `<div id="${chartId}" style="width: 100%; height: 320px;"></div>`;
+  
+  try {
+    const chart = echarts.init(document.getElementById(chartId));
+    
+    const option = {
+      tooltip: { trigger: 'axis' },
+      legend: { 
+        data: data.datasets.map(d => d.label),
+        bottom: 0
+      },
+      xAxis: {
+        type: 'category',
+        data: data.labels
+      },
+      yAxis: {
+        type: 'value'
+      },
+      grid: {
+        top: 20,
+        left: 40,
+        right: 20,
+        bottom: 60,
+        containLabel: true
+      },
+      series: data.datasets.map(dataset => ({
+        name: dataset.label,
+        type: 'line',
+        smooth: true,
+        data: dataset.data,
+        itemStyle: {
+          color: dataset.borderColor
+        },
+        areaStyle: {
+          color: {
+            type: 'linear',
+            x: 0, y: 0, x2: 0, y2: 1,
+            colorStops: [
+              { offset: 0, color: dataset.borderColor + '80' },
+              { offset: 1, color: dataset.borderColor + '10' }
+            ]
+          }
+        }
+      }))
+    };
+    
+    chart.setOption(option);
+    window.addEventListener('resize', () => chart.resize());
+  } catch (error) {
+    console.error('ECharts 렌더링 오류:', error);
+    container.innerHTML = '<div class="flex items-center justify-center h-80"><p class="text-red-500">차트 로딩 실패</p></div>';
+  }
+}
+
+function renderEChartPie(container, data) {
+  if (typeof echarts === 'undefined') {
+    container.innerHTML = '<div class="flex items-center justify-center h-80"><p class="text-gray-500">ECharts 로딩 중...</p></div>';
+    return;
+  }
+  
+  const chartId = 'echarts-pie-' + Date.now();
+  container.innerHTML = `<div id="${chartId}" style="width: 100%; height: 320px;"></div>`;
+  
+  try {
+    const chart = echarts.init(document.getElementById(chartId));
+    
+    const option = {
+      tooltip: { trigger: 'item' },
+      legend: {
+        bottom: 0,
+        data: data.labels
+      },
+      series: [{
+        type: 'pie',
+        radius: ['40%', '70%'],
+        center: ['50%', '45%'],
+        data: data.labels.map((label, i) => ({
+          value: data.datasets[0].data[i],
+          name: label,
+          itemStyle: {
+            color: data.datasets[0].backgroundColor[i]
+          }
+        }))
+      }]
+    };
+    
+    chart.setOption(option);
+    window.addEventListener('resize', () => chart.resize());
+  } catch (error) {
+    console.error('ECharts 파이차트 렌더링 오류:', error);
+    container.innerHTML = '<div class="flex items-center justify-center h-80"><p class="text-red-500">차트 로딩 실패</p></div>';
+  }
+}
+</script>
+
+</div>
+</turbo-frame>
+      </turbo-frame>
+    </main>
+    
+    <!-- Footer -->
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-auto">
+      <div class="px-4 py-6 sm:px-6 lg:px-8">
+        <div class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
+          
+          <!-- Left side - Copyright -->
+          <div class="text-sm text-gray-500">
+            © 2024 Admin Panel. Built with 
+            <span class="text-primary-600 font-medium">NestJS</span>, 
+            <span class="text-primary-600 font-medium">Handlebars</span>, 
+            <span class="text-primary-600 font-medium">Turbo</span> & 
+            <span class="text-primary-600 font-medium">Tailwind CSS</span>
+          </div>
+          
+          <!-- Right side - Links and Info -->
+          <div class="flex items-center space-x-6">
+            
+            <!-- System Status -->
+            <div class="flex items-center space-x-2 text-sm">
+              <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span class="text-gray-600">시스템 정상</span>
+            </div>
+            
+            <!-- Version -->
+            <div class="text-sm text-gray-500">
+              v1.0.0
+            </div>
+            
+            <!-- Quick Links -->
+            <div class="flex items-center space-x-4 text-sm">
+              <a href="/help" class="text-gray-500 hover:text-primary-600 transition-colors duration-200">
+                도움말
+              </a>
+              <a href="/support" class="text-gray-500 hover:text-primary-600 transition-colors duration-200">
+                지원
+              </a>
+              <a href="/about" class="text-gray-500 hover:text-primary-600 transition-colors duration-200">
+                정보
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Additional Footer Info (Mobile responsive) -->
+        <div class="mt-4 pt-4 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
+          
+          <!-- Server Info -->
+          <div class="text-xs text-gray-400 flex items-center space-x-4">
+            <span>서버 시간: <time id="server-time"></time></span>
+            <span>•</span>
+            <span>접속자: <span id="online-users">12</span>명</span>
+            <span>•</span>
+            <span>업타임: <span id="uptime">2일 14시간</span></span>
+          </div>
+          
+          <!-- Theme Toggle -->
+          <div class="flex items-center space-x-2" x-data="{ darkMode: false }">
+            <span class="text-xs text-gray-400">테마:</span>
+            <button 
+              @click="darkMode = !darkMode"
+              class="p-1 rounded text-gray-400 hover:text-gray-600 transition-colors duration-200"
+              :class="{ 'text-yellow-500': darkMode }"
+            >
+              <i class="fas fa-sun text-xs" x-show="!darkMode"></i>
+              <i class="fas fa-moon text-xs" x-show="darkMode" x-cloak></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </footer>
+    
+    <!-- Footer Scripts -->
+    <script>
+      // Update server time
+      function updateServerTime() {
+        const timeElement = document.getElementById('server-time');
+        if (timeElement) {
+          timeElement.textContent = new Date().toLocaleString('ko-KR');
+        }
+      }
+      
+      // Update every minute
+      setInterval(updateServerTime, 60000);
+      updateServerTime();
+    
+      // Simulate online users update
+      function updateOnlineUsers() {
+        const usersElement = document.getElementById('online-users');
+        if (usersElement) {
+          const randomUsers = Math.floor(Math.random() * 20) + 10;
+          usersElement.textContent = randomUsers;
+        }
+      }
+      
+      setInterval(updateOnlineUsers, 30000);
+    </script>    
+  </div>
+
+  <!-- Chart Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  
+  <!-- Socket.io for dev reload (development only) -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/public/js/dev-reload.js"></script>
+  <script src="/public/js/class-helper.js"></script>
+  <script src="/public/js/interactive-dev.js"></script>
+  
+  <!-- Error Handling & UI Systems -->
+  <script src="/public/js/toast.js"></script>
+  <script src="/public/js/modal.js"></script>
+  <script src="/public/js/alert.js"></script>
+  <script src="/public/js/loading.js"></script>
+  <script src="/public/js/debounce.js"></script>
+  <script src="/public/js/api.js"></script>
+  
+  <!-- Custom Scripts -->
+  <script src="/public/js/app.js"></script>
+</body>
+</html>

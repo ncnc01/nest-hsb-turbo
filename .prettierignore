@@ -1,0 +1,14 @@
+# Prettier ignore patterns
+node_modules/
+dist/
+build/
+logs/
+*.log
+.env*
+
+# HBS templates with embedded scripts
+views/partials/sidebar.hbs
+
+# Public assets
+public/js/
+public/css/

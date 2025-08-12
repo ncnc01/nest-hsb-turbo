@@ -1,0 +1,1281 @@
+<!-- Hero Section with Design Theme -->
+<div class="relative overflow-hidden bg-gradient-to-br from-purple-50 via-white to-pink-50">
+  <div class="absolute inset-0">
+    <div class="absolute inset-0 bg-gradient-to-r from-purple-100/20 to-pink-100/20"></div>
+    <!-- Decorative elements -->
+    <div class="absolute top-20 left-10 w-72 h-72 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse"></div>
+    <div class="absolute top-40 right-10 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse" style="animation-delay: 1s"></div>
+    <div class="absolute bottom-20 left-1/2 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse" style="animation-delay: 2s"></div>
+    
+    <svg class="absolute bottom-0 left-0 right-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+      <path fill="white" fill-opacity="1" d="M0,160L48,144C96,128,192,96,288,106.7C384,117,480,171,576,186.7C672,203,768,181,864,154.7C960,128,1056,96,1152,101.3C1248,107,1344,149,1392,170.7L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+    </svg>
+  </div>
+  
+  <div class="relative content-wrapper py-20">
+    <div class="text-center">
+      <div class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 text-sm font-medium rounded-full mb-6">
+        <i class="fas fa-palette mr-2"></i>
+        Design System Guide
+      </div>
+      <h1 class="text-6xl font-bold text-gray-900 mb-4">
+        <span class="bg-gradient-to-r from-purple-600 via-pink-500 to-blue-600 bg-clip-text text-transparent">Style</span>
+        <span class="text-gray-900">Guide</span>
+      </h1>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+        완벽하게 디자인된 컴포넌트와 유틸리티 클래스들로 일관되고 아름다운 UI를 구축하세요
+      </p>
+      <div class="flex items-center justify-center gap-6">
+        <div class="flex items-center text-purple-600">
+          <i class="fas fa-cube mr-2"></i>
+          <span class="text-sm font-medium">50+ Components</span>
+        </div>
+        <div class="flex items-center text-pink-600">
+          <i class="fas fa-swatchbook mr-2"></i>
+          <span class="text-sm font-medium">Design Tokens</span>
+        </div>
+        <div class="flex items-center text-blue-600">
+          <i class="fas fa-code mr-2"></i>
+          <span class="text-sm font-medium">HBS Helpers</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="content-wrapper py-12">
+
+  <!-- Quick Navigation -->
+  <div class="mb-16">
+    <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">
+        <i class="fas fa-compass mr-3 text-purple-500"></i>
+        빠른 네비게이션
+      </h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+        <a href="#buttons" class="group text-center p-4 rounded-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200">
+          <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
+            <i class="fas fa-mouse-pointer text-white"></i>
+          </div>
+          <span class="text-sm font-medium text-gray-700">Buttons</span>
+        </a>
+        <a href="#forms" class="group text-center p-4 rounded-xl hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 transition-all duration-200">
+          <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
+            <i class="fas fa-edit text-white"></i>
+          </div>
+          <span class="text-sm font-medium text-gray-700">Forms</span>
+        </a>
+        <a href="#cards" class="group text-center p-4 rounded-xl hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 transition-all duration-200">
+          <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
+            <i class="fas fa-layer-group text-white"></i>
+          </div>
+          <span class="text-sm font-medium text-gray-700">Cards</span>
+        </a>
+        <a href="#navigation" class="group text-center p-4 rounded-xl hover:bg-gradient-to-r hover:from-orange-50 hover:to-red-50 transition-all duration-200">
+          <div class="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
+            <i class="fas fa-compass text-white"></i>
+          </div>
+          <span class="text-sm font-medium text-gray-700">Navigation</span>
+        </a>
+        <a href="#badges" class="group text-center p-4 rounded-xl hover:bg-gradient-to-r hover:from-yellow-50 hover:to-orange-50 transition-all duration-200">
+          <div class="w-12 h-12 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
+            <i class="fas fa-tag text-white"></i>
+          </div>
+          <span class="text-sm font-medium text-gray-700">Badges</span>
+        </a>
+        <a href="#layout" class="group text-center p-4 rounded-xl hover:bg-gradient-to-r hover:from-teal-50 hover:to-cyan-50 transition-all duration-200">
+          <div class="w-12 h-12 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
+            <i class="fas fa-th-large text-white"></i>
+          </div>
+          <span class="text-sm font-medium text-gray-700">Layout</span>
+        </a>
+        <a href="#helpers" class="group text-center p-4 rounded-xl hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 transition-all duration-200">
+          <div class="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
+            <i class="fas fa-magic text-white"></i>
+          </div>
+          <span class="text-sm font-medium text-gray-700">Helpers</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Component Sections -->
+  <div class="space-y-12">
+
+    <!-- Buttons Section -->
+    <section id="buttons" class="relative scroll-mt-8">
+      <div class="absolute inset-0 bg-gradient-to-r from-blue-50/30 to-indigo-50/30 rounded-3xl -z-10"></div>
+      <div class="bg-white/70 backdrop-blur-sm border border-blue-100/50 shadow-xl rounded-3xl overflow-hidden">
+        <div class="bg-gradient-to-r from-blue-500 to-indigo-500 px-8 py-6">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center">
+                <i class="fas fa-mouse-pointer text-white text-xl"></i>
+              </div>
+              <div>
+                <h2 class="text-3xl font-bold text-white">Button Components</h2>
+                <p class="text-blue-100">다양한 스타일과 크기의 버튼 컴포넌트</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="toggleView('buttons-example')" class="view-toggle active bg-white/20 text-white px-4 py-2 rounded-lg font-medium hover:bg-white/30 transition-colors">
+                <i class="fas fa-eye mr-2"></i>예시 보기
+              </button>
+              <button onclick="toggleView('buttons-code')" class="view-toggle bg-white/10 text-white/70 px-4 py-2 rounded-lg font-medium hover:bg-white/20 transition-colors">
+                <i class="fas fa-code mr-2"></i>코드 보기
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="p-8">
+          <!-- Example View -->
+          <div id="buttons-example" class="view-content">
+            <!-- Button Variants -->
+            <div class="mb-10">
+              <h3 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                <span class="w-2 h-8 bg-gradient-to-b from-blue-500 to-indigo-500 rounded-full mr-3"></span>
+                Button Variants
+              </h3>
+              <div class="flex flex-wrap gap-4 mb-6">
+                <button class="btn btn-primary transform hover:scale-105 transition-transform">Primary</button>
+                <button class="btn btn-secondary transform hover:scale-105 transition-transform">Secondary</button>
+                <button class="btn btn-success transform hover:scale-105 transition-transform">Success</button>
+                <button class="btn btn-danger transform hover:scale-105 transition-transform">Danger</button>
+                <button class="btn btn-warning transform hover:scale-105 transition-transform">Warning</button>
+                <button class="btn btn-outline transform hover:scale-105 transition-transform">Outline</button>
+                <button class="btn btn-ghost transform hover:scale-105 transition-transform">Ghost</button>
+              </div>
+            </div>
+            
+            <!-- Button Sizes -->
+            <div class="mb-8">
+              <h3 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                <span class="w-2 h-8 bg-gradient-to-b from-blue-500 to-indigo-500 rounded-full mr-3"></span>
+                Button Sizes
+              </h3>
+              <div class="flex flex-wrap items-center gap-4 mb-6">
+                <button class="btn btn-primary btn-xs">Extra Small</button>
+                <button class="btn btn-primary btn-sm">Small</button>
+                <button class="btn btn-primary">Default</button>
+                <button class="btn btn-primary btn-lg">Large</button>
+                <button class="btn btn-primary btn-xl">Extra Large</button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Code View -->
+          <div id="buttons-code" class="view-content hidden">
+            <div class="bg-gray-900 rounded-2xl p-6 border border-gray-200">
+              <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-2">
+                  <div class="flex gap-1">
+                    <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                    <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                  </div>
+                  <span class="text-gray-400 text-sm font-mono">buttons.hbs</span>
+                </div>
+                <button onclick="copyCode('buttons-code-content')" class="text-gray-400 hover:text-white text-sm flex items-center gap-1">
+                  <i class="fas fa-copy"></i>
+                  Copy
+                </button>
+              </div>
+              <div id="buttons-code-content">
+                <pre class="text-blue-400 text-sm font-mono leading-relaxed"><code>&lt;!-- Button Variants --&gt;
+&lt;button class="btn btn-primary"&gt;Primary&lt;/button&gt;
+&lt;button class="btn btn-secondary"&gt;Secondary&lt;/button&gt;
+&lt;button class="btn btn-success"&gt;Success&lt;/button&gt;
+&lt;button class="btn btn-danger"&gt;Danger&lt;/button&gt;
+&lt;button class="btn btn-warning"&gt;Warning&lt;/button&gt;
+&lt;button class="btn btn-outline"&gt;Outline&lt;/button&gt;
+&lt;button class="btn btn-ghost"&gt;Ghost&lt;/button&gt;
+
+&lt;!-- Button Sizes --&gt;
+&lt;button class="btn btn-primary btn-xs"&gt;Extra Small&lt;/button&gt;
+&lt;button class="btn btn-primary btn-sm"&gt;Small&lt;/button&gt;
+&lt;button class="btn btn-primary"&gt;Default&lt;/button&gt;
+&lt;button class="btn btn-primary btn-lg"&gt;Large&lt;/button&gt;
+&lt;button class="btn btn-primary btn-xl"&gt;Extra Large&lt;/button&gt;
+
+&lt;!-- With Handlebars Helpers --&gt;
+&lt;button class="{{btn 'primary' 'lg'}}"&gt;Large Primary&lt;/button&gt;
+&lt;button class="{{btn variant='danger' size='sm'}}"&gt;Small Danger&lt;/button&gt;</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Forms Section -->
+    <section id="forms" class="relative scroll-mt-8">
+      <div class="absolute inset-0 bg-gradient-to-r from-green-50/30 to-emerald-50/30 rounded-3xl -z-10"></div>
+      <div class="bg-white/70 backdrop-blur-sm border border-green-100/50 shadow-xl rounded-3xl overflow-hidden">
+        <div class="bg-gradient-to-r from-green-500 to-emerald-500 px-8 py-6">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center">
+                <i class="fas fa-edit text-white text-xl"></i>
+              </div>
+              <div>
+                <h2 class="text-3xl font-bold text-white">Form Components</h2>
+                <p class="text-green-100">사용자 입력을 위한 폼 컴포넌트들</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="toggleView('forms-example')" class="view-toggle active bg-white/20 text-white px-4 py-2 rounded-lg font-medium hover:bg-white/30 transition-colors">
+                <i class="fas fa-eye mr-2"></i>예시 보기
+              </button>
+              <button onclick="toggleView('forms-code')" class="view-toggle bg-white/10 text-white/70 px-4 py-2 rounded-lg font-medium hover:bg-white/20 transition-colors">
+                <i class="fas fa-code mr-2"></i>코드 보기
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="p-8">
+          <!-- Example View -->
+          <div id="forms-example" class="view-content">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <!-- Left Column - Form Controls -->
+              <div class="space-y-6">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                  <span class="w-2 h-8 bg-gradient-to-b from-green-500 to-emerald-500 rounded-full mr-3"></span>
+                  Form Controls
+                </h3>
+                
+                <div class="space-y-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">일반 입력 필드</label>
+                    <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="텍스트를 입력하세요">
+                  </div>
+                  
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">오류 상태</label>
+                    <input type="text" class="w-full px-3 py-2 border border-red-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent bg-red-50" placeholder="오류 상태" value="잘못된 입력">
+                    <p class="text-red-600 text-sm mt-1">유효하지 않은 입력입니다.</p>
+                  </div>
+                  
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Select 박스</label>
+                    <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                      <option>옵션 1</option>
+                      <option>옵션 2</option>
+                      <option>옵션 3</option>
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Textarea</label>
+                    <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" rows="3" placeholder="내용을 입력하세요"></textarea>
+                    <p class="text-gray-500 text-sm mt-1">도움말 텍스트입니다.</p>
+                  </div>
+                  
+                  <div class="flex items-center gap-4">
+                    <label class="flex items-center gap-2">
+                      <input type="checkbox" class="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500">
+                      <span class="text-sm text-gray-700">체크박스</span>
+                    </label>
+                    <label class="flex items-center gap-2">
+                      <input type="radio" name="radio-group" class="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500">
+                      <span class="text-sm text-gray-700">라디오</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Right Column - More Examples -->
+              <div class="space-y-6">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                  <span class="w-2 h-8 bg-gradient-to-b from-green-500 to-emerald-500 rounded-full mr-3"></span>
+                  Advanced Forms
+                </h3>
+                
+                <div class="space-y-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">File Upload</label>
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-green-400 transition-colors">
+                      <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                      <p class="text-gray-500">파일을 드래그하거나 클릭하여 업로드</p>
+                      <input type="file" class="hidden">
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Range Slider</label>
+                    <input type="range" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
+                    <div class="flex justify-between text-sm text-gray-500 mt-1">
+                      <span>0</span>
+                      <span>100</span>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Switch Toggle</label>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" value="" class="sr-only peer">
+                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                      <span class="ml-3 text-sm text-gray-700">알림 받기</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Code View -->
+          <div id="forms-code" class="view-content hidden">
+            <div class="bg-gray-900 rounded-2xl p-6">
+              <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-2">
+                  <div class="flex gap-1">
+                    <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                    <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                  </div>
+                  <span class="text-gray-400 text-sm font-mono">forms.hbs</span>
+                </div>
+                <button onclick="copyCode('forms-code-content')" class="text-gray-400 hover:text-white text-sm flex items-center gap-1">
+                  <i class="fas fa-copy"></i>
+                  Copy
+                </button>
+              </div>
+              <div id="forms-code-content">
+                <pre class="text-green-400 text-sm font-mono leading-relaxed"><code>&lt;!-- 기본 입력 필드 --&gt;
+&lt;div&gt;
+  &lt;label class="block text-sm font-medium text-gray-700 mb-2"&gt;
+    라벨
+  &lt;/label&gt;
+  &lt;input type="text" 
+         class="w-full px-3 py-2 border border-gray-300 rounded-lg 
+                focus:outline-none focus:ring-2 focus:ring-green-500 
+                focus:border-transparent" 
+         placeholder="입력하세요"&gt;
+&lt;/div&gt;
+
+&lt;!-- 오류 상태 --&gt;
+&lt;input type="text" 
+       class="w-full px-3 py-2 border border-red-300 rounded-lg 
+              focus:outline-none focus:ring-2 focus:ring-red-500 
+              focus:border-transparent bg-red-50"&gt;
+&lt;p class="text-red-600 text-sm mt-1"&gt;오류 메시지&lt;/p&gt;
+
+&lt;!-- Select 박스 --&gt;
+&lt;select class="w-full px-3 py-2 border border-gray-300 rounded-lg"&gt;
+  &lt;option&gt;옵션 1&lt;/option&gt;
+  &lt;option&gt;옵션 2&lt;/option&gt;
+&lt;/select&gt;
+
+&lt;!-- Handlebars 헬퍼 사용 --&gt;
+&lt;input type="text" class="{{formInput}}"&gt;
+&lt;input type="text" class="{{formInput error=true}}"&gt;</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cards Section -->
+    <section id="cards" class="relative scroll-mt-8">
+      <div class="absolute inset-0 bg-gradient-to-r from-purple-50/30 to-pink-50/30 rounded-3xl -z-10"></div>
+      <div class="bg-white/70 backdrop-blur-sm border border-purple-100/50 shadow-xl rounded-3xl overflow-hidden">
+        <div class="bg-gradient-to-r from-purple-500 to-pink-500 px-8 py-6">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center">
+                <i class="fas fa-layer-group text-white text-xl"></i>
+              </div>
+              <div>
+                <h2 class="text-3xl font-bold text-white">Card Components</h2>
+                <p class="text-purple-100">콘텐츠를 구조화하는 카드 컴포넌트</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="toggleView('cards-example')" class="view-toggle active bg-white/20 text-white px-4 py-2 rounded-lg font-medium hover:bg-white/30 transition-colors">
+                <i class="fas fa-eye mr-2"></i>예시 보기
+              </button>
+              <button onclick="toggleView('cards-code')" class="view-toggle bg-white/10 text-white/70 px-4 py-2 rounded-lg font-medium hover:bg-white/20 transition-colors">
+                <i class="fas fa-code mr-2"></i>코드 보기
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="p-8">
+          <!-- Example View -->
+          <div id="cards-example" class="view-content">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <!-- Basic Card -->
+              <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden transform hover:scale-105 transition-all duration-200">
+                <div class="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-4">
+                  <h3 class="text-lg font-medium flex items-center">
+                    <i class="fas fa-star mr-2"></i>
+                    기본 카드
+                  </h3>
+                </div>
+                <div class="p-6">
+                  <p class="text-gray-600 mb-4">기본 카드 컴포넌트입니다. 헤더, 바디, 푸터로 구성됩니다.</p>
+                  <div class="flex items-center gap-2 text-sm text-gray-500">
+                    <i class="fas fa-calendar mr-1"></i>
+                    2024.01.15
+                  </div>
+                </div>
+                <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
+                  <button class="btn btn-primary btn-sm">
+                    <i class="fas fa-arrow-right mr-1"></i>
+                    자세히 보기
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Compact Card -->
+              <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6 transform hover:scale-105 transition-all duration-200">
+                <div class="flex items-start gap-4">
+                  <div class="w-12 h-12 bg-gradient-to-r from-green-400 to-teal-400 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-leaf text-white"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-lg font-medium mb-2">컴팩트 카드</h3>
+                    <p class="text-gray-600 text-sm mb-3">간단한 내용을 표시하는 컴팩트 카드입니다.</p>
+                    <div class="flex gap-2">
+                      <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full font-medium">새로움</span>
+                      <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full font-medium">인기</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Elevated Card -->
+              <div class="bg-white rounded-xl shadow-2xl border border-gray-100 p-6 text-center transform hover:scale-105 transition-all duration-200">
+                <div class="w-16 h-16 bg-gradient-to-r from-orange-400 to-red-400 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <i class="fas fa-rocket text-white text-xl"></i>
+                </div>
+                <h3 class="text-lg font-medium mb-2">엘리베이트 카드</h3>
+                <p class="text-gray-600 text-sm mb-4">강조된 그림자 효과를 가진 카드입니다.</p>
+                <div class="flex justify-center gap-3">
+                  <button class="btn btn-outline btn-sm">취소</button>
+                  <button class="btn btn-primary btn-sm">확인</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Code View -->
+          <div id="cards-code" class="view-content hidden">
+            <div class="bg-gray-900 rounded-2xl p-6">
+              <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-2">
+                  <div class="flex gap-1">
+                    <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                    <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                  </div>
+                  <span class="text-gray-400 text-sm font-mono">cards.hbs</span>
+                </div>
+                <button onclick="copyCode('cards-code-content')" class="text-gray-400 hover:text-white text-sm flex items-center gap-1">
+                  <i class="fas fa-copy"></i>
+                  Copy
+                </button>
+              </div>
+              <div id="cards-code-content">
+                <pre class="text-purple-400 text-sm font-mono leading-relaxed"><code>&lt;!-- 기본 카드 --&gt;
+&lt;div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden"&gt;
+  &lt;div class="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-4"&gt;
+    &lt;h3 class="text-lg font-medium"&gt;제목&lt;/h3&gt;
+  &lt;/div&gt;
+  &lt;div class="p-6"&gt;
+    &lt;p class="text-gray-600"&gt;내용&lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class="px-6 py-4 bg-gray-50 border-t border-gray-200"&gt;
+    &lt;button class="btn btn-primary btn-sm"&gt;액션&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- 컴팩트 카드 --&gt;
+&lt;div class="bg-white rounded-xl shadow-md border border-gray-200 p-6"&gt;
+  &lt;div class="flex items-start gap-4"&gt;
+    &lt;div class="w-12 h-12 bg-green-400 rounded-xl flex items-center justify-center"&gt;
+      &lt;i class="fas fa-leaf text-white"&gt;&lt;/i&gt;
+    &lt;/div&gt;
+    &lt;div&gt;
+      &lt;h3&gt;제목&lt;/h3&gt;
+      &lt;p&gt;내용&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- Handlebars 헬퍼 사용 --&gt;
+&lt;div class="{{card}}"&gt;...&lt;/div&gt;
+&lt;div class="{{card 'compact'}}"&gt;...&lt;/div&gt;
+&lt;div class="{{card 'elevated'}}"&gt;...&lt;/div&gt;</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Badges & Alerts Section -->
+    <section id="badges" class="relative scroll-mt-8">
+      <div class="absolute inset-0 bg-gradient-to-r from-yellow-50/30 to-orange-50/30 rounded-3xl -z-10"></div>
+      <div class="bg-white/70 backdrop-blur-sm border border-yellow-100/50 shadow-xl rounded-3xl overflow-hidden">
+        <div class="bg-gradient-to-r from-yellow-500 to-orange-500 px-8 py-6">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center">
+                <i class="fas fa-tag text-white text-xl"></i>
+              </div>
+              <div>
+                <h2 class="text-3xl font-bold text-white">Badges & Alerts</h2>
+                <p class="text-yellow-100">상태 표시와 알림을 위한 컴포넌트</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="toggleView('badges-example')" class="view-toggle active bg-white/20 text-white px-4 py-2 rounded-lg font-medium hover:bg-white/30 transition-colors">
+                <i class="fas fa-eye mr-2"></i>예시 보기
+              </button>
+              <button onclick="toggleView('badges-code')" class="view-toggle bg-white/10 text-white/70 px-4 py-2 rounded-lg font-medium hover:bg-white/20 transition-colors">
+                <i class="fas fa-code mr-2"></i>코드 보기
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="p-8">
+          <!-- Example View -->
+          <div id="badges-example" class="view-content">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <!-- Badges -->
+              <div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                  <span class="w-2 h-8 bg-gradient-to-b from-yellow-500 to-orange-500 rounded-full mr-3"></span>
+                  Badges
+                </h3>
+                <div class="flex flex-wrap gap-3 mb-6">
+                  <span class="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full font-medium transform hover:scale-110 transition-transform">Primary</span>
+                  <span class="px-3 py-1 bg-gray-100 text-gray-800 text-sm rounded-full font-medium transform hover:scale-110 transition-transform">Secondary</span>
+                  <span class="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full font-medium transform hover:scale-110 transition-transform">Success</span>
+                  <span class="px-3 py-1 bg-red-100 text-red-800 text-sm rounded-full font-medium transform hover:scale-110 transition-transform">Danger</span>
+                  <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm rounded-full font-medium transform hover:scale-110 transition-transform">Warning</span>
+                  <span class="px-3 py-1 bg-cyan-100 text-cyan-800 text-sm rounded-full font-medium transform hover:scale-110 transition-transform">Info</span>
+                </div>
+                
+                <!-- Badge with Icons -->
+                <div class="space-y-3">
+                  <div class="flex items-center gap-3">
+                    <span class="text-gray-700">사용자 상태:</span>
+                    <span class="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full font-medium flex items-center gap-1">
+                      <i class="fas fa-check text-xs"></i>
+                      온라인
+                    </span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="text-gray-700">알림:</span>
+                    <span class="px-3 py-1 bg-red-100 text-red-800 text-sm rounded-full font-medium flex items-center gap-1">
+                      <i class="fas fa-exclamation text-xs"></i>
+                      5개 대기중
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Alerts -->
+              <div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                  <span class="w-2 h-8 bg-gradient-to-b from-yellow-500 to-orange-500 rounded-full mr-3"></span>
+                  Alerts
+                </h3>
+                <div class="space-y-4">
+                  <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg flex items-start gap-3">
+                    <i class="fas fa-check-circle text-green-600 mt-0.5"></i>
+                    <div>
+                      <strong>성공!</strong> 작업이 성공적으로 완료되었습니다.
+                    </div>
+                  </div>
+                  <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-start gap-3">
+                    <i class="fas fa-times-circle text-red-600 mt-0.5"></i>
+                    <div>
+                      <strong>오류!</strong> 문제가 발생했습니다. 다시 시도해주세요.
+                    </div>
+                  </div>
+                  <div class="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-lg flex items-start gap-3">
+                    <i class="fas fa-exclamation-triangle text-yellow-600 mt-0.5"></i>
+                    <div>
+                      <strong>주의!</strong> 이 작업은 되돌릴 수 없습니다.
+                    </div>
+                  </div>
+                  <div class="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg flex items-start gap-3">
+                    <i class="fas fa-info-circle text-blue-600 mt-0.5"></i>
+                    <div>
+                      <strong>정보:</strong> 새로운 기능이 추가되었습니다.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Code View -->
+          <div id="badges-code" class="view-content hidden">
+            <div class="bg-gray-900 rounded-2xl p-6">
+              <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-2">
+                  <div class="flex gap-1">
+                    <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                    <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                  </div>
+                  <span class="text-gray-400 text-sm font-mono">badges-alerts.hbs</span>
+                </div>
+                <button onclick="copyCode('badges-code-content')" class="text-gray-400 hover:text-white text-sm flex items-center gap-1">
+                  <i class="fas fa-copy"></i>
+                  Copy
+                </button>
+              </div>
+              <div id="badges-code-content">
+                <pre class="text-yellow-400 text-sm font-mono leading-relaxed"><code>&lt;!-- Badges --&gt;
+&lt;span class="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full font-medium"&gt;
+  Primary
+&lt;/span&gt;
+&lt;span class="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full font-medium"&gt;
+  Success
+&lt;/span&gt;
+
+&lt;!-- 아이콘과 함께 --&gt;
+&lt;span class="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full font-medium flex items-center gap-1"&gt;
+  &lt;i class="fas fa-check text-xs"&gt;&lt;/i&gt;
+  온라인
+&lt;/span&gt;
+
+&lt;!-- Alert Messages --&gt;
+&lt;div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg"&gt;
+  &lt;div class="flex items-start gap-3"&gt;
+    &lt;i class="fas fa-check-circle text-green-600 mt-0.5"&gt;&lt;/i&gt;
+    &lt;div&gt;
+      &lt;strong&gt;성공!&lt;/strong&gt; 작업이 완료되었습니다.
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg"&gt;
+  &lt;div class="flex items-start gap-3"&gt;
+    &lt;i class="fas fa-times-circle text-red-600 mt-0.5"&gt;&lt;/i&gt;
+    &lt;div&gt;
+      &lt;strong&gt;오류!&lt;/strong&gt; 문제가 발생했습니다.
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- Handlebars 헬퍼 사용 --&gt;
+&lt;span class="{{badge 'success'}}"&gt;성공&lt;/span&gt;
+&lt;div class="{{alert 'warning'}}"&gt;주의 메시지&lt;/div&gt;</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Layout Utilities Section -->
+    <section id="layout" class="relative scroll-mt-8">
+      <div class="absolute inset-0 bg-gradient-to-r from-teal-50/30 to-cyan-50/30 rounded-3xl -z-10"></div>
+      <div class="bg-white/70 backdrop-blur-sm border border-teal-100/50 shadow-xl rounded-3xl overflow-hidden">
+        <div class="bg-gradient-to-r from-teal-500 to-cyan-500 px-8 py-6">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center">
+                <i class="fas fa-th-large text-white text-xl"></i>
+              </div>
+              <div>
+                <h2 class="text-3xl font-bold text-white">Layout Utilities</h2>
+                <p class="text-teal-100">레이아웃을 위한 편리한 유틸리티</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="toggleView('layout-example')" class="view-toggle active bg-white/20 text-white px-4 py-2 rounded-lg font-medium hover:bg-white/30 transition-colors">
+                <i class="fas fa-eye mr-2"></i>예시 보기
+              </button>
+              <button onclick="toggleView('layout-code')" class="view-toggle bg-white/10 text-white/70 px-4 py-2 rounded-lg font-medium hover:bg-white/20 transition-colors">
+                <i class="fas fa-code mr-2"></i>코드 보기
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="p-8">
+          <!-- Example View -->
+          <div id="layout-example" class="view-content">
+            <!-- Grid System -->
+            <div class="mb-10">
+              <h3 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                <span class="w-2 h-8 bg-gradient-to-b from-teal-500 to-cyan-500 rounded-full mr-3"></span>
+                Grid System
+              </h3>
+              <div class="space-y-6">
+                <div class="grid grid-cols-4 gap-4">
+                  <div class="bg-gradient-to-r from-teal-400 to-cyan-400 text-white p-4 rounded-xl text-center font-semibold">1</div>
+                  <div class="bg-gradient-to-r from-teal-400 to-cyan-400 text-white p-4 rounded-xl text-center font-semibold">2</div>
+                  <div class="bg-gradient-to-r from-teal-400 to-cyan-400 text-white p-4 rounded-xl text-center font-semibold">3</div>
+                  <div class="bg-gradient-to-r from-teal-400 to-cyan-400 text-white p-4 rounded-xl text-center font-semibold">4</div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div class="bg-gradient-to-r from-purple-400 to-pink-400 text-white p-6 rounded-xl text-center">
+                    <i class="fas fa-mobile-alt text-2xl mb-2"></i>
+                    <p class="font-semibold">반응형 1</p>
+                    <p class="text-sm opacity-90">Mobile: 1 col</p>
+                  </div>
+                  <div class="bg-gradient-to-r from-purple-400 to-pink-400 text-white p-6 rounded-xl text-center">
+                    <i class="fas fa-tablet-alt text-2xl mb-2"></i>
+                    <p class="font-semibold">반응형 2</p>
+                    <p class="text-sm opacity-90">Tablet: 2 cols</p>
+                  </div>
+                  <div class="bg-gradient-to-r from-purple-400 to-pink-400 text-white p-6 rounded-xl text-center">
+                    <i class="fas fa-desktop text-2xl mb-2"></i>
+                    <p class="font-semibold">반응형 3</p>
+                    <p class="text-sm opacity-90">Desktop: 3 cols</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Flex Utilities -->
+            <div class="mb-8">
+              <h3 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                <span class="w-2 h-8 bg-gradient-to-b from-teal-500 to-cyan-500 rounded-full mr-3"></span>
+                Flex Utilities
+              </h3>
+              <div class="space-y-4">
+                <div class="flex justify-between items-center bg-gradient-to-r from-gray-50 to-gray-100 p-6 rounded-xl">
+                  <div class="bg-teal-500 text-white px-4 py-2 rounded-lg">왼쪽 콘텐츠</div>
+                  <div class="bg-cyan-500 text-white px-4 py-2 rounded-lg">오른쪽 콘텐츠</div>
+                </div>
+                
+                <div class="flex items-center justify-center bg-gradient-to-r from-gray-50 to-gray-100 p-12 rounded-xl">
+                  <div class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-6 py-3 rounded-xl font-semibold">
+                    완전 중앙 정렬
+                  </div>
+                </div>
+                
+                <div class="flex flex-col gap-4 bg-gradient-to-r from-gray-50 to-gray-100 p-6 rounded-xl">
+                  <div class="bg-blue-500 text-white px-4 py-2 rounded-lg text-center">스택 1</div>
+                  <div class="bg-indigo-500 text-white px-4 py-2 rounded-lg text-center">스택 2</div>
+                  <div class="bg-purple-500 text-white px-4 py-2 rounded-lg text-center">스택 3</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Code View -->
+          <div id="layout-code" class="view-content hidden">
+            <div class="bg-gray-900 rounded-2xl p-6">
+              <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-2">
+                  <div class="flex gap-1">
+                    <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                    <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                  </div>
+                  <span class="text-gray-400 text-sm font-mono">layout.hbs</span>
+                </div>
+                <button onclick="copyCode('layout-code-content')" class="text-gray-400 hover:text-white text-sm flex items-center gap-1">
+                  <i class="fas fa-copy"></i>
+                  Copy
+                </button>
+              </div>
+              <div id="layout-code-content">
+                <pre class="text-teal-400 text-sm font-mono leading-relaxed"><code>&lt;!-- Grid System --&gt;
+&lt;div class="grid grid-cols-4 gap-4"&gt;
+  &lt;div&gt;아이템 1&lt;/div&gt;
+  &lt;div&gt;아이템 2&lt;/div&gt;
+  &lt;div&gt;아이템 3&lt;/div&gt;
+  &lt;div&gt;아이템 4&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- 반응형 Grid --&gt;
+&lt;div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"&gt;
+  &lt;div&gt;반응형 아이템&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- Flex Utilities --&gt;
+&lt;div class="flex justify-between items-center"&gt;
+  &lt;span&gt;왼쪽&lt;/span&gt;
+  &lt;span&gt;오른쪽&lt;/span&gt;
+&lt;/div&gt;
+
+&lt;!-- 중앙 정렬 --&gt;
+&lt;div class="flex items-center justify-center"&gt;
+  &lt;div&gt;중앙 정렬&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- 세로 스택 --&gt;
+&lt;div class="flex flex-col gap-4"&gt;
+  &lt;div&gt;스택 1&lt;/div&gt;
+  &lt;div&gt;스택 2&lt;/div&gt;
+  &lt;div&gt;스택 3&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- Handlebars 헬퍼 사용 --&gt;
+&lt;div class="{{grid cols=3 gap=4}}"&gt;...&lt;/div&gt;
+&lt;div class="{{flex justify='between' items='center'}}"&gt;...&lt;/div&gt;</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Handlebars Helpers Section -->
+    <section id="helpers" class="relative scroll-mt-8">
+      <div class="absolute inset-0 bg-gradient-to-r from-indigo-50/30 to-purple-50/30 rounded-3xl -z-10"></div>
+      <div class="bg-white/70 backdrop-blur-sm border border-indigo-100/50 shadow-xl rounded-3xl overflow-hidden">
+        <div class="bg-gradient-to-r from-indigo-500 to-purple-500 px-8 py-6">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center">
+                <i class="fas fa-magic text-white text-xl"></i>
+              </div>
+              <div>
+                <h2 class="text-3xl font-bold text-white">Handlebars Helpers</h2>
+                <p class="text-indigo-100">동적 스타일링을 위한 헬퍼 함수들</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="toggleView('helpers-example')" class="view-toggle active bg-white/20 text-white px-4 py-2 rounded-lg font-medium hover:bg-white/30 transition-colors">
+                <i class="fas fa-eye mr-2"></i>예시 보기
+              </button>
+              <button onclick="toggleView('helpers-code')" class="view-toggle bg-white/10 text-white/70 px-4 py-2 rounded-lg font-medium hover:bg-white/20 transition-colors">
+                <i class="fas fa-code mr-2"></i>코드 보기
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="p-8">
+          <!-- Example View -->
+          <div id="helpers-example" class="view-content">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <!-- Left Column - Examples -->
+              <div class="space-y-6">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                  <span class="w-2 h-8 bg-gradient-to-b from-indigo-500 to-purple-500 rounded-full mr-3"></span>
+                  Interactive Examples
+                </h3>
+                
+                <!-- Spacing Helper -->
+                <div class="p-6 m-2 bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-900 rounded-xl border border-indigo-200">
+                  <div class="flex items-center gap-3">
+                    <i class="fas fa-expand-arrows-alt text-indigo-600"></i>
+                    <div>
+                      <h4 class="font-semibold">Spacing Helper</h4>
+                      <p class="text-sm opacity-80">패딩과 마진이 자동으로 적용됩니다</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Text Helper -->
+                <div class="space-y-3">
+                  <p class="text-xl font-bold text-indigo-700">
+                    크고 굵은 인디고 텍스트
+                  </p>
+                  <p class="text-sm text-purple-600">
+                    작은 보라색 텍스트
+                  </p>
+                  <p class="text-lg font-medium text-gray-800">
+                    중간 크기 회색 텍스트
+                  </p>
+                </div>
+                
+                <!-- Interactive Grid -->
+                <div>
+                  <h4 class="font-medium text-gray-900 mb-3">Dynamic Grid</h4>
+                  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                    <div class="aspect-square bg-gradient-to-br from-pink-400 to-red-400 rounded-xl flex items-center justify-center text-white font-bold">1</div>
+                    <div class="aspect-square bg-gradient-to-br from-orange-400 to-pink-400 rounded-xl flex items-center justify-center text-white font-bold">2</div>
+                    <div class="aspect-square bg-gradient-to-br from-yellow-400 to-orange-400 rounded-xl flex items-center justify-center text-white font-bold">3</div>
+                    <div class="aspect-square bg-gradient-to-br from-green-400 to-yellow-400 rounded-xl flex items-center justify-center text-white font-bold">4</div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Right Column - Helper List -->
+              <div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                  <span class="w-2 h-8 bg-gradient-to-b from-indigo-500 to-purple-500 rounded-full mr-3"></span>
+                  Available Helpers
+                </h3>
+                
+                <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 border border-indigo-100">
+                  <div class="space-y-3">
+                    <div class="flex justify-between items-center p-3 bg-white rounded-lg border border-indigo-100">
+                      <div>
+                        <code class="text-indigo-600 font-medium">btn</code>
+                        <p class="text-xs text-gray-500">버튼 스타일링</p>
+                      </div>
+                      <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded">Style</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-white rounded-lg border border-purple-100">
+                      <div>
+                        <code class="text-purple-600 font-medium">card</code>
+                        <p class="text-xs text-gray-500">카드 레이아웃</p>
+                      </div>
+                      <span class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded">Layout</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-white rounded-lg border border-pink-100">
+                      <div>
+                        <code class="text-pink-600 font-medium">grid</code>
+                        <p class="text-xs text-gray-500">그리드 시스템</p>
+                      </div>
+                      <span class="text-xs bg-pink-100 text-pink-700 px-2 py-1 rounded">Layout</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-white rounded-lg border border-blue-100">
+                      <div>
+                        <code class="text-blue-600 font-medium">flex</code>
+                        <p class="text-xs text-gray-500">플렉스 레이아웃</p>
+                      </div>
+                      <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">Layout</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-white rounded-lg border border-teal-100">
+                      <div>
+                        <code class="text-teal-600 font-medium">spacing</code>
+                        <p class="text-xs text-gray-500">간격 설정</p>
+                      </div>
+                      <span class="text-xs bg-teal-100 text-teal-700 px-2 py-1 rounded">Utility</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-white rounded-lg border border-green-100">
+                      <div>
+                        <code class="text-green-600 font-medium">text</code>
+                        <p class="text-xs text-gray-500">텍스트 스타일</p>
+                      </div>
+                      <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">Typography</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Code View -->
+          <div id="helpers-code" class="view-content hidden">
+            <div class="bg-gray-900 rounded-2xl p-6">
+              <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-2">
+                  <div class="flex gap-1">
+                    <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                    <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                  </div>
+                  <span class="text-gray-400 text-sm font-mono">helpers.hbs</span>
+                </div>
+                <button onclick="copyCode('helpers-code-content')" class="text-gray-400 hover:text-white text-sm flex items-center gap-1">
+                  <i class="fas fa-copy"></i>
+                  Copy
+                </button>
+              </div>
+              <div id="helpers-code-content">
+                <pre class="text-indigo-400 text-sm font-mono leading-relaxed"><code>&lt;!-- 버튼 헬퍼 --&gt;
+&lt;button class="{{btn 'primary' 'lg'}}"&gt;큰 기본 버튼&lt;/button&gt;
+&lt;button class="{{btn variant='danger' size='sm'}}"&gt;작은 위험 버튼&lt;/button&gt;
+
+&lt;!-- 카드 헬퍼 --&gt;
+&lt;div class="{{card}}"&gt;기본 카드&lt;/div&gt;
+&lt;div class="{{card 'compact'}}"&gt;컴팩트 카드&lt;/div&gt;
+&lt;div class="{{card 'elevated'}}"&gt;엘리베이트 카드&lt;/div&gt;
+
+&lt;!-- 그리드 헬퍼 --&gt;
+&lt;div class="{{grid cols=3 gap=4}}"&gt;
+  &lt;div&gt;아이템 1&lt;/div&gt;
+  &lt;div&gt;아이템 2&lt;/div&gt;
+  &lt;div&gt;아이템 3&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- 반응형 그리드 --&gt;
+&lt;div class="{{grid cols=2 md=4 gap=4}}"&gt;
+  &lt;div&gt;반응형 아이템&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- 플렉스 헬퍼 --&gt;
+&lt;div class="{{flex justify='center' gap=4}}"&gt;
+  &lt;button&gt;버튼 1&lt;/button&gt;
+  &lt;button&gt;버튼 2&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;!-- 간격 헬퍼 --&gt;
+&lt;div class="{{spacing p=4 m=2}}"&gt;
+  간격이 적용된 요소
+&lt;/div&gt;
+
+&lt;!-- 텍스트 헬퍼 --&gt;
+&lt;h1 class="{{text size='2xl' weight='bold' color='blue-600'}}"&gt;
+  제목
+&lt;/h1&gt;
+
+&lt;!-- 배지 헬퍼 --&gt;
+&lt;span class="{{badge 'success'}}"&gt;성공&lt;/span&gt;
+&lt;span class="{{badge 'warning'}}"&gt;주의&lt;/span&gt;
+
+&lt;!-- 알럿 헬퍼 --&gt;
+&lt;div class="{{alert 'info'}}"&gt;정보 메시지&lt;/div&gt;
+&lt;div class="{{alert 'error'}}"&gt;오류 메시지&lt;/div&gt;</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Footer CTA -->
+  <div class="mt-20 text-center bg-gradient-to-r from-gray-900 via-purple-900 to-indigo-900 rounded-3xl p-12 text-white">
+    <div class="max-w-3xl mx-auto">
+      <div class="w-20 h-20 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+        <i class="fas fa-rocket text-3xl"></i>
+      </div>
+      <h2 class="text-4xl font-bold mb-4">이제 시작해보세요!</h2>
+      <p class="text-xl text-purple-200 mb-8">
+        이 컴포넌트들을 사용하여 아름다운 웹 애플리케이션을 구축하세요
+      </p>
+      <div class="flex items-center justify-center gap-4">
+        <a href="/interactive-demo" class="bg-white text-purple-900 px-8 py-4 rounded-2xl font-semibold hover:bg-purple-50 transition-colors inline-flex items-center gap-2">
+          <i class="fas fa-play"></i>
+          Interactive Demo 체험하기
+        </a>
+        <button onclick="window.location.reload()" class="bg-purple-600 text-white px-8 py-4 rounded-2xl font-semibold hover:bg-purple-700 transition-colors inline-flex items-center gap-2">
+          <i class="fas fa-redo"></i>
+          페이지 새로고침
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Enhanced JavaScript for Interactive Features -->
+<script src="/js/components/toast.js" data-turbo-permanent></script>
+
+<script>
+// Style Guide Interactive Functions
+function toggleView(viewId) {
+  // Get the section containing this view
+  const section = document.getElementById(viewId).closest('section');
+  const exampleView = section.querySelector('[id$="-example"]');
+  const codeView = section.querySelector('[id$="-code"]');
+  const toggles = section.querySelectorAll('.view-toggle');
+  
+  // Hide all views in this section
+  exampleView.classList.add('hidden');
+  codeView.classList.add('hidden');
+  
+  // Show the selected view
+  document.getElementById(viewId).classList.remove('hidden');
+  
+  // Update toggle buttons
+  toggles.forEach(toggle => {
+    toggle.classList.remove('active', 'bg-white/20');
+    toggle.classList.add('bg-white/10', 'text-white/70');
+  });
+  
+  // Activate the clicked toggle
+  const activeToggle = section.querySelector(`[onclick="toggleView('${viewId}')"]`);
+  if (activeToggle) {
+    activeToggle.classList.remove('bg-white/10', 'text-white/70');
+    activeToggle.classList.add('active', 'bg-white/20', 'text-white');
+  }
+}
+
+// Copy code to clipboard
+function copyCode(elementId) {
+  const element = document.getElementById(elementId);
+  const text = element.textContent || element.innerText;
+  
+  navigator.clipboard.writeText(text).then(() => {
+    // Show toast notification
+    if (window.Toast) {
+      window.Toast.success('코드가 클립보드에 복사되었습니다!');
+    } else {
+      // Fallback notification
+      const button = document.querySelector(`[onclick="copyCode('${elementId}')"]`);
+      const originalText = button.innerHTML;
+      button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+      button.classList.add('text-green-400');
+      
+      setTimeout(() => {
+        button.innerHTML = originalText;
+        button.classList.remove('text-green-400');
+      }, 2000);
+    }
+  }).catch(err => {
+    console.error('클립보드 복사 실패:', err);
+    if (window.Toast) {
+      window.Toast.error('클립보드 복사에 실패했습니다.');
+    }
+  });
+}
+
+// Add CSS classes for proper button styling
+document.addEventListener('DOMContentLoaded', function() {
+  // Add basic button classes
+  const style = document.createElement('style');
+  style.textContent = `
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      line-height: 1.25rem;
+      border-radius: 0.5rem;
+      transition: all 0.15s ease-in-out;
+      cursor: pointer;
+      border: 1px solid transparent;
+      text-decoration: none;
+    }
+    
+    .btn:focus {
+      outline: none;
+      ring: 2px;
+      ring-offset: 2px;
+    }
+    
+    .btn-primary {
+      background-color: #3b82f6;
+      color: white;
+      border-color: #3b82f6;
+    }
+    
+    .btn-primary:hover {
+      background-color: #2563eb;
+      border-color: #2563eb;
+    }
+    
+    .btn-secondary {
+      background-color: #6b7280;
+      color: white;
+      border-color: #6b7280;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #4b5563;
+      border-color: #4b5563;
+    }
+    
+    .btn-success {
+      background-color: #10b981;
+      color: white;
+      border-color: #10b981;
+    }
+    
+    .btn-success:hover {
+      background-color: #059669;
+      border-color: #059669;
+    }
+    
+    .btn-danger {
+      background-color: #ef4444;
+      color: white;
+      border-color: #ef4444;
+    }
+    
+    .btn-danger:hover {
+      background-color: #dc2626;
+      border-color: #dc2626;
+    }
+    
+    .btn-warning {
+      background-color: #f59e0b;
+      color: white;
+      border-color: #f59e0b;
+    }
+    
+    .btn-warning:hover {
+      background-color: #d97706;
+      border-color: #d97706;
+    }
+    
+    .btn-outline {
+      background-color: transparent;
+      color: #3b82f6;
+      border-color: #3b82f6;
+    }
+    
+    .btn-outline:hover {
+      background-color: #3b82f6;
+      color: white;
+    }
+    
+    .btn-ghost {
+      background-color: transparent;
+      color: #6b7280;
+      border-color: transparent;
+    }
+    
+    .btn-ghost:hover {
+      background-color: #f3f4f6;
+      color: #374151;
+    }
+    
+    .btn-xs {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+    }
+    
+    .btn-sm {
+      padding: 0.375rem 0.75rem;
+      font-size: 0.875rem;
+    }
+    
+    .btn-lg {
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+    }
+    
+    .btn-xl {
+      padding: 1rem 2rem;
+      font-size: 1.125rem;
+    }
+  `;
+  document.head.appendChild(style);
+});
+
+// Smooth scroll navigation
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  });
+});
+
+// Section highlight effect
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      // Highlight corresponding navigation link
+      const id = entry.target.id;
+      document.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.classList.remove('bg-gradient-to-r', 'from-blue-50', 'to-indigo-50');
+        if (link.getAttribute('href') === `#${id}`) {
+          link.classList.add('bg-gradient-to-r', 'from-blue-50', 'to-indigo-50');
+        }
+      });
+    }
+  });
+}, {
+  threshold: 0.1,
+  rootMargin: '-100px 0px -100px 0px'
+});
+
+// Observe all sections
+document.querySelectorAll('section[id]').forEach(section => {
+  observer.observe(section);
+});
+</script>

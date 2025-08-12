@@ -1,0 +1,514 @@
+<!-- Hero Section -->
+<div class="bg-gradient-to-br from-purple-50 via-white to-pink-50 py-16">
+  <div class="content-wrapper">
+    <div class="text-center">
+      <div class="inline-flex items-center px-4 py-2 bg-purple-100 text-purple-800 text-sm font-medium rounded-full mb-6">
+        <i class="fas fa-sparkles mr-2"></i>
+        UI System Showcase
+      </div>
+      <h1 class="text-5xl font-bold text-gray-900 mb-4">
+        완전한 <span class="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">UI 에코시스템</span>
+      </h1>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+        토스트, 모달, 알림, 로딩, 디바운스, API 요청 등 모든 UI 컴포넌트를 체험해보세요
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="content-wrapper py-12">
+
+  <!-- Toast Notifications Section -->
+  <section class="mb-16">
+    <div class="bg-white rounded-3xl p-8 shadow-lg border border-gray-100">
+      <div class="flex items-center mb-6">
+        <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mr-4">
+          <i class="fas fa-bell text-white text-xl"></i>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold text-gray-900">토스트 알림</h2>
+          <p class="text-gray-600">우아한 알림 시스템</p>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <button 
+          onclick="Toast.success('성공적으로 처리되었습니다!')"
+          class="btn bg-green-500 hover:bg-green-600 text-white"
+        >
+          <i class="fas fa-check mr-2"></i>성공
+        </button>
+        <button 
+          onclick="Toast.error('오류가 발생했습니다!')"
+          class="btn bg-red-500 hover:bg-red-600 text-white"
+        >
+          <i class="fas fa-times mr-2"></i>에러
+        </button>
+        <button 
+          onclick="Toast.warning('주의가 필요합니다!')"
+          class="btn bg-yellow-500 hover:bg-yellow-600 text-white"
+        >
+          <i class="fas fa-exclamation-triangle mr-2"></i>경고
+        </button>
+        <button 
+          onclick="Toast.info('정보를 확인하세요!')"
+          class="btn bg-blue-500 hover:bg-blue-600 text-white"
+        >
+          <i class="fas fa-info-circle mr-2"></i>정보
+        </button>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <button 
+          onclick="showLoadingToast()"
+          class="btn bg-indigo-500 hover:bg-indigo-600 text-white"
+        >
+          <i class="fas fa-spinner mr-2"></i>로딩 토스트
+        </button>
+        <button 
+          onclick="Toast.setPosition('top-left'); Toast.info('위치가 변경되었습니다!')"
+          class="btn bg-purple-500 hover:bg-purple-600 text-white"
+        >
+          <i class="fas fa-arrows-alt mr-2"></i>위치 변경
+        </button>
+        <button 
+          onclick="Toast.removeAll()"
+          class="btn bg-gray-500 hover:bg-gray-600 text-white"
+        >
+          <i class="fas fa-trash mr-2"></i>모두 제거
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal System Section -->
+  <section class="mb-16">
+    <div class="bg-white rounded-3xl p-8 shadow-lg border border-gray-100">
+      <div class="flex items-center mb-6">
+        <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mr-4">
+          <i class="fas fa-window-restore text-white text-xl"></i>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold text-gray-900">모달 시스템</h2>
+          <p class="text-gray-600">다양한 모달 컴포넌트</p>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <button 
+          onclick="showBasicModal()"
+          class="btn bg-blue-500 hover:bg-blue-600 text-white"
+        >
+          <i class="fas fa-window-restore mr-2"></i>기본 모달
+        </button>
+        <button 
+          onclick="showFormModal()"
+          class="btn bg-green-500 hover:bg-green-600 text-white"
+        >
+          <i class="fas fa-edit mr-2"></i>폼 모달
+        </button>
+        <button 
+          onclick="showImageModal()"
+          class="btn bg-purple-500 hover:bg-purple-600 text-white"
+        >
+          <i class="fas fa-image mr-2"></i>이미지 모달
+        </button>
+        <button 
+          onclick="showLoadingModal()"
+          class="btn bg-indigo-500 hover:bg-indigo-600 text-white"
+        >
+          <i class="fas fa-spinner mr-2"></i>로딩 모달
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Alert System Section -->
+  <section class="mb-16">
+    <div class="bg-white rounded-3xl p-8 shadow-lg border border-gray-100">
+      <div class="flex items-center mb-6">
+        <div class="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl flex items-center justify-center mr-4">
+          <i class="fas fa-exclamation-circle text-white text-xl"></i>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold text-gray-900">커스텀 알림</h2>
+          <p class="text-gray-600">네이티브 alert 대체</p>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <button 
+          onclick="Alert.success('작업이 완료되었습니다!')"
+          class="btn bg-green-500 hover:bg-green-600 text-white"
+        >
+          <i class="fas fa-check mr-2"></i>성공 알림
+        </button>
+        <button 
+          onclick="Alert.error('오류가 발생했습니다!')"
+          class="btn bg-red-500 hover:bg-red-600 text-white"
+        >
+          <i class="fas fa-times mr-2"></i>에러 알림
+        </button>
+        <button 
+          onclick="showConfirmAlert()"
+          class="btn bg-blue-500 hover:bg-blue-600 text-white"
+        >
+          <i class="fas fa-question mr-2"></i>확인 대화상자
+        </button>
+        <button 
+          onclick="showPromptAlert()"
+          class="btn bg-purple-500 hover:bg-purple-600 text-white"
+        >
+          <i class="fas fa-edit mr-2"></i>입력 대화상자
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Loading System Section -->
+  <section class="mb-16">
+    <div class="bg-white rounded-3xl p-8 shadow-lg border border-gray-100">
+      <div class="flex items-center mb-6">
+        <div class="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center mr-4">
+          <i class="fas fa-spinner text-white text-xl"></i>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold text-gray-900">로딩 시스템</h2>
+          <p class="text-gray-600">다양한 로딩 인디케이터</p>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <button 
+          onclick="showGlobalLoading()"
+          class="btn bg-blue-500 hover:bg-blue-600 text-white"
+        >
+          <i class="fas fa-spinner mr-2"></i>전역 로딩
+        </button>
+        <button 
+          onclick="showInlineLoading()"
+          class="btn bg-green-500 hover:bg-green-600 text-white"
+        >
+          <i class="fas fa-cog mr-2"></i>인라인 로딩
+        </button>
+        <button 
+          onclick="showButtonLoading(this)"
+          class="btn bg-purple-500 hover:bg-purple-600 text-white"
+        >
+          <i class="fas fa-play mr-2"></i>버튼 로딩
+        </button>
+        <button 
+          onclick="showSkeletonLoading()"
+          class="btn bg-gray-500 hover:bg-gray-600 text-white"
+        >
+          <i class="fas fa-bars mr-2"></i>스켈레톤
+        </button>
+      </div>
+      
+      <!-- 인라인 로딩 테스트 영역 -->
+      <div id="inline-loading-test" class="bg-gray-50 rounded-lg p-6 mt-6">
+        <h3 class="text-lg font-semibold mb-4">인라인 로딩 테스트 영역</h3>
+        <p class="text-gray-600">이 영역에 인라인 로딩이 표시됩니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Debounce & API Section -->
+  <section class="mb-16">
+    <div class="bg-white rounded-3xl p-8 shadow-lg border border-gray-100">
+      <div class="flex items-center mb-6">
+        <div class="w-12 h-12 bg-gradient-to-r from-teal-500 to-green-500 rounded-2xl flex items-center justify-center mr-4">
+          <i class="fas fa-search text-white text-xl"></i>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold text-gray-900">디바운스 & API</h2>
+          <p class="text-gray-600">성능 최적화와 API 요청</p>
+        </div>
+      </div>
+      
+      <!-- 디바운스 검색 -->
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-gray-700 mb-2">디바운스 검색 (300ms)</label>
+        <input 
+          type="text" 
+          id="debounced-search"
+          class="form-input w-full"
+          placeholder="타이핑하면 300ms 후에 검색됩니다..."
+        >
+        <div id="search-results" class="mt-4 space-y-2"></div>
+      </div>
+      
+      <!-- API 테스트 -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <button 
+          onclick="testApiGet()"
+          class="btn bg-blue-500 hover:bg-blue-600 text-white"
+        >
+          <i class="fas fa-download mr-2"></i>GET 요청
+        </button>
+        <button 
+          onclick="testApiPost()"
+          class="btn bg-green-500 hover:bg-green-600 text-white"
+        >
+          <i class="fas fa-upload mr-2"></i>POST 요청
+        </button>
+        <button 
+          onclick="testApiError()"
+          class="btn bg-red-500 hover:bg-red-600 text-white"
+        >
+          <i class="fas fa-exclamation-triangle mr-2"></i>에러 테스트
+        </button>
+        <button 
+          onclick="testApiRetry()"
+          class="btn bg-orange-500 hover:bg-orange-600 text-white"
+        >
+          <i class="fas fa-redo mr-2"></i>재시도 테스트
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Statistics Section -->
+  <section class="mb-16">
+    <div class="bg-white rounded-3xl p-8 shadow-lg border border-gray-100">
+      <div class="flex items-center mb-6">
+        <div class="w-12 h-12 bg-gradient-to-r from-pink-500 to-rose-500 rounded-2xl flex items-center justify-center mr-4">
+          <i class="fas fa-chart-line text-white text-xl"></i>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold text-gray-900">시스템 상태</h2>
+          <p class="text-gray-600">실시간 성능 모니터링</p>
+        </div>
+      </div>
+      
+      <div id="system-stats" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <!-- 통계가 동적으로 채워짐 -->
+      </div>
+      
+      <div class="mt-6 flex gap-4">
+        <button 
+          onclick="refreshStats()"
+          class="btn bg-blue-500 hover:bg-blue-600 text-white"
+        >
+          <i class="fas fa-refresh mr-2"></i>상태 새로고침
+        </button>
+        <button 
+          onclick="clearAllSystems()"
+          class="btn bg-red-500 hover:bg-red-600 text-white"
+        >
+          <i class="fas fa-trash mr-2"></i>모든 시스템 초기화
+        </button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+// Toast 관련 함수들
+function showLoadingToast() {
+  const loadingToast = Toast.loading('데이터 처리 중...');
+  setTimeout(() => {
+    loadingToast.update('처리 완료!', 'success');
+    setTimeout(() => loadingToast.remove(), 2000);
+  }, 3000);
+}
+
+// Modal 관련 함수들
+function showBasicModal() {
+  const modal = Modal.create({
+    title: '기본 모달',
+    content: '<p>이것은 기본 모달입니다. 다양한 크기와 애니메이션을 지원합니다.</p>',
+    footer: `
+      <button class="btn btn-secondary" data-dismiss="modal">닫기</button>
+      <button class="btn btn-primary" data-dismiss="modal">확인</button>
+    `,
+    options: { size: 'md' }
+  });
+  modal.open();
+}
+
+function showFormModal() {
+  const modal = Modal.form('사용자 정보', `
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">이름</label>
+        <input type="text" name="name" class="form-input w-full" required>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">이메일</label>
+        <input type="email" name="email" class="form-input w-full" required>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">메시지</label>
+        <textarea name="message" class="form-textarea w-full" rows="3"></textarea>
+      </div>
+    </div>
+  `);
+  modal.open();
+}
+
+function showImageModal() {
+  const modal = Modal.image('https://picsum.photos/800/600', '샘플 이미지');
+  modal.open();
+}
+
+function showLoadingModal() {
+  const modal = Modal.loading('파일 업로드 중...');
+  modal.open();
+  setTimeout(() => modal.close(), 3000);
+}
+
+// Alert 관련 함수들
+async function showConfirmAlert() {
+  const result = await Alert.confirm('정말로 삭제하시겠습니까?');
+  Toast.info(result ? '삭제되었습니다' : '취소되었습니다');
+}
+
+async function showPromptAlert() {
+  const result = await Alert.prompt('이름을 입력하세요', '홍길동');
+  if (result) {
+    Toast.success(`안녕하세요, ${result}님!`);
+  }
+}
+
+// Loading 관련 함수들
+function showGlobalLoading() {
+  const loading = Loading.show('전역 로딩 중...', { showProgress: true });
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress += 10;
+    loading.setProgress(progress);
+    if (progress >= 100) {
+      clearInterval(interval);
+      setTimeout(() => loading.hide(), 500);
+    }
+  }, 200);
+}
+
+function showInlineLoading() {
+  const loading = Loading.showInline('#inline-loading-test');
+  setTimeout(() => loading.hide(), 3000);
+}
+
+function showButtonLoading(button) {
+  const loading = Loading.showButton(button);
+  setTimeout(() => loading.hide(), 2000);
+}
+
+function showSkeletonLoading() {
+  const loading = Loading.showSkeleton('#inline-loading-test', {
+    lines: 4,
+    height: 20,
+    spacing: 16
+  });
+  setTimeout(() => loading.hide(), 3000);
+}
+
+// 디바운스 검색 설정
+document.addEventListener('DOMContentLoaded', function() {
+  if (window.Debounce) {
+    Debounce.onSearch('#debounced-search', async (query) => {
+      const results = document.getElementById('search-results');
+      
+      // 가짜 검색 결과 생성
+      const fakeResults = [
+        `"${query}"와 관련된 결과 1`,
+        `"${query}"와 관련된 결과 2`,
+        `"${query}"와 관련된 결과 3`
+      ];
+      
+      results.innerHTML = fakeResults.map(result => 
+        `<div class="bg-gray-100 p-3 rounded-lg">${result}</div>`
+      ).join('');
+    }, {
+      minLength: 2,
+      resultsContainer: '#search-results'
+    });
+  }
+});
+
+// API 테스트 함수들
+async function testApiGet() {
+  try {
+    // 가짜 API 엔드포인트 (실제로는 존재하지 않음)
+    await Api.get('/api/test', { 
+      showLoading: true,
+      showSuccess: true 
+    });
+  } catch (error) {
+    // 404 에러가 예상됨
+    console.log('Expected 404 error for demo');
+  }
+}
+
+async function testApiPost() {
+  try {
+    await Api.post('/api/test', { 
+      message: 'Hello World' 
+    }, { 
+      showLoading: true,
+      showSuccess: true 
+    });
+  } catch (error) {
+    console.log('Expected error for demo');
+  }
+}
+
+async function testApiError() {
+  try {
+    await Api.get('/api/nonexistent', { 
+      showErrors: true 
+    });
+  } catch (error) {
+    console.log('Expected error for demo');
+  }
+}
+
+async function testApiRetry() {
+  try {
+    await Api.get('/api/retry-test', { 
+      retries: 3,
+      showLoading: true 
+    });
+  } catch (error) {
+    console.log('Expected error after retries');
+  }
+}
+
+// 시스템 상태 표시
+function refreshStats() {
+  const stats = {
+    'Toast System': window.Toast ? Object.keys(window.Toast.toasts || {}).length : 0,
+    'Active Modals': window.Modal ? window.Modal.activeModals?.length || 0 : 0,
+    'Loading States': window.Loading ? Object.keys(window.Loading.loadings || {}).length : 0,
+    'Debounce Timers': window.Debounce ? window.Debounce.getPerformanceStats?.()?.activeDebounces || 0 : 0
+  };
+
+  const container = document.getElementById('system-stats');
+  container.innerHTML = Object.entries(stats).map(([name, value]) => `
+    <div class="bg-gradient-to-br from-blue-50 to-purple-50 p-4 rounded-xl border border-blue-100">
+      <div class="text-2xl font-bold text-blue-600">${value}</div>
+      <div class="text-sm text-gray-600">${name}</div>
+    </div>
+  `).join('');
+}
+
+function clearAllSystems() {
+  if (window.Toast) window.Toast.removeAll?.();
+  if (window.Modal) window.Modal.closeAll?.();
+  if (window.Loading) window.Loading.hideAll?.();
+  if (window.Debounce) window.Debounce.clearAll?.();
+  
+  Toast.success('모든 시스템이 초기화되었습니다');
+  setTimeout(refreshStats, 100);
+}
+
+// 초기 상태 표시
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(refreshStats, 1000);
+  
+  // 5초마다 상태 업데이트
+  setInterval(refreshStats, 5000);
+});
+</script>
