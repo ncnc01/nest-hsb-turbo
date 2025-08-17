@@ -13,11 +13,22 @@ import {
   Req,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
+import { InquiryService } from './inquiry.service';
 import { InquiryServiceMock, CreateInquiryDto, UpdateInquiryDto } from './inquiry.service.mock';
+import { DevToolsController } from '../../dev-tools/dev-tools.controller';
 
 @Controller('inquiry')
 export class InquiryController {
-  constructor(private readonly inquiryService: InquiryServiceMock) {}
+  constructor(
+    private readonly inquiryService: InquiryService,
+    private readonly inquiryServiceMock: InquiryServiceMock,
+  ) {}
+
+  private getActiveService() {
+    const mode = DevToolsController.getCurrentDataMode();
+    console.log(`🎯 InquiryController using ${mode} mode`);
+    return mode === 'real' ? this.inquiryService : this.inquiryServiceMock;
+  }
 
   @Get()
   @Render('pages/inquiry/list')
@@ -31,8 +42,9 @@ export class InquiryController {
       search: query.search,
     };
 
-    const result = await this.inquiryService.findAll(page, limit, filters);
-    const stats = await this.inquiryService.getStats();
+    const activeService = this.getActiveService();
+    const result = await activeService.findAll(page, limit, filters);
+    const stats = await activeService.getStats();
     
     // Turbo Frame 요청인지 확인
     const isTurboFrame = req.headers['turbo-frame'] === 'main-content';
@@ -43,9 +55,9 @@ export class InquiryController {
       layout: isTurboFrame ? false : 'layouts/main',
       ...result,
       stats,
-      categories: this.inquiryService.getCategories(),
-      statuses: this.inquiryService.getStatuses(),
-      priorities: this.inquiryService.getPriorities(),
+      categories: this.getActiveService().getCategories(),
+      statuses: this.getActiveService().getStatuses(),
+      priorities: this.getActiveService().getPriorities(),
       currentFilters: filters,
       user: { name: 'Admin User' },
     };
@@ -60,43 +72,61 @@ export class InquiryController {
       title: '새 문의사항 등록',
       subtitle: '고객 문의사항을 등록합니다',
       layout: isTurboFrame ? false : 'layouts/main',
-      categories: this.inquiryService.getCategories(),
+      categories: this.getActiveService().getCategories(),
       user: { name: 'Admin User' },
     };
   }
 
-  @Post('api')
+  @Post()
   async createInquiry(
     @Body() createInquiryDto: CreateInquiryDto, 
     @Req() req: Request,
     @Res() res: Response
   ) {
     try {
-      const inquiry = await this.inquiryService.create(createInquiryDto);
+      const activeService = this.getActiveService();
+      const inquiry = await activeService.create(createInquiryDto);
       
-      if (req.headers.accept?.includes('text/vnd.turbo-stream.html')) {
-        res.setHeader('Content-Type', 'text/vnd.turbo-stream.html');
-        res.send(`
-          <turbo-stream action="replace" target="main-content">
-            <template>
-              <div class="p-6">
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                  문의사항이 성공적으로 등록되었습니다.
-                </div>
-                <script>
-                  setTimeout(() => {
-                    Turbo.visit('/inquiry');
-                  }, 1000);
-                </script>
-              </div>
-            </template>
-          </turbo-stream>
-        `);
+      // Turbo Frame 요청인지 확인
+      const isTurboFrame = req.headers['turbo-frame'] === 'main-content';
+      
+      if (isTurboFrame) {
+        // Turbo Frame 응답으로 성공 메시지와 함께 목록 페이지로 이동
+        return res.render('pages/inquiry/list', {
+          title: '문의사항 관리',
+          subtitle: '고객 문의사항 목록 및 관리',
+          layout: false,
+          successMessage: '문의사항이 성공적으로 등록되었습니다.',
+          ...(await activeService.findAll(1, 10, {})),
+          categories: activeService.getCategories(),
+          statuses: activeService.getStatuses(),
+          priorities: activeService.getPriorities(),
+          currentFilters: {},
+          user: { name: 'Admin User' },
+        });
       } else {
-        res.redirect('/inquiry');
+        // 일반 POST 요청일 경우 리다이렉트
+        return res.redirect('/inquiry');
       }
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      console.error('문의사항 등록 오류:', error);
+      
+      const isTurboFrame = req.headers['turbo-frame'] === 'main-content';
+      
+      if (isTurboFrame) {
+        // Turbo Frame 응답으로 에러와 함께 폼 페이지 다시 렌더링
+        return res.status(400).render('pages/inquiry/create', {
+          title: '새 문의사항 등록',
+          subtitle: '고객 문의사항을 등록합니다',
+          layout: false,
+          errorMessage: error.message || '문의사항 등록 중 오류가 발생했습니다.',
+          categories: this.getActiveService().getCategories(),
+          user: { name: 'Admin User' },
+          formData: createInquiryDto, // 입력했던 데이터 유지
+        });
+      } else {
+        return res.status(400).redirect('/inquiry/new/create?error=' + encodeURIComponent(error.message));
+      }
     }
   }
 
@@ -105,6 +135,6 @@ export class InquiryController {
   // 통계 API
   @Get('api/stats')
   async getStats() {
-    return await this.inquiryService.getStats();
+    return await this.getActiveService().getStats();
   }
 }

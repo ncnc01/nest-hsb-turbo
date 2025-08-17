@@ -286,6 +286,7 @@ export class InquiryServiceMock {
 
   // 통계 정보
   async getStats() {
+    console.log('🎭 [MOCK] InquiryServiceMock.getStats() called - Mock 데이터 조회 중');
     const total = this.mockInquiries.length;
     const pending = this.mockInquiries.filter(i => i.status === 'pending').length;
     const inProgress = this.mockInquiries.filter(i => i.status === 'in_progress').length;

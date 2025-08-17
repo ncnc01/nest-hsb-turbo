@@ -1,7 +1,10 @@
-import { Controller, Get, Render } from '@nestjs/common';
+import { Controller, Get, Post, Body, Render, Res } from '@nestjs/common';
+import { Response } from 'express';
 
 @Controller('dev-tools')
 export class DevToolsController {
+  // 메모리에 데이터 모드 저장 (실제로는 DB나 Redis 사용 권장)
+  private static dataMode: 'mock' | 'real' = 'mock';
   @Get()
   @Render('pages/dev-tools/index')
   getDevTools() {
@@ -94,5 +97,40 @@ export class DevToolsController {
         },
       ],
     };
+  }
+
+  // 데이터 모드 상태 조회 API
+  @Get('api/data-mode/status')
+  getDataModeStatus(@Res() res: Response) {
+    return res.json({
+      mode: DevToolsController.dataMode,
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  // 데이터 모드 변경 API
+  @Post('api/data-mode/preference')
+  setDataModePreference(@Body() body: { mode: 'mock' | 'real' }, @Res() res: Response) {
+    const { mode } = body;
+    
+    if (mode !== 'mock' && mode !== 'real') {
+      return res.status(400).json({ 
+        error: 'Invalid mode. Must be "mock" or "real"' 
+      });
+    }
+
+    DevToolsController.dataMode = mode;
+    console.log(`📝 Data mode changed to: ${mode}`);
+    
+    return res.json({
+      mode: DevToolsController.dataMode,
+      message: `Data mode changed to ${mode}`,
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  // 현재 데이터 모드 가져오기 (내부용)
+  static getCurrentDataMode(): 'mock' | 'real' {
+    return DevToolsController.dataMode;
   }
 }

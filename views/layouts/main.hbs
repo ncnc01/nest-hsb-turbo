@@ -482,6 +482,13 @@
     <!-- Top Header -->
     {{> header}}
     
+    <!-- Data Mode Toggle (개발 환경에서만 표시) - 중앙 상단 책갈피 스타일 -->
+    {{#if isDevelopment}}
+    <div class="fixed top-0 left-1/2 transform -translate-x-1/2 z-50" style="width: 180px;">
+      {{> data-mode-toggle}}
+    </div>
+    {{/if}}
+    
     <!-- Main Content -->
     <main class="bg-gray-50 p-6">
       {{{body}}}

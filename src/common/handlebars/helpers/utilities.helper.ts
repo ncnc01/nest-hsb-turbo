@@ -241,3 +241,28 @@ export function omit(obj: Record<string, any>, ...args: any[]): Record<string, a
   
   return result;
 }
+
+/**
+ * 배열에서 특정 인덱스 값 반환 헬퍼
+ * @example {{index array 0}}
+ */
+export function index(array: any[], idx: number): any {
+  if (!Array.isArray(array)) return undefined;
+  return array[Number(idx)];
+}
+
+/**
+ * 객체에서 키를 통해 값 조회 헬퍼
+ * @example {{lookup user "name"}}
+ */
+export function lookup(obj: any, key: string, subkey?: string): any {
+  if (!obj) return undefined;
+  
+  if (subkey) {
+    // nested lookup: {{lookup data id "property"}}
+    const nestedObj = obj[key];
+    return nestedObj ? nestedObj[subkey] : undefined;
+  }
+  
+  return obj[key];
+}

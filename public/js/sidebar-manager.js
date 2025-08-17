@@ -41,6 +41,18 @@ function sidebarManager() {
       } else {
         this.sidebarOpen = false;
       }
+      
+      // Alpine 초기화 후 상태 재확인
+      this.$nextTick(() => {
+        if (!this.isMobile) {
+          const savedState = localStorage.getItem('sidebarOpen');
+          const shouldBeOpen = savedState === 'true';
+          if (this.sidebarOpen !== shouldBeOpen) {
+            console.log('⚡ Alpine nextTick: 사이드바 상태 동기화');
+            this.sidebarOpen = shouldBeOpen;
+          }
+        }
+      });
 
       // 현재 페이지 감지 및 활성화
       this.highlightCurrentPage();
@@ -51,9 +63,42 @@ function sidebarManager() {
       // Turbo navigation 이벤트 리스닝
       document.addEventListener('turbo:load', () => {
         this.highlightCurrentPage();
+        
+        // Turbo 페이지 이동 후 상태 재동기화
+        if (!this.isMobile) {
+          const savedState = localStorage.getItem('sidebarOpen');
+          const shouldBeOpen = savedState === 'true';
+          
+          // 상태가 다르면 강제로 동기화
+          if (this.sidebarOpen !== shouldBeOpen) {
+            console.log('🔄 Turbo load: 사이드바 상태 재동기화', {
+              current: this.sidebarOpen,
+              shouldBe: shouldBeOpen
+            });
+            this.sidebarOpen = shouldBeOpen;
+          }
+        }
+        
         this.updateBodyClass();
       });
 
+      // Turbo render 이벤트에서도 상태 확인
+      document.addEventListener('turbo:render', () => {
+        // Alpine 컴포넌트가 재생성되었을 수 있으므로 상태 재확인
+        setTimeout(() => {
+          if (!this.isMobile) {
+            const savedState = localStorage.getItem('sidebarOpen');
+            const shouldBeOpen = savedState === 'true';
+            
+            if (this.sidebarOpen !== shouldBeOpen) {
+              console.log('🎨 Turbo render: 사이드바 상태 강제 동기화');
+              this.sidebarOpen = shouldBeOpen;
+              this.updateBodyClass();
+            }
+          }
+        }, 50);
+      });
+      
       // 모바일 사이드바 토글 이벤트 리스닝
       window.addEventListener('toggle-mobile-sidebar', () => {
         console.log('모바일 사이드바 이벤트 수신');
@@ -156,6 +201,51 @@ function sidebarManager() {
     }
   };
 }
+
+// Turbo 캐시 전에 사이드바 상태 정리
+document.addEventListener('turbo:before-cache', () => {
+  const sidebarElement = document.querySelector('#sidebar-manager');
+  if (sidebarElement && sidebarElement.__x) {
+    // Alpine 컴포넌트의 상태를 localStorage와 동기화
+    const alpineData = sidebarElement.__x.$data;
+    if (alpineData && !alpineData.isMobile) {
+      localStorage.setItem('sidebarOpen', alpineData.sidebarOpen.toString());
+    }
+  }
+});
+
+// 페이지 로드 완료 후 사이드바 상태 강제 적용
+document.addEventListener('turbo:load', () => {
+  setTimeout(() => {
+    const sidebarElement = document.querySelector('#sidebar-manager');
+    if (sidebarElement && sidebarElement.__x) {
+      const alpineData = sidebarElement.__x.$data;
+      if (alpineData && !alpineData.isMobile) {
+        const savedState = localStorage.getItem('sidebarOpen');
+        const shouldBeOpen = savedState === 'true';
+        
+        // 상태가 다르면 강제로 동기화
+        if (alpineData.sidebarOpen !== shouldBeOpen) {
+          console.log('🔧 Forcing sidebar state sync after Turbo load');
+          alpineData.sidebarOpen = shouldBeOpen;
+          alpineData.updateBodyClass();
+        }
+        
+        // DOM에서도 직접 텍스트 숨기기
+        if (!shouldBeOpen) {
+          const sidebarDiv = document.querySelector('#sidebar-manager .w-16');
+          if (sidebarDiv) {
+            const spans = sidebarDiv.querySelectorAll('span.truncate');
+            spans.forEach(span => {
+              span.style.display = 'none';
+              span.style.visibility = 'hidden';
+            });
+          }
+        }
+      }
+    }
+  }, 100);
+});
 
 // 전역 객체에 등록
 window.SidebarManager = {

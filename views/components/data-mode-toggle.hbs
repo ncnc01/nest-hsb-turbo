@@ -1,0 +1,138 @@
+{{!-- Mock/Real 데이터 모드 토글 컴포넌트 - 책갈피 스타일 --}}
+<div class="data-mode-toggle w-full" x-data="dataModeToggle()">
+  {{!-- 책갈피 탭 --}}
+  <div class="relative group w-full">
+    {{!-- 책갈피 모양 --}}
+    <div class="bg-white border-2 border-b-0 rounded-t-xl shadow-lg transition-all duration-300 hover:translate-y-1 w-full"
+         :class="status.mode === 'real' ? 'border-green-500' : 'border-orange-500'">
+      
+      {{!-- 상단 리본 장식 --}}
+      <div class="absolute -top-1 left-1/2 transform -translate-x-1/2 w-12 h-1.5 rounded-full"
+           :class="status.mode === 'real' ? 'bg-green-500' : 'bg-orange-500'"></div>
+      
+      {{!-- 메인 버튼 --}}
+      <button type="button"
+              @click="toggleMode()"
+              :disabled="isLoading"
+              class="w-full px-4 py-2 pb-3 flex items-center justify-center space-x-2 cursor-pointer transition-all duration-200 group-hover:pb-4">
+        
+        {{!-- 아이콘 --}}
+        <div class="w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300"
+             :class="status.mode === 'real' ? 'bg-green-100' : 'bg-orange-100'">
+          <i class="fas text-xs transition-all duration-300"
+             :class="status.mode === 'real' ? 'fa-database text-green-600' : 'fa-flask text-orange-600'"></i>
+        </div>
+
+        {{!-- 텍스트 --}}
+        <span class="text-xs font-bold uppercase tracking-wider transition-colors duration-300"
+              :class="status.mode === 'real' ? 'text-green-600' : 'text-orange-600'"
+              x-text="status.mode === 'real' ? 'REAL' : 'MOCK'"></span>
+
+        {{!-- 토글 인디케이터 (작은 점) --}}
+        <div class="flex space-x-1">
+          <div class="w-1.5 h-1.5 rounded-full transition-all duration-300"
+               :class="status.mode === 'real' ? 'bg-gray-300' : 'bg-orange-500'"></div>
+          <div class="w-1.5 h-1.5 rounded-full transition-all duration-300"
+               :class="status.mode === 'real' ? 'bg-green-500' : 'bg-gray-300'"></div>
+        </div>
+
+        {{!-- 로딩 인디케이터 --}}
+        <div x-show="isLoading" class="ml-1">
+          <svg class="animate-spin h-3 w-3 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </div>
+      </button>
+    </div>
+
+    {{!-- 호버 시 툴팁 --}}
+    <div class="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50">
+      <div class="bg-gray-900 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap">
+        <span x-text="status.mode === 'real' ? 'Switch to Mock Data' : 'Switch to Real Data'"></span>
+        <div class="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* 책갈피 애니메이션 효과 */
+.data-mode-toggle:hover .group > div:first-child {
+  transform: translateY(2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* 펄스 애니메이션 (새로운 데이터 모드 알림) */
+@keyframes pulse-bookmark {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.data-mode-toggle[data-just-toggled="true"] .group > div:first-child {
+  animation: pulse-bookmark 0.5s ease-in-out 2;
+}
+</style>
+
+<script>
+function dataModeToggle() {
+  return {
+    status: {
+      mode: 'mock', // 기본값
+    },
+    isLoading: false,
+
+    init() {
+      // 초기 상태 로드
+      this.loadCurrentStatus();
+    },
+
+    async loadCurrentStatus() {
+      try {
+        const response = await fetch('/dev-tools/api/data-mode/status');
+        if (response.ok) {
+          this.status = await response.json();
+        }
+      } catch (error) {
+        console.error('🚨 Failed to load data mode status:', error);
+      }
+    },
+
+    async toggleMode() {
+      if (this.isLoading) return;
+      
+      this.isLoading = true;
+      const newMode = this.status.mode === 'real' ? 'mock' : 'real';
+      
+      console.log(`🔄 Switching from ${this.status.mode} to ${newMode}`);
+
+      try {
+        const response = await fetch('/dev-tools/api/data-mode/preference', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mode: newMode })
+        });
+
+        if (response.ok) {
+          // 애니메이션 효과 추가
+          this.$el.setAttribute('data-just-toggled', 'true');
+          setTimeout(() => {
+            // 성공 시 페이지 새로고침
+            window.location.reload();
+          }, 300);
+        } else {
+          console.error('🚨 Failed to toggle data mode');
+          this.isLoading = false;
+        }
+      } catch (error) {
+        console.error('🚨 Error toggling data mode:', error);
+        this.isLoading = false;
+      }
+    }
+  }
+}
+</script>

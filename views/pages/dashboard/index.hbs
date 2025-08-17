@@ -1356,20 +1356,41 @@ window.forceDashboardReinit = function() {
   }, 200);
 };
 
-// 단순화된 Turbo 이벤트 처리 (첫 로드 후 중복 방지)
+// Turbo 이벤트 처리 - 차트 상태 확인 후 재초기화 결정
 document.addEventListener('turbo:load', () => {
   if (window.location.pathname === '/dashboard') {
-    if (!dashboardFirstInitDone) {
-      console.log('🔄 Turbo load detected for dashboard (FIRST INIT)');
-      window.forceDashboardReinit();
-      dashboardFirstInitDone = true;
-    } else {
-      console.log('🔄 Turbo load detected for dashboard (ALREADY INITIALIZED - SKIPPING)');
-      // 단순히 상태 복원만
-      setTimeout(() => {
+    console.log('🔄 Turbo load detected for dashboard');
+    
+    // 차트 상태 확인
+    setTimeout(() => {
+      const chartContainers = document.querySelectorAll('[data-chart-id]');
+      let hasEmptyCharts = false;
+      let hasLoadingCharts = false;
+      
+      chartContainers.forEach(container => {
+        const canvas = container.querySelector('canvas');
+        const loadingElement = container.querySelector('.fa-spinner');
+        
+        if (loadingElement) {
+          hasLoadingCharts = true;
+        }
+        
+        if (!canvas || canvas.width === 0 || canvas.height === 0) {
+          hasEmptyCharts = true;
+          console.log(`📊 Empty chart detected: ${container.getAttribute('data-chart-id')}`);
+        }
+      });
+      
+      // 빈 차트나 로딩 중인 차트가 있으면 재초기화
+      if (hasEmptyCharts || hasLoadingCharts || chartContainers.length === 0) {
+        console.log(`🚀 Dashboard needs reinitialization - empty: ${hasEmptyCharts}, loading: ${hasLoadingCharts}, containers: ${chartContainers.length}`);
+        window.forceDashboardReinit();
+      } else {
+        console.log('✅ Dashboard charts are properly rendered, skipping reinitialization');
+        // 상태 복원만
         window.loadChartStates();
-      }, 100);
-    }
+      }
+    }, 100);
   } else {
     // 다른 페이지로 이동하면 플래그 리셋
     if (dashboardFirstInitDone) {
@@ -1379,16 +1400,30 @@ document.addEventListener('turbo:load', () => {
   }
 });
 
-// Turbo Frame 렌더링 완료 후 차트 재초기화 (페이지 이동 후에만)
+// Turbo Frame 렌더링 완료 후 차트 상태 확인
 document.addEventListener('turbo:frame-render', (event) => {
   if (event.target.id === 'main-content' && window.location.pathname === '/dashboard') {
-    if (!dashboardFirstInitDone) {
-      console.log('🖼️ Dashboard frame rendered (FIRST INIT)');
-      window.forceDashboardReinit();
-      dashboardFirstInitDone = true;
-    } else {
-      console.log('🖼️ Dashboard frame rendered (ALREADY INITIALIZED - SKIPPING)');
-    }
+    console.log('🖼️ Dashboard frame rendered');
+    
+    // 약간의 지연 후 차트 상태 확인
+    setTimeout(() => {
+      const chartContainers = document.querySelectorAll('[data-chart-id]');
+      let needsInit = chartContainers.length === 0;
+      
+      chartContainers.forEach(container => {
+        const canvas = container.querySelector('canvas');
+        if (!canvas || canvas.width === 0 || canvas.height === 0) {
+          needsInit = true;
+        }
+      });
+      
+      if (needsInit) {
+        console.log('🚀 Frame render - Dashboard needs initialization');
+        window.forceDashboardReinit();
+      } else {
+        console.log('✅ Frame render - Dashboard charts are properly rendered');
+      }
+    }, 200);
   }
 });
 

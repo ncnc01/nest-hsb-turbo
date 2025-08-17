@@ -42,3 +42,15 @@ coverage
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Database files
+*.sqlite
+*.db
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Temporary files
+*.tmp
+*.temp
+nul

@@ -93,6 +93,43 @@
         </span>
       </a>
 
+      <!-- 스택 비교 -->
+      <a
+        href="/stack-comparison"
+        class="sidebar-link group flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:text-primary-600 hover:bg-primary-50 transition-colors duration-200"
+        :class="{ 'current-page': isCurrentPage('/stack-comparison') }"
+        :title="(!isMobile && !sidebarOpen) ? '스택 비교' : ''"
+      >
+        <i
+          class="fas fa-layer-group flex-shrink-0 text-gray-400 group-hover:text-primary-500"
+          :class="(!isMobile && !sidebarOpen) ? 'mr-0' : 'mr-3'"
+        ></i>
+        <span
+          x-show="isMobile || sidebarOpen"
+          x-transition:enter="transition-opacity duration-200 delay-100"
+          x-transition:enter-start="opacity-0"
+          x-transition:enter-end="opacity-100"
+          x-transition:leave="transition-opacity duration-150"
+          x-transition:leave-start="opacity-100"
+          x-transition:leave-end="opacity-0"
+          class="truncate"
+        >
+          스택 비교
+        </span>
+        <span
+          x-show="isMobile || sidebarOpen"
+          class="ml-auto inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+          x-transition:enter="transition-opacity duration-200 delay-100"
+          x-transition:enter-start="opacity-0"
+          x-transition:enter-end="opacity-100"
+          x-transition:leave="transition-opacity duration-150"
+          x-transition:leave-start="opacity-100"
+          x-transition:leave-end="opacity-0"
+        >
+          NEW
+        </span>
+      </a>
+
       <!-- 개발 도구 -->
       <div
         class="menu-section"

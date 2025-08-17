@@ -1,93 +1,113 @@
 /**
- * 간단한 에디터 관리 (문제 해결용)
+ * 간단한 에디터 관리 시스템
+ * 기존 시스템 복원용
  */
 
-// 전역 변수들
+let currentEditor = null;
 let currentEditorType = 'basic';
-let currentEditorInstance = null;
 
 // 에디터 전환 함수
-async function updateEditor(library) {
-  console.log('🔄 에디터 전환:', library);
+async function updateEditor(editorType) {
+  console.log('🔄 Switching editor to:', editorType);
   
   const container = document.getElementById('editor-container');
   if (!container) {
-    console.error('에디터 컨테이너를 찾을 수 없습니다');
+    console.error('❌ Editor container not found');
     return;
   }
-
-  // 현재 값 저장
-  const currentValue = getCurrentContent();
   
-  // 이전 에디터 정리
+  // 현재 내용 저장
+  const currentContent = getCurrentContent();
+  
+  // 기존 에디터 정리
   await destroyCurrentEditor();
   
-  // 새 에디터 렌더링
-  currentEditorType = library;
+  // 새 에디터 생성
+  currentEditorType = editorType;
   
-  switch(library) {
+  switch (editorType) {
+    case 'basic':
+      renderBasicEditor(container, currentContent);
+      break;
     case 'tinymce':
-      await renderTinyMCE(container, currentValue);
+      await renderTinyMCE(container, currentContent);
       break;
     case 'ckeditor5':
-      await renderCKEditor5(container, currentValue);
+      await renderCKEditor(container, currentContent);
       break;
     case 'quill':
-      await renderQuill(container, currentValue);
+      await renderQuill(container, currentContent);
       break;
     case 'monaco':
-      await renderMonaco(container, currentValue);
+      await renderMonaco(container, currentContent);
       break;
     default:
-      renderBasic(container, currentValue);
+      renderBasicEditor(container, currentContent);
   }
 }
 
-// 현재 내용 가져오기
+// 현재 에디터 내용 가져오기
 function getCurrentContent() {
-  switch(currentEditorType) {
+  switch (currentEditorType) {
     case 'tinymce':
-      return currentEditorInstance && window.tinymce ? tinymce.get('content-editor')?.getContent() || '' : '';
+      if (window.tinymce && window.tinymce.activeEditor) {
+        return window.tinymce.activeEditor.getContent();
+      }
+      break;
     case 'ckeditor5':
-      return currentEditorInstance ? currentEditorInstance.getData() : '';
+      if (currentEditor && currentEditor.getData) {
+        return currentEditor.getData();
+      }
+      break;
     case 'quill':
-      return currentEditorInstance ? currentEditorInstance.root.innerHTML : '';
+      if (currentEditor && currentEditor.root) {
+        return currentEditor.root.innerHTML;
+      }
+      break;
     case 'monaco':
-      return currentEditorInstance ? currentEditorInstance.getValue() : '';
+      if (currentEditor && currentEditor.getValue) {
+        return currentEditor.getValue();
+      }
+      break;
     default:
-      const textarea = document.querySelector('#content-editor');
+      const textarea = document.querySelector('#editor-container textarea[name="content"]');
       return textarea ? textarea.value : '';
   }
+  
+  // 폴백
+  const textarea = document.querySelector('#editor-container textarea[name="content"]');
+  return textarea ? textarea.value : '';
 }
 
-// 이전 에디터 정리
+// 기존 에디터 정리
 async function destroyCurrentEditor() {
   try {
-    switch(currentEditorType) {
+    switch (currentEditorType) {
       case 'tinymce':
-        if (window.tinymce && tinymce.get('content-editor')) {
-          await tinymce.remove('#content-editor');
+        if (window.tinymce) {
+          await window.tinymce.remove('#content-editor');
         }
         break;
       case 'ckeditor5':
-        if (currentEditorInstance && currentEditorInstance.destroy) {
-          await currentEditorInstance.destroy();
+        if (currentEditor && currentEditor.destroy) {
+          await currentEditor.destroy();
         }
         break;
-      case 'quill':
       case 'monaco':
-        // 특별한 정리 불필요
+        if (currentEditor && currentEditor.dispose) {
+          currentEditor.dispose();
+        }
         break;
     }
   } catch (error) {
-    console.warn('에디터 정리 중 오류:', error);
+    console.warn('Editor cleanup warning:', error);
   }
   
-  currentEditorInstance = null;
+  currentEditor = null;
 }
 
-// 기본 에디터
-function renderBasic(container, value) {
+// 기본 텍스트에리어
+function renderBasicEditor(container, content) {
   container.innerHTML = `
     <textarea
       id="content-editor"
@@ -96,185 +116,131 @@ function renderBasic(container, value) {
       required
       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 resize-vertical"
       placeholder="문의사항의 상세 내용을 입력하세요..."
-    >${value}</textarea>
+    >${content}</textarea>
   `;
-  console.log('✅ 기본 에디터 로드됨');
+  console.log('✅ Basic editor loaded');
 }
 
 // TinyMCE 에디터
-async function renderTinyMCE(container, value) {
-  if (!window.tinymce) {
-    console.warn('TinyMCE 라이브러리가 없습니다. 기본 에디터로 대체합니다.');
-    renderBasic(container, value);
-    return;
-  }
-
+async function renderTinyMCE(container, content) {
   container.innerHTML = `
-    <textarea id="content-editor" name="content">${value}</textarea>
+    <textarea id="content-editor" name="content">${content}</textarea>
   `;
-
+  
   try {
-    await tinymce.init({
+    if (!window.tinymce) {
+      console.warn('TinyMCE not available, using basic editor');
+      renderBasicEditor(container, content);
+      return;
+    }
+    
+    await window.tinymce.init({
       selector: '#content-editor',
       height: 400,
-      plugins: [
-        'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',
-        'checklist', 'mediaembed', 'casechange', 'formatpainter', 'pageembed', 'a11ychecker', 'tinymcespellchecker', 'permanentpen', 'powerpaste', 'advtable', 'advcode', 'advtemplate', 'ai', 'uploadcare', 'mentions', 'tinycomments', 'tableofcontents', 'footnotes', 'mergetags', 'autocorrect', 'typography', 'inlinecss', 'markdown','importword', 'exportword', 'exportpdf'
-      ],
-      toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography uploadcare | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
-      tinycomments_mode: 'embedded',
-      tinycomments_author: 'Admin User',
-      mergetags_list: [
-        { value: 'CustomerName', title: '고객명' },
-        { value: 'CustomerEmail', title: '고객 이메일' }
-      ],
-      ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('AI Assistant는 프리미엄 기능입니다')),
-      uploadcare_public_key: '2be0637a8a9fda750e87',
+      plugins: 'link lists code table',
+      toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | bullist numlist | link code',
+      menubar: false,
       setup: (editor) => {
-        currentEditorInstance = editor;
-        editor.on('init', () => {
-          console.log('✅ TinyMCE 에디터 로드됨');
-        });
+        currentEditor = editor;
+        console.log('✅ TinyMCE editor loaded');
       }
     });
   } catch (error) {
-    console.error('TinyMCE 초기화 실패:', error);
-    renderBasic(container, value);
+    console.error('TinyMCE failed:', error);
+    renderBasicEditor(container, content);
   }
 }
 
-// CKEditor5
-async function renderCKEditor5(container, value) {
-  if (!window.ClassicEditor) {
-    console.warn('CKEditor5 라이브러리가 없습니다. 기본 에디터로 대체합니다.');
-    renderBasic(container, value);
-    return;
-  }
-
+// CKEditor 5
+async function renderCKEditor(container, content) {
   container.innerHTML = `
-    <div id="content-editor" style="min-height: 400px;">${value}</div>
+    <div id="content-editor">${content}</div>
   `;
-
+  
   try {
-    const editor = await ClassicEditor.create(document.querySelector('#content-editor'), {
-      toolbar: ['heading', '|', 'bold', 'italic', 'link', '|', 'bulletedList', 'numberedList', '|', 'outdent', 'indent', '|', 'blockQuote', 'insertTable', '|', 'undo', 'redo']
+    if (!window.ClassicEditor) {
+      console.warn('CKEditor5 not available, using basic editor');
+      renderBasicEditor(container, content);
+      return;
+    }
+    
+    const editor = await window.ClassicEditor.create(document.querySelector('#content-editor'), {
+      toolbar: ['heading', '|', 'bold', 'italic', 'link', '|', 'bulletedList', 'numberedList', '|', 'undo', 'redo']
     });
     
-    // 에디터 높이 설정
-    const editingView = editor.editing.view;
-    const root = editingView.document.getRoot();
-    editingView.change(writer => {
-      writer.setStyle('min-height', '400px', root);
-    });
-    
-    currentEditorInstance = editor;
-    console.log('✅ CKEditor5 에디터 로드됨');
+    currentEditor = editor;
+    console.log('✅ CKEditor5 loaded');
   } catch (error) {
-    console.error('CKEditor5 초기화 실패:', error);
-    renderBasic(container, value);
+    console.error('CKEditor5 failed:', error);
+    renderBasicEditor(container, content);
   }
 }
 
 // Quill 에디터
-async function renderQuill(container, value) {
-  if (!window.Quill) {
-    console.warn('Quill 라이브러리가 없습니다. 기본 에디터로 대체합니다.');
-    renderBasic(container, value);
-    return;
-  }
-
+async function renderQuill(container, content) {
   container.innerHTML = `
-    <div id="content-editor" style="height: 300px;">${value}</div>
+    <div id="content-editor" style="height: 300px;">${content}</div>
   `;
-
+  
   try {
-    const quill = new Quill('#content-editor', {
+    if (!window.Quill) {
+      console.warn('Quill not available, using basic editor');
+      renderBasicEditor(container, content);
+      return;
+    }
+    
+    const quill = new window.Quill('#content-editor', {
       theme: 'snow',
       modules: {
         toolbar: [
-          [{ 'header': [1, 2, 3, false] }],
-          ['bold', 'italic', 'underline', 'strike'],
-          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-          ['link', 'image'],
-          ['clean']
+          ['bold', 'italic', 'underline'],
+          ['link', 'blockquote', 'code-block'],
+          [{ 'list': 'ordered'}, { 'list': 'bullet' }]
         ]
       }
     });
     
-    currentEditorInstance = quill;
-    console.log('✅ Quill 에디터 로드됨');
+    currentEditor = quill;
+    console.log('✅ Quill editor loaded');
   } catch (error) {
-    console.error('Quill 초기화 실패:', error);
-    renderBasic(container, value);
+    console.error('Quill failed:', error);
+    renderBasicEditor(container, content);
   }
 }
 
 // Monaco 에디터
-async function renderMonaco(container, value) {
-  if (!window.require) {
-    console.warn('Monaco 라이브러리가 없습니다. 기본 에디터로 대체합니다.');
-    renderBasic(container, value);
-    return;
-  }
-
+async function renderMonaco(container, content) {
   container.innerHTML = `
     <div id="content-editor" style="height: 400px; border: 1px solid #ccc;"></div>
   `;
-
+  
   try {
-    require.config({ 
-      paths: { 
-        'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs' 
-      }
+    if (!window.require) {
+      console.warn('Monaco not available, using basic editor');
+      renderBasicEditor(container, content);
+      return;
+    }
+    
+    window.require.config({ 
+      paths: { 'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs' }
     });
-
-    require(['vs/editor/editor.main'], () => {
-      const editor = monaco.editor.create(document.getElementById('content-editor'), {
-        value: value,
+    
+    window.require(['vs/editor/editor.main'], () => {
+      const editor = window.monaco.editor.create(document.getElementById('content-editor'), {
+        value: content,
         language: 'markdown',
-        theme: 'vs-dark',
-        automaticLayout: true
+        theme: 'vs-light',
+        automaticLayout: true,
+        wordWrap: 'on'
       });
       
-      currentEditorInstance = editor;
-      console.log('✅ Monaco 에디터 로드됨');
+      currentEditor = editor;
+      console.log('✅ Monaco editor loaded');
     });
   } catch (error) {
-    console.error('Monaco 초기화 실패:', error);
-    renderBasic(container, value);
+    console.error('Monaco failed:', error);
+    renderBasicEditor(container, content);
   }
 }
 
-
-// 폼 제출용 내용 가져오기 (기존 함수와 호환)
-function getEditorContent() {
-  return getCurrentContent();
-}
-
-// Turbo 페이지 로드 시 에디터 상태 초기화
-document.addEventListener('turbo:load', function() {
-  console.log('🔄 Turbo 페이지 로드 - 에디터 상태 초기화');
-  
-  // 에디터 상태 초기화
-  currentEditorType = 'basic';
-  currentEditorInstance = null;
-  
-  // 에디터 컨테이너가 있는 페이지인지 확인
-  const container = document.getElementById('editor-container');
-  const selector = document.getElementById('editor-library-select');
-  
-  if (container && selector) {
-    console.log('📝 에디터 페이지 감지 - 기본 에디터로 초기화');
-    
-    // 셀렉터 값을 basic으로 리셋
-    selector.value = 'basic';
-    
-    // 기본 에디터로 렌더링
-    renderBasic(container, '');
-  }
-});
-
-// 전역 updateEditor 함수를 안전하게 노출
-window.updateEditor = updateEditor;
-
-console.log('📝 간단한 에디터 관리자가 로드되었습니다.');
+console.log('📝 Simple Editor System loaded');

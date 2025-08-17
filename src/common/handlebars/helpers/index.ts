@@ -4,6 +4,7 @@ export * from './conditionals.helper';
 export * from './utilities.helper';
 export * from './turbo.helper';
 export * from './styling.helper';
+export * from './math.helper';
 
 // 헬퍼 그룹별로 import하기 쉽도록 재구성
 import * as formatters from './formatters.helper';
@@ -11,6 +12,7 @@ import * as conditionals from './conditionals.helper';
 import * as utilities from './utilities.helper';
 import * as turbo from './turbo.helper';
 import * as styling from './styling.helper';
+import * as math from './math.helper';
 
 export const helpers = {
   formatters,
@@ -18,6 +20,7 @@ export const helpers = {
   utilities,
   turbo,
   styling,
+  math,
 };
 
 // 모든 헬퍼를 플랫 객체로 export (등록 시 편의성)
@@ -79,6 +82,8 @@ export const allHelpers = {
   merge: utilities.merge,
   pick: utilities.pick,
   omit: utilities.omit,
+  index: utilities.index,
+  lookup: utilities.lookup,
 
   // Turbo
   turboFrame: turbo.turboFrame,
@@ -110,4 +115,20 @@ export const allHelpers = {
   flex: styling.flex,
   spacing: styling.spacing,
   text: styling.text,
+
+  // Math
+  add: math.add,
+  subtract: math.subtract,
+  multiply: math.multiply,
+  divide: math.divide,
+  modulo: math.modulo,
+  round: math.round,
+  ceil: math.ceil,
+  floor: math.floor,
+  abs: math.abs,
+  max: math.max,
+  min: math.min,
+  average: math.average,
+  isEven: math.isEven,
+  isOdd: math.isOdd,
 };

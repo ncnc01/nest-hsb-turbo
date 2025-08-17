@@ -1,0 +1,39 @@
+{{!-- Alpine.js 탭 컴포넌트 템플릿 --}}
+{{!-- 사용법: {{> alpine-tab-component tabs=tabsData defaultTab="tab1"}} --}}
+
+<div x-data="tabComponent()" x-cloak>
+  {{!-- 탭 버튼들 --}}
+  <div class="flex flex-wrap border-b mb-6">
+    {{#each tabs}}
+    <button @click="setActiveTab('{{id}}')" 
+            :class="activeTab === '{{id}}' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500'"
+            class="px-4 py-2 border-b-2 font-medium">
+      {{title}}
+    </button>
+    {{/each}}
+  </div>
+
+  {{!-- 탭 컨텐츠 --}}
+  {{#each tabs}}
+  <div :class="activeTab === '{{id}}' ? 'block' : 'hidden'">
+    {{{content}}}
+  </div>
+  {{/each}}
+</div>
+
+<script>
+function tabComponent() {
+  return {
+    activeTab: '{{defaultTab}}',
+    
+    init() {
+      console.log('Tab component initialized with:', this.activeTab);
+    },
+    
+    setActiveTab(tab) {
+      console.log('Switching to tab:', tab);
+      this.activeTab = tab;
+    }
+  };
+}
+</script>
