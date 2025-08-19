@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { join } from "path";
@@ -16,6 +16,7 @@ import { DevReloadModule } from "./modules/dev-reload/dev-reload.module";
 import { DevToolsModule } from './dev-tools/dev-tools.module';
 import { User } from './database/entities/user.entity';
 import { Inquiry } from './database/entities/inquiry.entity';
+import { DatabaseConfig } from './config/database.config';
 
 @Module({
   imports: [
@@ -23,16 +24,10 @@ import { Inquiry } from './database/entities/inquiry.entity';
       isGlobal: true,
       envFilePath: ".env",
     }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DB_HOST || 'localhost',
-      port: parseInt(process.env.DB_PORT, 10) || 5432,
-      username: process.env.DB_USERNAME || 'postgres',
-      password: process.env.DB_PASSWORD || 'password',
-      database: process.env.DB_DATABASE || 'nest_hbs_turbo',
-      entities: [User, Inquiry],
-      synchronize: process.env.NODE_ENV !== 'production',
-      logging: process.env.NODE_ENV === 'development',
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useClass: DatabaseConfig,
+      inject: [ConfigService],
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, "..", "public"),
